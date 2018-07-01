@@ -26,4 +26,28 @@ if ~isfield(param, 'B_ri')
     param.B_ri = 0;
 end
 
+if ~isfield(param, 'Dfc')
+    if isfield(param, 'G') && ~isempty(param.G)
+        param.Dfc = (1 - param.G) / param.G;
+        param.G = 1;
+    else
+        param.Dfc = 0;
+    end
+else
+    % setting diagonal, so don't need the G parameter to vary
+    param.G = 1;
+end
+
+if isfield(param, 'D')
+    param.Dcf = param.D;
+end
+
+if isfield(param, 'C')
+    param.Acf = param.C;
+end
+
+if isfield(param, 'S')
+    param.Scf = param.S;
+end
+
 param = check_param_tcm(param);
