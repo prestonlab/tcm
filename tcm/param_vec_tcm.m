@@ -1,7 +1,7 @@
 function param_vec = param_vec_tcm(param)
-%WRITE_PARAM_TCM   Write parameters for use with compiled TCM.
+%PARAM_VEC_TCM   Write parameters for use with compiled TCM.
 %
-%  write_param_tcm(param, param_file)
+%  param_vec_tcm(param, param_file)
 %
 %  INPUTS:
 %       param:  structure specifying parameter values. Must include:
