@@ -37,12 +37,8 @@ function seq = gen_tcm(param, data, n_rep)
 %      recalls are zero. Stop events are not included, so that the
 %      matrix is comparable to data.recalls.
   
-if nargin < 4
+if nargin < 3
     n_rep = 1; 
-end
-
-if ~exist('var_param')
-    var_param = [];
 end
 
 [n_trials, n_items, n_recalls] = size_frdata(data);
@@ -57,17 +53,13 @@ for i = 1:n_rep
         env.trial = j;
         env.event = 1;
 
-        if ~isempty(var_param)
-            param = update_param(param, var_param, env);
-        end
-
-        seq_trial = run_trial(param, var_param, env, data.pres_itemnos(j,:));
+        seq_trial = run_trial(param, env, data.pres_itemnos(j,:));
         seq(n,1:length(seq_trial)) = seq_trial;
     end
 end
 
 
-function seq = run_trial(param, var_param, env, pres_itemnos)
+function seq = run_trial(param, env, pres_itemnos)
     
     LL = size(pres_itemnos, 2);
 
@@ -76,17 +68,12 @@ function seq = run_trial(param, var_param, env, pres_itemnos)
     
     % study
     [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, param, ...
-                                                var_param, env, LL);
+                                                env, LL);
     % recall
     stopped = false;
     pos = 0;
     seq = [];
     while ~stopped
-        
-        if ~isempty(var_param)
-            param = update_param(param, var_param, env);
-        end
-        
         % recall probability given associations, the current cue, and
         % given that previously recalled items will not be repeated
         prob_model = p_recall_tcm(w_cf, c, LL, seq, pos, param, w_cf_pre);
@@ -123,6 +110,6 @@ function seq = run_trial(param, var_param, env, pres_itemnos)
             [f, c] = reactivate_item_tcm(f, c, w_fc, event, param);
         end
 
-        %update event
+        % update event
         env.event = env.event + 1;
     end

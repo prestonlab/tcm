@@ -1,5 +1,5 @@
 function [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, ...
-                                                  param, var_param, env, LL)
+                                                  param, env, LL)
 %PRESENT_ITEMS_TCM   Present a series of items to a TCM network.
 %
 %  [f, c, w_fc, w_cf] = present_items_tcm(f, c, w_fc, w_cf, param, LL)
@@ -19,8 +19,6 @@ function [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, ...
 %
 %   param:  structure of model parameters.
 %
-%  var_param: structure of variable parameters.
-%
 %      LL:  list length.
 %
 %  OUTPUTS:
@@ -33,11 +31,6 @@ function [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, ...
 %     w_cf:  updated with associations, scaled by primacy.
 
 for i = 1:LL
-    % set event_specific parameters
-    if ~isempty(var_param)
-        param = update_param(param,var_param,env);
-    end
-    
     % interpresentation interval distraction
     if isfield(param, 'B_ipi')
         ipi_index = env.ipi_dist_unit(i);

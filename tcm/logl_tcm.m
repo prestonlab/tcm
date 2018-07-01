@@ -44,12 +44,7 @@ for i = 1:n_trials
     env.trial = i;
     env.event = 1;
     
-    if ~isempty(var_param)
-        param = update_param(param,var_param,env);
-    end
-    
     [logl_trial, logl_all_trial] = run_trial(param, ...
-                                             var_param, ...
                                              env, ...
                                              data.pres_itemnos(i,:), ...
                                              data.recalls(i,:));
@@ -60,7 +55,7 @@ for i = 1:n_trials
 end
 
 
-function [logl, logl_all] = run_trial(param, var_param, env, pres_itemnos, recalls)
+function [logl, logl_all] = run_trial(param, env, pres_itemnos, recalls)
     
     LL = size(pres_itemnos, 2);
     
@@ -74,16 +69,11 @@ function [logl, logl_all] = run_trial(param, var_param, env, pres_itemnos, recal
     w_fc_pre_s = w_fc;
     w_cf_pre_s = w_cf;
     [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, param, ...
-                                                var_param, env, LL);
+                                                env, LL);
 
     logl = zeros(size(seq));
     logl_all = NaN(length(seq), LL+1);
     for i = 1:length(seq)
-        
-        if ~isempty(var_param)
-            param = update_param(param,var_param,env);
-        end
-        
         % probability of all possible events
         output_pos = i - 1;
         prev_rec = seq(1:output_pos);
