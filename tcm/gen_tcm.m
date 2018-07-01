@@ -1,40 +1,41 @@
-function seq = gen_tcm(param, data, var_param, n_rep)
+function seq = gen_tcm(param, data, n_rep)
 %GEN_TCM   Generate simulated data from TCM.
 %
-%  Same as tcm_general, but generates recall sequences rather than
+%  Same as logl_tcm, but generates recall sequences rather than
 %  calculating the probability of data given the model.
 %
 %  param and data are assumed to be pre-processed, including setting
 %  defaults for missing parameters, etc.
 %
-%  seq = gen_tcm(param, data, var_param, n_rep)
+%  seq = gen_tcm(param, data, n_rep)
 %
-%  INPUTS:
-%   param:  structure with model parameters. Each field may contain a
-%           scalar or a vector. Vector fields indicate that different
-%           parameters are used for different lists. For field f, trial
-%           i, the value used is: param.(f)(index(i))
-%           or just param.(f) if f is a scalar field or if index is
-%           omitted.
+%  INPUTS
+%  param - struct
+%      Structure with model parameters. See check_param_tcm for details.
 %
-%    data:  free recall data structure, with repeats and intrusions
-%           removed. Required fields:
-%            recalls
-%            pres_itemnos
+%  data - frdata struct
+%      Standard free recall data structure. Must have repeats and
+%      intrusions removed. Required fields:
 %
-% var_param: structure with information about parameters that vary
-%            by trial, by study event, or by recall event.
-%            Required fields:
-%             name
-%             update_level
-%             val
+%          recalls - [lists x output position] numeric array
+%              Serial position of each recalled item. Output
+%              positions were no item was recalled should be zero.
 %
-%   n_rep:  number of times to replicate the experiment.
+%          pres_itemnos - [lists x input position] numeric array
+%              Number of each presented item. If modeling semantic
+%              similarity, indicates the position of each item in
+%              the semantic matrix.
 %
-%  OUTPUTS:
-%      seq:  [lists X recalls] matrix giving the serial positions of
-%            simulated recalls. Stop events are not included, so that
-%            the matrix is comparable to data.recalls.
+%  n_rep - int
+%      Number of times to replicate the study when generating
+%      data. Can run many times to get a stable estimate of the
+%      model's behavior.
+%
+%  OUTPUTS
+%  seq - [lists x output position]
+%      Serial positions of simulated recalls. Output positions with no
+%      recalls are zero. Stop events are not included, so that the
+%      matrix is comparable to data.recalls.
   
 if nargin < 4
     n_rep = 1; 
