@@ -1,39 +1,37 @@
-function [logl, logl_all] = logl_tcm(param, data, var_param)
+function [logl, logl_all] = logl_tcm(param, data)
 %LOGL_TCM   Calculate log likelihood for free recall using TCM.
 %
 %  Calculates log likelihood for multiple lists. param and data are
 %  assumed to be pre-processed, including setting defaults for
 %  missing parameters, etc.
 %
-%  [logl, logl_all] = logl_tcm(param, data, var_param)
+%  [logl, logl_all] = logl_tcm(param, data)
 %
-%  INPUTS:
-%   param:  structure with model parameters. Each field must contain a
-%           scalar or a string. 
+%  INPUTS
+%  param - struct
+%      Structure with model parameters. See check_param_tcm for details.
 %
-%    data:  free recall data structure, with repeats and intrusions
-%           removed. Required fields:
-%            recalls
-%            pres_itemnos
-%    
-% var_param: structure with information about parameters that vary
-%            by trial, by study event, or by recall event.
-%            Required fields:
-%             name
-%             update_level
-%             val
+%  data - frdata struct
+%      Standard free recall data structure. Must have repeats and
+%      intrusions removed. Required fields:
 %
-%  OUTPUTS:
-%      logl:  [lists X recalls] matrix with log likelihood values for
-%             all recall events in data.recalls (plus stopping events).
+%          recalls - [lists x output position] numeric array
+%              Serial position of each recalled item. Output
+%              positions were no item was recalled should be zero.
 %
-%  logl_all:  [lists X recalls X events] matrix of log likelihood values
-%             for all possible events, after each recall event in
-%             data.recalls.
-
-if nargin < 3
-    var_param = [];
-end
+%          pres_itemnos - [lists x input position] numeric array
+%              Number of each presented item. If modeling semantic
+%              similarity, indicates the position of each item in
+%              the semantic matrix.
+%
+%  OUTPUTS
+%  logl - [lists x recall events] numeric array
+%      Log likelihood for all recall events in data.recalls, plus
+%      stopping events.
+%
+%  logl_all - [lists x recall events x possible events] numeric array
+%      Likelihood for all possible events, after each recall event
+%      in data.recalls.
 
 param = check_param_tcm(param);
 
