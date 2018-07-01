@@ -33,8 +33,6 @@ function [logl, logl_all] = logl_tcm(param, data)
 %      Likelihood for all possible events, after each recall event
 %      in data.recalls.
 
-param = check_param_tcm(param);
-
 [n_trials, n_items, n_recalls] = size_frdata(data);
 logl = NaN(n_trials, n_recalls + 1);
 logl_all = NaN(n_trials, n_recalls + 1, n_items + 1);
