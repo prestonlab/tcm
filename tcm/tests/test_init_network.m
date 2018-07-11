@@ -21,7 +21,7 @@ e = 10e-6;
 
 env = struct;
 pres_itemnos = [4 2 1 3];
-net = init_network_tcm(param, env, pres_itemnos);
+net = init_network_tcm(param, pres_itemnos);
 
 % test dimensions
 assert(length(net.f) == 5)
@@ -41,7 +41,7 @@ param.B_ri = 0.2;
 env = struct;
 pres_itemnos = [4 2 1 3];
 
-net = init_network_tcm(param, env, pres_itemnos);
+net = init_network_tcm(param, pres_itemnos);
 
 assert(length(net.f) == 10)
 assert(length(net.c) == 10)
@@ -61,7 +61,7 @@ param.Scf = 2;
 env = struct;
 pres_itemnos = [2 6 3 4];
 
-net = init_network_tcm(param, env, pres_itemnos);
+net = init_network_tcm(param, pres_itemnos);
 
 mat = [...
      0    18    12    14     0
@@ -84,7 +84,7 @@ end
 env = struct;
 pres_itemnos = [2 6 3 4];
 
-net = init_network_tcm(param, env, pres_itemnos);
+net = init_network_tcm(param, pres_itemnos);
 
 assert(length(net.f) == 5)
 assert(length(net.c) == 11)
