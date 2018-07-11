@@ -22,7 +22,34 @@ function net = init_network_tcm(param, pres_itemnos)
 %      up semantic vectors and matrices.
 %
 %  OUTPUTS:
-%       net:  struct with information about the network.
+%  net - struct
+%      Struct defining the network. Fields are:
+%      f - [nf x 1] vector
+%          Feature (item) vector. Items are assumed to be localist,
+%          so there is just one unit for each item.
+%      c - [nc x 1] vector
+%          Context vector. States of context may be in the same space
+%          as f (localist context), or may have a different feature
+%          space (distributed context).
+%      w_fc_exp - [nc x nf] matrix
+%          Weight matrix of non-semantic associations linking f to c.
+%      w_fc_pre - [nc x nf] matrix
+%          Weight matrix of semantic associations linking f to c.
+%      w_cf_exp - [nf x nc] matrix
+%          Weight matrix of non-semantic associations linking c to f.
+%      w_cf_pre - [nf x nc] matrix
+%          Weight matrix of semantic associations linking c to f.
+%      dc - logical
+%          True if context is distributed (i.e., a different
+%          feature space than the feature vectors).
+%      f_item - [1 x items] vector
+%          Indices of item units in f.
+%      c_item - [1 x items] vector
+%          Indices of item units in c.
+%      f_start - numeric
+%          Index of start unit in f.
+%      c_start - numeric
+%          Index of start unit in c.
 
 LL = size(pres_itemnos, 2);
 
@@ -122,6 +149,7 @@ if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
     end
 end
 
+% put standard fields on net struct
 net.f = f;
 net.c = c;
 net.w_fc_exp = w_fc_exp;
