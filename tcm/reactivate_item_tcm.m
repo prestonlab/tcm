@@ -1,4 +1,4 @@
-function [f, c] = reactivate_item_tcm(f, c, w_fc, unit, param)
+function net = reactivate_item_tcm(net, unit, param)
 %REACTIVATE_ITEM_TCM   Reactivate a recalled item and update context.
 %
 %  [f, c] = reactivate_item_tcm(f, c, w_fc, unit, param)
@@ -22,14 +22,14 @@ function [f, c] = reactivate_item_tcm(f, c, w_fc, unit, param)
 %            retrieved item.
 
 % reactivate the recalled item
-f(:) = 0;
-f(unit) = 1;
+net.f(:) = 0;
+net.f(unit) = 1;
 
 % update context based on what was recalled
-c_in = w_fc * f;
+c_in = net.w_fc_exp * net.f;
 c_in = normalize_vector(c_in);
-rho = scale_context(dot(c, c_in), param.B_rec);
-c = rho * c + param.B_rec * c_in;
+rho = scale_context(dot(net.c, c_in), param.B_rec);
+net.c = rho * net.c + param.B_rec * c_in;
 
 
 function rho = scale_context(cdot, B)

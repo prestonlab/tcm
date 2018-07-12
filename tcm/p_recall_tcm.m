@@ -1,4 +1,4 @@
-function p = p_recall_tcm(w_cf, c, LL, prev_rec, output_pos, param, w_cf_pre)
+function p = p_recall_tcm(net, param, prev_rec)
 %P_RECALL_TCM   Probability of recall according to TCM.
 %
 %  p = p_recall_tcm(w_cf, c, LL, prev_rec, output_pos, param)
@@ -26,48 +26,47 @@ function p = p_recall_tcm(w_cf, c, LL, prev_rec, output_pos, param, w_cf_pre)
 AMIN = 0.000001;
 PMIN = 0.000001;
 
+output_pos = length(prev_rec);
+LL = length(net.f_item);
+
 % determine cue strength
-if isfield(param, 'I') && param.I ~= 0 && ...
-        (~isempty(prev_rec) || param.init_item)
-    % experimental cuing strength
-    strength_exp = (w_cf * c)';
-    f = zeros(size(c));
-    if isempty(prev_rec)
-        unit = LL;
-    else
-        unit = prev_rec(end);
-    end
-    f(unit) = 1;
+if isfield(param, 'I') && param.I ~= 0 && ~isempty(prev_rec)
+    % at least part of the cue is item-based
+
+    % experimental cuing (context)
+    strength_exp = (net.w_cf_exp * net.c)';
+
+    % semantic cuing (item and context)
+    net.f(:) = 0;
+    net.f(prev_rec(end)) = 1;
+    pre_exp_cue = param.I * net.f + (1 - param.I) * net.c;
+    strength_pre = (net.w_cf_pre * pre_exp_cue)';
     
-    % pre-exp cuing strength
-    %pre_exp_cue = normalize_vector(param.I * f + (1 - param.I) * c);
-    pre_exp_cue = param.I * f + (1 - param.I) * c;
-    strength_pre = (w_cf_pre * pre_exp_cue)';
+    % combine experimental and semantic cues
     strength = strength_exp + strength_pre;
-elseif isfield(param, 'I') && param.I == 1 && ...
-        (isempty(prev_rec) && ~param.init_item)
-    strength = (w_cf * c)';
+elseif isfield(param, 'I') && param.I == 1 && isempty(prev_rec)
+    % item semantic cuing only, but no item to cue with
+    strength = (net.w_cf_exp * net.c)';
 else
-    strength = ((w_cf + w_cf_pre) * c)';
+    % context used for both cues
+    strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
 end
 
+% get strength just for items; set to minimum activation level
 strength = strength(1:LL);
 strength(strength < AMIN) = AMIN;
+
+% scale strength
 if isfield(param, 'ST') && param.ST ~= 0
     remaining = 1:LL;
     remaining = remaining(~ismember(remaining, prev_rec));
     s = sum(strength(remaining));
-    % if isempty(prev_rec)
-    %   s = sum(strength) / min(strength);
-    % else
-    %   s = sum(strength(remaining)) / sum(strength(prev_rec));
-    % end
     param.T = param.T * (s^param.ST);
 end
 strength = strength .^ param.T;
 
-if sum(strength(1:LL)) == 0
-    % if strength is zero for everything, set equal support for everything
+% if strength is zero for everything, set equal support for everything
+if sum(strength) == 0
     strength(1:LL) = 1;
 end
 
