@@ -54,7 +54,7 @@ function net = init_network_tcm(param, pres_itemnos)
 LL = size(pres_itemnos, 2);
 
 % item units
-if isfield(param, 'sem_vec')
+if isfield(param, 'sem_vec') && ~isempty(param.sem_vec)
     net.dc = true;
     IU = size(param.sem_vec, 1);
     item_vecs = param.sem_vec(:,pres_itemnos);
@@ -80,6 +80,9 @@ if isfield(param, 'B_ipi')
     net.c_ipi = (n_c+1):(n_c+LL);
     n_f = n_f + LL;
     n_c = n_c + LL;
+else
+    net.f_ipi = [];
+    net.c_ipi = [];
 end
 
 % ri units
@@ -88,6 +91,9 @@ if isfield(param, 'B_ri')
     net.c_ri = n_c + 1;
     n_f = n_f + 1;
     n_c = n_c + 1;
+else
+    net.f_ri = [];
+    net.c_ri = [];
 end
 
 % initialize the model representations
