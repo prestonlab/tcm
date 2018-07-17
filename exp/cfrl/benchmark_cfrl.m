@@ -1,4 +1,8 @@
-function seq = benchmark_cfrl()
+function [logl_mex, logl_mat, logl, logl_all] = benchmark_cfrl(ver)
+
+if nargin < 1
+    ver = 1;
+end
 
 % data for cfr, subject 1
 data = getfield(load('cfr_benchmark_data.mat', 'data'), 'data');
@@ -36,24 +40,32 @@ disp('Testing implementations with parameters from wikiw2v_context fit...')
 
 disp('No semantics:')
 logl_mex = logl_mex_tcm(param, data);
-logl = logl_tcm(param, data);
+if ver == 1
+    param.Dcf = param.Dcf - param.Acf;
+    [logl, logl_all] = logl_tcm(param, data);
+else
+    param.sem_vec = eye(768);
+    param.Dcf = param.Dcf - param.Acf;
+    [logl, logl_all] = logl_tcm(param, data);
+end
 logl_mat = nansum(logl(:));
 fprintf('  logl mex: %.8f\n', logl_mex)
 fprintf('  logl mat: %.8f\n', logl_mat)
-assert(abs(logl_mex - logl_mat) < .001, ...
-       'Different log likelihood values for different implementations.')
-disp('  Differences are less than 0.001.')
+%assert(abs(logl_mex - logl_mat) < .001, ...
+%       'Different log likelihood values for different implementations.')
+%disp('  Differences are less than 0.001.')
 
-disp('With semantics:')
-param.sem_mat = sem.sem_mat;
-logl_mex = logl_mex_tcm(param, data);
-logl = logl_tcm(param, data);
-logl_mat = nansum(logl(:));
-fprintf('  logl mex: %.8f\n', logl_mex)
-fprintf('  logl mat: %.8f\n', logl_mat)
-assert(abs(logl_mex - logl_mat) < .001, ...
-       'Different log likelihood values for different implementations.')
-disp('  Differences are less than 0.001.')
+% disp('With semantics:')
+% param.sem_mat = sem.sem_mat;
+% logl_mex = logl_mex_tcm(param, data);
+% logl = logl_tcm(param, data);
+% logl_mat = nansum(logl(:));
+% fprintf('  logl mex: %.8f\n', logl_mex)
+% fprintf('  logl mat: %.8f\n', logl_mat)
+% %assert(abs(logl_mex - logl_mat) < .001, ...
+% %       'Different log likelihood values for different implementations.')
+% disp('  Differences are less than 0.001.')
+% save ~/work/cfr/tcm/benchmark_distcon
+% % try generating some data
+% seq = gen_tcm(param, data);
 
-% try generating some data
-seq = gen_tcm(param, data);
