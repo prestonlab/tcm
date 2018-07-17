@@ -46,10 +46,10 @@ if isfield(param, 'I') && param.I ~= 0 && ~isempty(prev_rec)
     strength = strength_temp + strength_sem;
 elseif isfield(param, 'I') && param.I == 1 && isempty(prev_rec)
     % item semantic cuing only, but no item to cue with
-    strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
+    strength = ((net.w_cf_exp + net.w_cf_pre + net.w_cf_sem) * net.c)';
 else
     % context used for both cues
-    strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
+    strength = ((net.w_cf_exp + net.w_cf_pre + net.w_cf_sem) * net.c)';
 end
 
 % get strength just for items; set to minimum activation level
