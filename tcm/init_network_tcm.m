@@ -148,13 +148,19 @@ end
 
 if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
     % scale by a free parameter
-    semantic = param.sem_mat(pres_itemnos, pres_itemnos);
+    if net.dc
+        semantic = param.sem_mat(:, pres_itemnos);
+    else
+        semantic = param.sem_mat(pres_itemnos, pres_itemnos);
+    end
 
     if param.Sfc ~= 0
-        w_fc_sem(1:LL, 1:LL) = w_fc_sem(1:LL, 1:LL) + semantic * param.Sfc;
+        w_fc_sem(net.c_item,net.f_item) = w_fc_sem(net.c_item,net.f_item) + ...
+            semantic * param.Sfc;
     end
     if param.Scf ~= 0
-        w_cf_sem(1:LL, 1:LL) = w_cf_sem(1:LL, 1:LL) + semantic * param.Scf;
+        w_cf_sem(net.f_item,net.c_item) = w_cf_sem(net.f_item,net.c_item) + ...
+            semantic' * param.Scf;
     end
 end
 
