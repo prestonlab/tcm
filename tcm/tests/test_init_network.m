@@ -65,14 +65,13 @@ env = struct;
 pres_itemnos = [2 6 3 4];
 
 net = init_network_tcm(param, pres_itemnos);
-
 mat = [...
      0    18    12    14     0
     18     0    24    28     0
     12    24     0    20     0
     14    28    20     0     0
      0     0     0     0     0];
-assert(isequal(net.w_cf_pre, mat))
+assert(isequal(net.w_cf_sem, mat))
 
 
 function test_distrib(testCase)
