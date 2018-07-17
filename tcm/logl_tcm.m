@@ -57,6 +57,7 @@ function [logl, logl_all] = run_trial(param, pres_itemnos, recalls)
     
     % initialize the model
     net = init_network_tcm(param, pres_itemnos);
+    net.itemnos = pres_itemnos;
     
     % study
     net = present_items_tcm(net, param);
