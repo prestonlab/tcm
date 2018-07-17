@@ -51,21 +51,34 @@ end
 logl_mat = nansum(logl(:));
 fprintf('  logl mex: %.8f\n', logl_mex)
 fprintf('  logl mat: %.8f\n', logl_mat)
-%assert(abs(logl_mex - logl_mat) < .001, ...
-%       'Different log likelihood values for different implementations.')
-%disp('  Differences are less than 0.001.')
+if abs(logl_mex - logl_mat) < .001
+    disp('  Differences are less than 0.001.')
+else
+    disp('  Warning: Differences are greater than 0.001.')
+end
 
-% disp('With semantics:')
-% param.sem_mat = sem.sem_mat;
-% logl_mex = logl_mex_tcm(param, data);
-% logl = logl_tcm(param, data);
-% logl_mat = nansum(logl(:));
-% fprintf('  logl mex: %.8f\n', logl_mex)
-% fprintf('  logl mat: %.8f\n', logl_mat)
-% %assert(abs(logl_mex - logl_mat) < .001, ...
-% %       'Different log likelihood values for different implementations.')
-% disp('  Differences are less than 0.001.')
-% save ~/work/cfr/tcm/benchmark_distcon
-% % try generating some data
-% seq = gen_tcm(param, data);
+disp('With semantics:')
+param.sem_mat = sem.sem_mat;
+logl_mex = logl_mex_tcm(param, data);
+if ver == 1
+    % using a semantic matrix isn't really defined (yet) with
+    % distributed context
+    param.Dcf = param.Dcf - param.Acf;
+    logl = logl_tcm(param, data);
+else
+    param.sem_vec = eye(768);
+    param.Dcf = param.Dcf - param.Acf;
+    logl = logl_tcm(param, data);
+end
+logl_mat = nansum(logl(:));
+fprintf('  logl mex: %.8f\n', logl_mex)
+fprintf('  logl mat: %.8f\n', logl_mat)
+if abs(logl_mex - logl_mat) < .001
+    disp('  Differences are less than 0.001.')
+else
+    disp('  Warning: Differences are greater than 0.001.')
+end
 
+
+% try generating some data
+%seq = gen_tcm(param, data);
