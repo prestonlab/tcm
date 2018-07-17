@@ -1,4 +1,7 @@
 function tests = test_present_items()
+%TEST_PRESENT_ITEMS   Define unit tests for item presentation.
+%
+%  tests = test_present_items()
 
 tests = functiontests(localfunctions);
 

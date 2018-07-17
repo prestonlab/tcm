@@ -1,4 +1,7 @@
 function tests = test_init_network()
+%TEST_INIT_NETWORK   Define a series of unit tests of network initialization.
+%
+%  tests = test_init_network()
 
 tests = functiontests(localfunctions);
 
