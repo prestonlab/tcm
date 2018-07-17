@@ -69,7 +69,7 @@ n_f = LL;
 n_c = IU;
 
 % ipi units
-if isfield(param, 'B_ipi')  
+if isfield(param, 'B_ipi') && param.B_ipi ~= 0
     net.f_ipi = (n_f+1):(n_f+LL);
     net.c_ipi = (n_c+1):(n_c+LL);
     n_f = n_f + LL;
@@ -80,7 +80,7 @@ else
 end
 
 % ri units
-if isfield(param, 'B_ri')
+if isfield(param, 'B_ri') && param.B_ri ~= 0
     net.f_ri = n_f + 1;
     net.c_ri = n_c + 1;
     n_f = n_f + 1;
