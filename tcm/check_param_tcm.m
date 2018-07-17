@@ -9,8 +9,8 @@ function param = check_param_tcm(param)
 %  PARAMETERS
 %  B_enc     - [0,1] - context update rate during encoding.
 %  B_rec     - [0,1] - context update rate during recall.
-%  Afc, Acf  - [0,Inf] - initial strength value of off-diagonal connections.
-%  Dfc, Dcf  - [0,Inf] - initial strength value for self connections.
+%  Afc, Acf  - [0,Inf] - strength of base pre-experimental connections.
+%  Dfc, Dcf  - [0,Inf] - strength of item pre-experimental connections.
 %  Sfc, Scf  - [0,Inf] - scaling for semantic similarity.
 %  Lfc, Lcf  - [0,Inf] - learning rate for item-context associations.
 %  P1        - [0,Inf] - magnitude of primacy effect.

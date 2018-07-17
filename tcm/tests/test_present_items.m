@@ -97,8 +97,8 @@ assert(all(all(abs(net.w_cf_exp - w_cf_exp) < e)));
 function test_distrib(testCase)
 
 param = testCase.TestData.param;
-param.Sfc = 1;
-param.Scf = 1;
+param.Dfc = 1;
+param.Dcf = 1;
 param.sem_vec = reshape(1:12, [4 3]);
 for i = 1:size(param.sem_vec, 2)
     param.sem_vec(:,i) = param.sem_vec(:,i) / norm(param.sem_vec(:,i));

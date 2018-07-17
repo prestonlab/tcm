@@ -124,26 +124,25 @@ if param.Acf ~= 0
 end
 
 % strength of pre-experimental associations
-if param.Dfc ~= 0
-    for i = 1:LL
-        w_fc_pre(i,i) = param.Dfc;
-    end
-end
-
-if param.Dcf ~= 0
-    for i = 1:LL
-        w_cf_pre(i,i) = param.Dcf;
-    end
-end
-
 if net.dc
-    if param.Sfc ~= 0
+    if param.Dfc ~= 0
         w_fc_pre(net.c_item,net.f_item) = w_fc_pre(net.c_item,net.f_item) + ...
-            item_vecs * param.Sfc;
+            item_vecs * param.Dfc;
     end
-    if param.Scf ~= 0
+    if param.Dcf ~= 0
         w_cf_pre(net.f_item,net.c_item) = w_cf_pre(net.f_item,net.c_item) + ...
-            item_vecs' * param.Scf;
+            item_vecs' * param.Dcf;
+    end
+else
+    if param.Dfc ~= 0
+        for i = 1:LL
+            w_fc_pre(i,i) = w_fc_pre(i,i) + param.Dfc;
+        end
+    end
+    if param.Dcf ~= 0
+        for i = 1:LL
+            w_cf_pre(i,i) = w_cf_pre(i,i) + param.Dcf;
+        end
     end
 end
 
@@ -151,7 +150,7 @@ if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
     % scale by a free parameter
     semantic = param.sem_mat(pres_itemnos, pres_itemnos);
 
-    if param.Sfc ~= 0  
+    if param.Sfc ~= 0
         w_fc_sem(1:LL, 1:LL) = w_fc_sem(1:LL, 1:LL) + semantic * param.Sfc;
     end
     if param.Scf ~= 0
