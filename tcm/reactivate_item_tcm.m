@@ -26,7 +26,7 @@ net.f(:) = 0;
 net.f(unit) = 1;
 
 % update context based on what was recalled
-c_in = net.w_fc_exp * net.f;
+c_in = (net.w_fc_exp + net.w_fc_pre) * net.f;
 c_in = normalize_vector(c_in);
 rho = scale_context(dot(net.c, c_in), param.B_rec);
 net.c = rho * net.c + param.B_rec * c_in;

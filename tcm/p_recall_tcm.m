@@ -33,20 +33,20 @@ LL = length(net.f_item);
 if isfield(param, 'I') && param.I ~= 0 && ~isempty(prev_rec)
     % at least part of the cue is item-based
 
-    % experimental cuing (context)
-    strength_exp = (net.w_cf_exp * net.c)';
+    % temporal cuing (context)
+    strength_temp = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
 
     % semantic cuing (item and context)
     net.f(:) = 0;
     net.f(prev_rec(end)) = 1;
     pre_exp_cue = param.I * net.f + (1 - param.I) * net.c;
-    strength_pre = (net.w_cf_pre * pre_exp_cue)';
+    strength_sem = (net.w_cf_sem * pre_exp_cue)';
     
-    % combine experimental and semantic cues
-    strength = strength_exp + strength_pre;
+    % combine temporal and semantic cues
+    strength = strength_temp + strength_sem;
 elseif isfield(param, 'I') && param.I == 1 && isempty(prev_rec)
     % item semantic cuing only, but no item to cue with
-    strength = (net.w_cf_exp * net.c)';
+    strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
 else
     % context used for both cues
     strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';

@@ -108,27 +108,31 @@ w_fc_pre = zeros(n_c, n_f);
 w_cf_exp = zeros(n_f, n_c);
 w_cf_pre = zeros(n_f, n_c);
 
+% have a separate semantic matrix, to allow for item-based semantic
+% cuing
+w_cf_sem = zeros(n_f, n_c);
+
 % constant connection strength within item units
 if param.Afc ~= 0
-    w_fc_exp(net.c_item,net.f_item) = w_fc_exp(net.c_item,net.f_item) + ...
+    w_fc_pre(net.c_item,net.f_item) = w_fc_pre(net.c_item,net.f_item) + ...
         param.Afc;
 end
 
 if param.Acf ~= 0
-    w_cf_exp(net.f_item,net.c_item) = w_cf_exp(net.f_item,net.c_item) + ...
+    w_cf_pre(net.f_item,net.c_item) = w_cf_pre(net.f_item,net.c_item) + ...
         param.Acf;
 end
 
 % strength of pre-experimental associations
 if param.Dfc ~= 0
     for i = 1:LL
-        w_fc_exp(i,i) = param.Dfc;
+        w_fc_pre(i,i) = param.Dfc;
     end
 end
 
 if param.Dcf ~= 0
     for i = 1:LL
-        w_cf_exp(i,i) = param.Dcf;
+        w_cf_pre(i,i) = param.Dcf;
     end
 end
 
@@ -148,10 +152,10 @@ if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
     semantic = param.sem_mat(pres_itemnos, pres_itemnos);
 
     if param.Sfc ~= 0  
-        w_fc_pre(1:LL, 1:LL) = w_fc(1:LL, 1:LL) + semantic * param.Sfc;
+        w_fc_sem(1:LL, 1:LL) = w_fc_sem(1:LL, 1:LL) + semantic * param.Sfc;
     end
     if param.Scf ~= 0
-        w_cf_pre(1:LL, 1:LL) = w_cf_pre(1:LL, 1:LL) + semantic * param.Scf;
+        w_cf_sem(1:LL, 1:LL) = w_cf_sem(1:LL, 1:LL) + semantic * param.Scf;
     end
 end
 
@@ -162,3 +166,4 @@ net.w_fc_exp = w_fc_exp;
 net.w_fc_pre = w_fc_pre;
 net.w_cf_exp = w_cf_exp;
 net.w_cf_pre = w_cf_pre;
+net.w_cf_sem = w_cf_sem;
