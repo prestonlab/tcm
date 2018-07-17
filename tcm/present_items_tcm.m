@@ -53,7 +53,7 @@ for i = 1:length(net.f_item)
     end
     
     % learning rate
-    Lcf = param.Lcf + (param.P1 * exp(-param.P2 * (i - 1))) + 1;
+    Lcf = param.Lcf + (param.P1 * exp(-param.P2 * (i - 1)));
     
     % update weights
     net.w_fc_exp(:,ind) = net.w_fc_exp(:,ind) + (param.Lfc * net.c);
