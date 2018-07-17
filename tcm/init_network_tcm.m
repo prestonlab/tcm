@@ -68,12 +68,6 @@ net.c_item = 1:IU;
 n_f = LL;
 n_c = IU;
 
-% start unit
-net.f_start = n_f + 1;
-net.c_start = n_c + 1;
-n_f = n_f + 1;
-n_c = n_c + 1;
-
 % ipi units
 if isfield(param, 'B_ipi')  
     net.f_ipi = (n_f+1):(n_f+LL);
@@ -95,6 +89,12 @@ else
     net.f_ri = [];
     net.c_ri = [];
 end
+
+% start unit
+net.f_start = n_f + 1;
+net.c_start = n_c + 1;
+n_f = n_f + 1;
+n_c = n_c + 1;
 
 % initialize the model representations
 f = zeros(n_f, 1);
