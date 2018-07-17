@@ -130,3 +130,25 @@ assert(abs(norm(c) - 1) < e);
 assert(all(abs(net.c - c) < e));
 assert(all(all(abs(net.w_fc_exp - w_fc_exp) < e)));
 assert(all(all(abs(net.w_cf_exp - w_cf_exp) < e)));
+
+
+function test_local_dc(testCase)
+%TEST_LOCAL_DC   Localist model using distributed implementation
+
+param = testCase.TestData.param;
+param.Dfc = 2;
+param.Dcf = 2;
+pres_itemnos = 1:4;
+net1 = init_network_tcm(param, pres_itemnos);
+net1 = present_items_tcm(net1, param);
+
+param.sem_vec = eye(4);
+net2 = init_network_tcm(param, pres_itemnos);
+net2 = present_items_tcm(net2, param);
+
+e = 0.0001;
+assert(all(abs(net1.w_fc_exp(:) - net2.w_fc_exp(:)) < e));
+assert(all(abs(net1.w_fc_pre(:) - net2.w_fc_pre(:)) < e));
+assert(all(abs(net1.w_cf_exp(:) - net2.w_cf_exp(:)) < e));
+assert(all(abs(net1.w_cf_pre(:) - net2.w_cf_pre(:)) < e));
+assert(all(abs(net1.w_cf_sem(:) - net2.w_cf_sem(:)) < e));
