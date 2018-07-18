@@ -15,7 +15,7 @@ Weights::Weights (unsigned int N, double base, double diag) {
   connect.resize(n_in);
   for (size_t i = 0; i < connect.size(); ++i) {
     connect[i].resize(n_out, base);
-    connect[i][i] = diag;
+    connect[i][i] += diag;
   }
 }
 
