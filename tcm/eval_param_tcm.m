@@ -34,7 +34,6 @@ function [err, logl, logl_all] = eval_param_tcm(param, varargin)
 % param evaluation configuration
 def.data = '';
 def.param_info = [];
-def.var_param = [];
 def.f_logl = @tcm_general;
 def.f_check_param = @check_param_tcm;
 def.verbose = isstruct(param);
@@ -69,9 +68,9 @@ end
 % calculate log likelihood
 %tic
 if nargout(opt.f_logl) == 2
-    [logl, logl_all] = opt.f_logl(param, opt.data, opt.var_param);
+    [logl, logl_all] = opt.f_logl(param, opt.data);
 else
-    logl = opt.f_logl(param, opt.data, opt.var_param);
+    logl = opt.f_logl(param, opt.data);
     logl_all = [];
 end
 err = -nansum(logl(:));
@@ -83,4 +82,3 @@ if opt.verbose
     %fprintf('Log likelihood: %.4f\n%.3f seconds elapsed.\n', -err, toc)
     fprintf('Log likelihood: %.4f\n', -err)
 end
-
