@@ -29,6 +29,7 @@ class Parameters {
   double Lcf; ///< Learning rate of context-to-item associations
   unsigned int stop; ///< Stop rule type. 1: output position, 2: ratio
   double Bstart; ///< Integration rate for reactivating start list context
+  double Bipi; ///< Integration rate retention interval
   double Bri; ///< Integration rate retention interval
   double I; ///< Weighting of item-based semantic cuing
   double init_item; ///< Whether to use item-based cuing for the initial recall
