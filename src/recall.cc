@@ -15,13 +15,22 @@ Recall::Recall () {};
 
 Recall::Recall (unsigned int N, Parameters model_param,
 		vector<unsigned int> recalls) {
-  list_length = N;
+  // initialize parameters
   param_array.add(model_param);
+
+  // create network with standard f and c representations and weights
+  list_length = N;
   net = Network(N, model_param);
+
+  // set recalls vector
   r = recalls;
+
+  // unpack lists
   setNLists();
   index.resize(n_lists, 0);
   extractLists();
+
+  // prepare probability matrix
   p.resize(r.size());
   for (size_t i = 0; i < r.size(); ++i) {
     p[i].resize(N+1);
@@ -50,6 +59,7 @@ Recall::Recall (unsigned int N, ParamArray param_set,
 }
 
 void Recall::setNLists () {
+  // one list for each recall termination event
   n_lists = 0;
   for (size_t i = 0; i < r.size(); ++i) {
     if (r[i] == list_length + 1) {
@@ -61,6 +71,7 @@ void Recall::setNLists () {
 void Recall::extractLists () {
   unsigned int list = 0;
 
+  // convert recalls vector and index vector to [lists x items] format
   r_mat.resize(n_lists);
   i_mat.resize(n_lists);
 
@@ -91,6 +102,8 @@ void Recall::checkRecallCodes () {
 void Recall::presentList () {
   double prim;
   for (unsigned int i = 0; i < list_length; ++i) {
+    // TODO: use Lcf instead of 1, to allow changing the base learning
+    // rate
     prim = (net.param.P1 * exp(-net.param.P2 * static_cast<double>(i))) + 1;
     net.setLcf(prim);
     net.presentItem(i);
@@ -98,6 +111,7 @@ void Recall::presentList () {
 }
 
 void Recall::setPoolSim (vector< vector<unsigned int> > * itemno, vector< vector<double> > * item_sem) {
+  // just copy pointers to the recall object
   poolno = itemno;
   poolsem = item_sem;
   has_sem = true;

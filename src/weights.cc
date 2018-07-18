@@ -58,4 +58,3 @@ void Weights::print () {
   }
   cout << endl;
 }
-
