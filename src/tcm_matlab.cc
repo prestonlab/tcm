@@ -86,6 +86,61 @@ double run_tcm_sem (double *r_mat, double *param_mat, unsigned int R,
   return logl;
 }
 
+double run_tcm_distcon (double *r_mat, double *param_mat, unsigned int R, 
+			unsigned int P, unsigned int N,
+			double *itemno_mat, double *sem_mat,
+			unsigned int n_list, unsigned int sem_rows,
+			unsigned int sem_cols) {
+  vector<double> param_vec (P);
+  vector<unsigned int> recalls (R);
+  vector< vector<unsigned int> > pres_itemno (n_list, vector<unsigned int> (N));
+  vector< vector<double> > semvec (sem_rows, vector<double> (sem_cols));
+  double logl = 0;
+
+  // read parameters into a Parameters object
+  unsigned int i;
+  for (i = 0; i < P; ++i) {
+    param_vec[i] = param_mat[i];
+  }
+  Parameters param (param_vec);
+
+  // copy recall codes into a vector
+  for (i = 0; i < R; ++i) {
+    recalls[i] = r_mat[i];
+  }
+  
+  // copy item numbers to a vector of vectors
+  unsigned int j;
+  unsigned int n = 0;
+  for (j = 0; j < N; ++j) {
+    for (i = 0; i < n_list; ++i) {
+      pres_itemno[i][j] = static_cast<unsigned int>(itemno_mat[n]);
+      n++;
+    }
+  }
+
+  // copy semantic similarities to a vector of vectors
+  n = 0;
+  for (j = 0; j < sem_cols; ++j) {
+    for (i = 0; i < sem_rows; ++i) {
+      semvec[i][j] = sem_mat[n];
+      n++;
+    }
+  }
+
+  // // create recalls object for the task
+  // Recall rec (N, param, recalls);
+
+  // // attached semantic similarity values to the network
+  // rec.setPoolSim(&pres_itemno, &sem);
+
+  // // evaluate free recall likelihood
+  // rec.task();
+  // logl = rec.logL();
+  
+  return logl;
+}
+
 /* The gateway function */
 void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double * r_mat; // recalls vector
@@ -96,7 +151,7 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double logl; // output scalar with log likelihood
 
   // read list length, recall events, and parameters
-  N = (unsigned int)mxGetScalar(prhs[0]);
+  N = mxGetScalar(prhs[0]);
   r_mat = mxGetPr(prhs[1]);
   R = mxGetN(prhs[1]);
   param_mat = mxGetPr(prhs[2]);
@@ -117,7 +172,7 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     double * itemno_mat = mxGetPr(prhs[4]);
     double * sem_mat = mxGetPr(prhs[5]);
     
-    sem_type = (unsigned int)mxGetScalar(prhs[3]);
+    sem_type = mxGetScalar(prhs[3]);
     n_list = mxGetM(prhs[4]);
     sem_rows = mxGetM(prhs[5]);
     sem_cols = mxGetN(prhs[5]);
@@ -129,7 +184,8 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     } else {
       // use semantic feature vectors to drive context evolution
       cout << "Using " << sem_rows << "x" << sem_cols << " semantic vectors." << endl;
-      logl = 0;
+      logl = run_tcm_distcon(r_mat, param_mat, R, P, N, itemno_mat, sem_mat,
+			     n_list, sem_rows, sem_cols);
     }
   }
   plhs[0] = mxCreateDoubleScalar(logl);
