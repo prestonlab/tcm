@@ -45,7 +45,7 @@ class Recall {
    * indicated by the serial position of the recalled item. The code
    * [N+1] indicates a stopping event.
    */
-  Recall (unsigned int N, Parameters param,
+  Recall (unsigned int n_items, unsigned int n_units, Parameters param,
 	  std::vector<unsigned int> recalls);
 
   /**
@@ -59,7 +59,7 @@ class Recall {
    * use for each list. May indicate different parameters for
    * different conditions, participants, etc.
    */
-  Recall (unsigned int N, ParamArray param_set,
+  Recall (unsigned int n_items, unsigned int n_units, ParamArray param_set,
 	  std::vector<unsigned int> recalls, 
 	  std::vector<unsigned int> index_vector);
 

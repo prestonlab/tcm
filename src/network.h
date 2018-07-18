@@ -25,13 +25,21 @@ class Network {
   std::vector<unsigned int> r_prev; ///< Indices of previously recalled items.
   std::vector< std::vector<double> > c_study; ///< States of context during study.
  public:
-  unsigned int N;
-  unsigned int NI;
-  unsigned int NO;
-  unsigned int I_init;
-  unsigned int I_ri;
-  std::vector<unsigned int> II;
-  std::vector<unsigned int> IO;
+  unsigned int n_f;
+  unsigned int n_c;
+  unsigned int n_f_item;
+  unsigned int n_c_item;
+  unsigned int n_other;
+  std::vector<unsigned int> f_item;
+  std::vector<unsigned int> c_item;
+  std::vector<unsigned int> f_ipi;
+  std::vector<unsigned int> c_ipi;
+  std::vector<unsigned int> f_ri;
+  std::vector<unsigned int> c_ri;
+  std::vector<unsigned int> f_start;
+  std::vector<unsigned int> c_start;
+  std::vector<unsigned int> f_other;
+  std::vector<unsigned int> c_other;
   Context f;
   Context c;
   Weights wfc_exp;
@@ -49,10 +57,11 @@ class Network {
   /**
    * Constructor specifying the layer size and parameters.
    *
-   * @param n_items number of item units in the item and context layers.
+   * @param n_items number of items to be presented.
+   * @param n_units number of item units in the context layer.
    * @param model_param model parameters
    */
-  Network (unsigned int n_items, Parameters model_param);
+  Network (unsigned int n_items, unsigned int n_units, Parameters model_param);
 
   /**
    * Add semantic associations to connection weights.

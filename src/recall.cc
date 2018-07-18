@@ -13,14 +13,14 @@ using namespace std;
 
 Recall::Recall () {};
 
-Recall::Recall (unsigned int N, Parameters model_param,
-		vector<unsigned int> recalls) {
+Recall::Recall (unsigned int n_items, unsigned int n_units,
+		Parameters model_param, vector<unsigned int> recalls) {
   // initialize parameters
   param_array.add(model_param);
 
   // create network with standard f and c representations and weights
-  list_length = N;
-  net = Network(N, model_param);
+  list_length = n_items;
+  net = Network(n_items, n_units, model_param);
 
   // set recalls vector
   r = recalls;
@@ -33,27 +33,27 @@ Recall::Recall (unsigned int N, Parameters model_param,
   // prepare probability matrix
   p.resize(r.size());
   for (size_t i = 0; i < r.size(); ++i) {
-    p[i].resize(N+1);
+    p[i].resize(n_items+1);
   }
   has_sem = false;
 }
 
-Recall::Recall (unsigned int N, ParamArray param_set,
-		vector<unsigned int> recalls,
+Recall::Recall (unsigned int n_items, unsigned int n_units,
+		ParamArray param_set, vector<unsigned int> recalls,
 		vector<unsigned int> index_vector) {
   Parameters param;
 
-  list_length = N;
+  list_length = n_items;
   param_array = param_set;
   index = index_vector;
   n_lists = index.size();
   param = param_array.getParam(0);
-  net = Network(N, param);
+  net = Network(n_items, n_units, param);
   r = recalls;
   extractLists();
   p.resize(r.size());
   for (size_t i = 0; i < r.size(); ++i) {
-    p[i].resize(N+1);
+    p[i].resize(n_items+1);
   }
   has_sem = false;
 }
@@ -172,7 +172,7 @@ void Recall::task () {
       net.setSem(&(*poolno)[i], poolsem);
     }
     net.setB(1);
-    net.presentDistract(net.I_init);
+    net.presentDistract(net.f_start[0]);
 
     // present the list
     net.setB(net.param.Benc);
@@ -181,7 +181,7 @@ void Recall::task () {
     // retention interval context disruption
     if (net.param.Bri != 0) {
       net.setB(net.param.Bri);
-      net.presentDistract(net.I_ri);
+      net.presentDistract(net.f_ri[0]);
     }
       
     // reinstate start-of-list context
@@ -217,7 +217,7 @@ void Recall::taskSameList () {
 	net.setSem(&(*poolno)[i], poolsem);
       }
       net.setB(1);
-      net.presentDistract(net.I_init);
+      net.presentDistract(net.f_start[0]);
 
       // present the list
       net.setB(net.param.Benc);
@@ -226,7 +226,7 @@ void Recall::taskSameList () {
       // retention interval context disruption
       if (net.param.Bri != 0) {
 	net.setB(net.param.Bri);
-	net.presentDistract(net.I_ri);
+	net.presentDistract(net.f_ri[0]);
       }
       
       // reinstate start-of-list context

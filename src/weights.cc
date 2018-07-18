@@ -8,17 +8,6 @@ using namespace std;
 
 Weights::Weights () {};
 
-Weights::Weights (unsigned int N, double base, double diag) {
-  n_in = N;
-  n_out = N;
-  L = 1;
-  connect.resize(n_in);
-  for (size_t i = 0; i < connect.size(); ++i) {
-    connect[i].resize(n_out, base);
-    connect[i][i] += diag;
-  }
-}
-
 Weights::Weights (unsigned int N, unsigned int M, double base, double diag) {
   n_in = N;
   n_out = M;

@@ -23,7 +23,7 @@ double run_tcm (double *r_mat, double *param_mat, unsigned int R,
   }
 
   // initialize a Recall object
-  Recall rec (N, param, recalls);
+  Recall rec (N, N, param, recalls);
 
   // evaluate free recall likelihood
   rec.taskSameList();
@@ -74,7 +74,7 @@ double run_tcm_sem (double *r_mat, double *param_mat, unsigned int R,
   }
 
   // create recalls object for the task
-  Recall rec (N, param, recalls);
+  Recall rec (N, N, param, recalls);
 
   // attached semantic similarity values to the network
   rec.setPoolSim(&pres_itemno, &sem);
