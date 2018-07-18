@@ -1,4 +1,4 @@
-function logl = logl_mex_tcm(param, data, var_param)
+function logl = logl_mex_tcm(param, data)
 %LOGL_MEX_TCM   Calculate log likelihood for free recall using TCM.
 %
 %  Similar to tcm_general, but calls C++ code that is much faster
@@ -63,7 +63,10 @@ function logl = run_tcm(data, param, param_vec)
 
     if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
-                          data.pres_itemnos, param.sem_mat);
+                          1, data.pres_itemnos, param.sem_mat);
+    elseif isfield(param, 'sem_vec') && ~isempty(param.sem_vec)
+        logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                          2, data.pres_itemnos, param.sem_vec);
     else
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec);
     end
