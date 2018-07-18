@@ -11,6 +11,16 @@ opt.sem_model = '';
 if namecheck('wikiw2v', model_type)
     opt.sem_model = 'wikiw2v';
 end
+if namecheck({'_qc' '_qi' '_qic'}, model_type)
+    opt.qsem = true;
+else
+    opt.qsem = false;
+end
+if namecheck('_dc', model_type)
+    opt.dc = true;
+else
+    opt.dc = false;
+end
 
 opt.stop_rule = 'op';
 opt.init_item = false;
