@@ -3,7 +3,7 @@ A fast and flexible implementation of the Temporal Context Model/Context Mainten
 
 ## Installation
 
-Download or clone the code project to some local `project_directory`. If cloning, you may need to first install [git-lfs](https://git-lfs.github.com). In Matlab:
+Download or clone the code project to some local `project_directory`. If cloning, you may need to first install [git-lfs](https://git-lfs.github.com) to get the sample data files, which are used to run tests of the code. In Matlab:
 
 ```matlab
 cd project_directory
