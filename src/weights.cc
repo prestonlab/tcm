@@ -19,17 +19,14 @@ Weights::Weights (unsigned int N, double base, double diag) {
   }
 }
 
-void Weights::addSem (vector< vector<double> > &sem,
-		      vector<unsigned int> &itemno,
-		      double D) {
-  for (unsigned int i = 0; i < itemno.size(); ++i) {
-    for (unsigned int j = 0; j < itemno.size(); ++j) {
-      if (i != j) {
-	connect[i][j] += sem[itemno[i]-1][itemno[j]-1];
-      } else {
-	connect[i][j] += D;
-      }
-    }
+Weights::Weights (unsigned int N, unsigned int M, double base, double diag) {
+  n_in = N;
+  n_out = M;
+  L = 1;
+  connect.resize(n_in);
+  for (size_t i = 0; i < connect.size(); ++i) {
+    connect[i].resize(n_out, base);
+    connect[i][i] = diag;
   }
 }
 
