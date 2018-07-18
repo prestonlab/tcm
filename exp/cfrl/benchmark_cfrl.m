@@ -61,8 +61,6 @@ disp('With semantics:')
 param.sem_mat = sem.sem_mat;
 logl_mex = logl_mex_tcm(param, data);
 if ver == 1
-    % using a semantic matrix isn't really defined (yet) with
-    % distributed context
     param.Dcf = param.Dcf - param.Acf;
     logl = logl_tcm(param, data);
 else
