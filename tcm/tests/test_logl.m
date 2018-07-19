@@ -49,13 +49,11 @@ function test_local(testCase)
 
 param = testCase.TestData.param;
 data = testCase.TestData.data;
-param_vec = param_vec_tcm(param);
 
-logl_mex = tcm_matlab(data.listLength, data.recalls_vec, param_vec);
-%logl_mex = logl_mex_tcm(param, data);
-
+logl_mex = logl_mex_tcm(param, data);
 [logl, logl_all] = logl_tcm(param, data);
 logl_mat = nansum(logl(:));
+
 assert(abs(logl_mex - logl_mat) < .001);
 
 
@@ -65,13 +63,12 @@ function test_local_sem(testCase)
 param = testCase.TestData.param;
 data = testCase.TestData.data;
 sem = testCase.TestData.sem;
-param_vec = param_vec_tcm(param);
-
-logl_mex = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
-                      1, data.pres_itemnos, sem.sem_mat);
 param.sem_mat = sem.sem_mat;
+
+logl_mex = logl_mex_tcm(param, data);
 [logl, logl_all] = logl_tcm(param, data);
 logl_mat = nansum(logl(:));
+
 assert(abs(logl_mex - logl_mat) < .001);
 
 
@@ -80,12 +77,10 @@ function test_dc_mex(testCase)
 param = testCase.TestData.param;
 data = testCase.TestData.data;
 sem = testCase.TestData.sem;
-
-param_vec = param_vec_tcm(param);
-logl_mex = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
-                      2, data.pres_itemnos, sem.vectors');
-
 param.sem_vec = sem.vectors';
+
+logl_mex = logl_mex_tcm(param, data);
 [logl, logl_all] = logl_tcm(param, data);
 logl_mat = nansum(logl(:));
+
 assert(abs(logl_mex - logl_mat) < .001);
