@@ -6,35 +6,43 @@ function [param_info, fixed] = search_param_cfrl(model_type, experiment)
 % defaults
 core.B_enc = [0 1];
 core.B_rec = [0 1];
+core.G = [0 1];
+core.Acf = [0 100];
+core.Dcf = [0 100];
 core.P1 = [0 100];
 core.P2 = [0 100];
-core.G = [0 1];
+core.T = [0 100];
 core.X1 = [0 1];
 core.X2 = [0 1];
-core.C = [0 100];
-core.D = [0 100];
-core.T = [0 100];
 core.B_s = [0 1];
 
+% initial ranges (for unbounded parameters)
 init = core;
+init.Acf = [0 1];
+init.Dcf = [0 1];
 init.P1 = [0 10];
 init.P2 = [0 10];
-init.C = [0 1];
-init.D = [0 1];
 init.T = [0 1];
 
 % fixed parameters
 fixed = struct;
 fixed.model_type = model_type;
+fixed.Afc = 0;
+fixed.Dfc = 0;
+fixed.Sfc = 0;
+fixed.Scf = 0;
+fixed.Lfc = 1;
+fixed.Lcf = 1;
 
 par = core;
 
 % semantic scaling
-if namecheck({'wikiw2v'}, model_type)
-    par.S = [0 100];
-    init.S = [0 1];
+if namecheck({'wikiw2v'}, model_type) && ...
+        namecheck({'qc' 'qi' 'qic'}, model_type)
+    par.Scf = [0 100];
+    init.Scf = [0 1];
 else
-    fixed.S = 0;
+    fixed.Scf = 0;
 end
 
 % item-context balance

@@ -9,8 +9,8 @@ function param = check_param_tcm(param)
 %  PARAMETERS
 %  B_enc     - [0,1] - context update rate during encoding.
 %  B_rec     - [0,1] - context update rate during recall.
-%  Afc, Acf  - [0,Inf] - initial strength value of off-diagonal connections.
-%  Dfc, Dcf  - [0,Inf] - initial strength value for self connections.
+%  Afc, Acf  - [0,Inf] - strength of base pre-experimental connections.
+%  Dfc, Dcf  - [0,Inf] - strength of item pre-experimental connections.
 %  Sfc, Scf  - [0,Inf] - scaling for semantic similarity.
 %  Lfc, Lcf  - [0,Inf] - learning rate for item-context associations.
 %  P1        - [0,Inf] - magnitude of primacy effect.
@@ -22,7 +22,6 @@ function param = check_param_tcm(param)
 %  B_s       - [0,1] - context update for reactivating start context.
 %  B_ri      - [0,1] - context update rate for retention interval.
 %  I         - [0,1] - fraction of semantic cuing that is item-driven.
-%  init_item - {false,true} - if true, initiate recall with last item.
 
 par_def = {...
     'B_enc', 'numeric', [0 1]
@@ -44,7 +43,6 @@ par_def = {...
     'B_s', 'numeric', [0 1]
     'B_ri', 'numeric', [0 1]
     'I', 'numeric', [0 1]
-    'init_item', 'logical', []
     };
 
 for i = 1:size(par_def, 1)

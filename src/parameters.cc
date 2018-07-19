@@ -28,6 +28,7 @@ Parameters::Parameters () {
   Lcf = 1;
   stop = 1;
   Bstart = 0;
+  Bipi = 0;
   Bri = 0;
   I = 0;
   init_item = 1;
@@ -53,9 +54,10 @@ Parameters::Parameters (vector<double> &param_vec) {
   X2 = param_vec[14];
   stop = param_vec[15];
   Bstart = param_vec[16];
-  Bri = param_vec[17];
-  I = param_vec[18];
-  init_item = param_vec[19];
+  Bipi = param_vec[17];
+  Bri = param_vec[18];
+  I = param_vec[19];
+  init_item = param_vec[20];
 
   amin = AMIN;
   pmin = PMIN;

@@ -1,112 +1,84 @@
-function [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, ...
-                                                  param, env, LL)
+function net = present_items_tcm(net, param)
 %PRESENT_ITEMS_TCM   Present a series of items to a TCM network.
 %
-%  [f, c, w_fc, w_cf] = present_items_tcm(f, c, w_fc, w_cf, param, LL)
+%  net = present_items_tcm(net, param)
 %
-%  INPUTS:
-%       f:  [list length+1 X 1] vector feature layer.
+%  INPUTS
+%  net - struct
+%      Struct with network components. See init_network_tcm for
+%      details. Context updating depends on c and
+%      w_fc_exp. Special fields used here:
+%      dc - logical
+%          If true, will assume that pre-experimental contexts
+%          associated with items are not orthogonal. This requires
+%          the use of a more computationally expensive rule for
+%          updating context. If false, all inputs to context during
+%          study are assumed to be orthogonal. This means that the
+%          code will not work correctly if items are repeated in
+%          the list.
 %
-%       c:  [list length+1 X 1] vector context layer, set to an
-%           initial state of context orthogonal to all presented
-%           items.
+%  param - struct
+%      Struct with model parameters. See check_param_tcm for
+%      details.
 %
-%    w_fc:  [list length+1 X list length+1] matrix of item-to-context
-%           associative weights.
-%
-%    w_cf:  [list length+1 X list length+1] matrix of context-to-item
-%           associative weights.
-%
-%   param:  structure of model parameters.
-%
-%      LL:  list length.
-%
-%  OUTPUTS:
-%        f:  set to the last item.
-%
-%        c:  updated to contain the end-of-list context.
-%
-%     w_fc:  updated with associations, scaled by param.G.
-%
-%     w_cf:  updated with associations, scaled by primacy.
+%  OUTPUTS
+%  net - struct
+%      Learning modifies w_fc_exp and w_cf_exp. Context (c) is also
+%      updated to its end state after list presentation.
 
-for i = 1:LL
-    % interpresentation interval distraction
-    if isfield(param, 'B_ipi')
-        ipi_index = env.ipi_dist_unit(i);
-        % present item
-        f(:) = 0;
-        f(ipi_index) = 1;
-        
-        % update context (assuming orthogonal item representations,
-        % an orthogonal initial state of context, and no off-diagonal
-        % pre-experimental associations on Mfc)
+c_in = zeros(size(net.c));
+for i = 1:length(net.f_item)
+    % interpresentation interval
+
+    if param.B_ipi > 0;
+        % assuming context input is orthgonal to current context
         rho = sqrt(1 - param.B_ipi^2);
-        c = rho * c + param.B_ipi * f;
+        c_in(:) = 0;
+        c_in(net.c_ipi(i)) = 1;
+        net.c = rho * net.c + param.B_ipi * c_in;
     end
     
-    % activate item
-    f(:) = 0;
-    f(i) = 1;
-    
-    % update context
-    if param.Afc == 0 && param.Sfc == 0
-        % assuming orthogonal item representations, an orthogonal initial
-        % state of context, and no off-diagonal pre-experimental
-        % associations on Mfc
+    % update context with item input
+    ind = net.f_item(i);
+    if ~net.dc
+        % assuming context input is orthogonal to current context
+        c_in(:) = 0;
+        c_in(net.c_item(ind)) = 1;
         rho = sqrt(1 - param.B_enc^2);
-        c = rho * c + param.B_enc * f;
+        net.c = rho * net.c + param.B_enc * c_in;
     else
-        % must calculate the actual projection
-        c_in = normalize_vector(w_fc(:,i));
-        rho = scale_context(dot(c, c_in), param.B_enc);
-        c = rho * c + param.B_enc * c_in;
+        % scaling of context input depends on overlap with current context
+        c_in(:) = normalize_vector(net.w_fc_pre(:,ind));
+        rho = scale_context(net.c, c_in, param.B_enc);
+        net.c = rho * net.c + param.B_enc * c_in;
     end
     
-    % primacy
-    P = (param.P1 * exp(-param.P2 * (i - 1))) + 1;
-
     % learning rate
-    if isfield(param, 'L')
-        P = P + param.L;
-    end
+    Lcf = param.Lcf + (param.P1 * exp(-param.P2 * (i - 1)));
     
     % update weights
-    w_fc(:,i) = w_fc(:,i) + c;
-    w_cf(i,:) = w_cf(i,:) + (P * c');
-
-    % update event counter
-    env.event = env.event + 1;
+    net.w_fc_exp(:,ind) = net.w_fc_exp(:,ind) + (param.Lfc * net.c);
+    net.w_cf_exp(ind,:) = net.w_cf_exp(ind,:) + (Lcf * net.c');
 end
 
-if isfield(param, 'B_ri');
-    % end-of-list distraction
-    ri_index = env.ri_dist_unit;  
-    % present item
-    f(:) = 0;
-    f(ri_index) = 1;
-    
-    % update context (assuming orthogonal item representations,
-    % an orthogonal initial state of context, and no off-diagonal
-    % pre-experimental associations on Mfc)
+% retention interval
+if param.B_ri > 0;
+    % assuming context input is orthogonal to current context
     rho = sqrt(1 - param.B_ri^2);
-    c = rho * c + param.B_ri * f;
+    c_in(:) = 0;
+    c_in(net.c_ri) = 1;
+    net.c = rho * net.c + param.B_ri * c_in;
 end
 
-if isfield(param, 'B_s')
-    % at end of list, assume some of start list context is pushed into
-    % context
-    s_index = env.s_unit;
-    
-    % present item
-    f(:) = 0;
-    f(s_index) = 1;
-    
-    % update context
-    rho = scale_context(dot(c, f), param.B_s);
-    c = rho * c + param.B_s * f;
+if param.B_s > 0;
+    % retrieve start-list context
+    c_in(:) = 0;
+    c_in(net.c_start) = 1;
+    rho = scale_context(net.c, c_in, param.B_s);
+    net.c = rho * net.c + param.B_s * c_in;
 end
 
-function rho = scale_context(cdot, B)
+function rho = scale_context(c, c_in, B)
 
+cdot = dot(c, c_in);
 rho = sqrt(1 + B^2 * (cdot^2 - 1)) - (B * cdot);

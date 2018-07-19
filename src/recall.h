@@ -19,6 +19,7 @@ class Recall {
   ParamArray param_array;
   Network net;
   bool has_sem;
+  bool has_vec;
   std::vector<unsigned int> r;
   std::vector< std::vector<unsigned int> > r_mat;
   std::vector< std::vector<unsigned int> > i_mat;
@@ -29,6 +30,8 @@ class Recall {
   std::vector<unsigned int> r_prev;
   std::vector< std::vector<unsigned int> > * poolno;
   std::vector< std::vector<double> > * poolsem;
+  std::vector< std::vector<unsigned int> > * vecno;
+  std::vector< std::vector<double> > * vecsem;
  public:
   /**
    * Blank constructor.
@@ -45,8 +48,8 @@ class Recall {
    * indicated by the serial position of the recalled item. The code
    * [N+1] indicates a stopping event.
    */
-  Recall (unsigned int N, Parameters param,
-	  std::vector<unsigned int> recalls);
+  Recall (unsigned int n_items, unsigned int n_units, bool isdc,
+	  Parameters param, std::vector<unsigned int> recalls);
 
   /**
    * Constructor with support for multiple parameter sets.
@@ -59,7 +62,8 @@ class Recall {
    * use for each list. May indicate different parameters for
    * different conditions, participants, etc.
    */
-  Recall (unsigned int N, ParamArray param_set,
+  Recall (unsigned int n_items, unsigned int n_units, bool isdc,
+	  ParamArray param_set,
 	  std::vector<unsigned int> recalls, 
 	  std::vector<unsigned int> index_vector);
 
@@ -87,6 +91,12 @@ class Recall {
    * Set semantic similarity and item numbers for the stimulus pool.
    */
   void setPoolSim (std::vector< std::vector<unsigned int> > * itemno,
+		   std::vector< std::vector<double> > * item_sem);
+
+  /**
+   * Set semantic vectors and item numbers for the stimulus pool.
+   */
+  void setPoolVec (std::vector< std::vector<unsigned int> > * itemno,
 		   std::vector< std::vector<double> > * item_sem);
 
   /**

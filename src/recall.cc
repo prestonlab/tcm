@@ -13,43 +13,55 @@ using namespace std;
 
 Recall::Recall () {};
 
-Recall::Recall (unsigned int N, Parameters model_param,
-		vector<unsigned int> recalls) {
-  list_length = N;
+Recall::Recall (unsigned int n_items, unsigned int n_units, bool isdc,
+		Parameters model_param, vector<unsigned int> recalls) {
+  // initialize parameters
   param_array.add(model_param);
-  net = Network(N, model_param);
+
+  // create network with standard f and c representations and weights
+  list_length = n_items;
+  net = Network(n_items, n_units, isdc, model_param);
+
+  // set recalls vector
   r = recalls;
+
+  // unpack lists
   setNLists();
   index.resize(n_lists, 0);
   extractLists();
+
+  // prepare probability matrix
   p.resize(r.size());
   for (size_t i = 0; i < r.size(); ++i) {
-    p[i].resize(N+1);
+    p[i].resize(n_items+1);
   }
   has_sem = false;
+  has_vec = false;
 }
 
-Recall::Recall (unsigned int N, ParamArray param_set,
-		vector<unsigned int> recalls,
+Recall::Recall (unsigned int n_items, unsigned int n_units, bool isdc,
+		ParamArray param_set, vector<unsigned int> recalls,
 		vector<unsigned int> index_vector) {
   Parameters param;
 
-  list_length = N;
+  list_length = n_items;
   param_array = param_set;
   index = index_vector;
   n_lists = index.size();
   param = param_array.getParam(0);
-  net = Network(N, param);
+  net = Network(n_items, n_units, isdc, param);
   r = recalls;
   extractLists();
   p.resize(r.size());
   for (size_t i = 0; i < r.size(); ++i) {
-    p[i].resize(N+1);
+    p[i].resize(n_items+1);
   }
   has_sem = false;
+  has_vec = false;
 }
 
 void Recall::setNLists () {
+  // one list for each recall termination event
   n_lists = 0;
   for (size_t i = 0; i < r.size(); ++i) {
     if (r[i] == list_length + 1) {
@@ -61,6 +73,7 @@ void Recall::setNLists () {
 void Recall::extractLists () {
   unsigned int list = 0;
 
+  // convert recalls vector and index vector to [lists x items] format
   r_mat.resize(n_lists);
   i_mat.resize(n_lists);
 
@@ -91,6 +104,8 @@ void Recall::checkRecallCodes () {
 void Recall::presentList () {
   double prim;
   for (unsigned int i = 0; i < list_length; ++i) {
+    // TODO: use Lcf instead of 1, to allow changing the base learning
+    // rate
     prim = (net.param.P1 * exp(-net.param.P2 * static_cast<double>(i))) + 1;
     net.setLcf(prim);
     net.presentItem(i);
@@ -98,9 +113,17 @@ void Recall::presentList () {
 }
 
 void Recall::setPoolSim (vector< vector<unsigned int> > * itemno, vector< vector<double> > * item_sem) {
+  // just copy pointers to the recall object
   poolno = itemno;
   poolsem = item_sem;
   has_sem = true;
+}
+
+void Recall::setPoolVec (vector< vector<unsigned int> > * itemno, vector< vector<double> > * item_sem) {
+  // just copy pointers to the recall object
+  vecno = itemno;
+  vecsem = item_sem;
+  has_vec = true;
 }
 
 void Recall::recallPeriod (unsigned int list) {
@@ -111,7 +134,7 @@ void Recall::recallPeriod (unsigned int list) {
     net.pstop(output_pos);
     net.removeRepeats();
     net.recallComp();
-    
+
     p[i_list[i]] = net.getProb();
     if (i < (r_list.size() - 1)) {
       net.reactivateItem(r_list[i] - 1);
@@ -157,8 +180,11 @@ void Recall::task () {
     if (has_sem) {
       net.setSem(&(*poolno)[i], poolsem);
     }
+    if (has_vec) {
+      net.setVec(&(*vecno)[i], vecsem);
+    }
     net.setB(1);
-    net.presentDistract(net.I_init);
+    net.presentDistract(net.c_start[0]);
 
     // present the list
     net.setB(net.param.Benc);
@@ -167,9 +193,9 @@ void Recall::task () {
     // retention interval context disruption
     if (net.param.Bri != 0) {
       net.setB(net.param.Bri);
-      net.presentDistract(net.I_ri);
+      net.presentDistract(net.f_ri[0]);
     }
-      
+
     // reinstate start-of-list context
     if (net.param.Bstart != 0) {
       net.setB(net.param.Bstart);
@@ -203,7 +229,7 @@ void Recall::taskSameList () {
 	net.setSem(&(*poolno)[i], poolsem);
       }
       net.setB(1);
-      net.presentDistract(net.I_init);
+      net.presentDistract(net.f_start[0]);
 
       // present the list
       net.setB(net.param.Benc);
@@ -212,7 +238,7 @@ void Recall::taskSameList () {
       // retention interval context disruption
       if (net.param.Bri != 0) {
 	net.setB(net.param.Bri);
-	net.presentDistract(net.I_ri);
+	net.presentDistract(net.f_ri[0]);
       }
       
       // reinstate start-of-list context

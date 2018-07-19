@@ -1,107 +1,174 @@
-function [f, c, w_fc, w_cf, w_cf_pre, env] = init_network_tcm(param, env, pres_itemnos)
+function net = init_network_tcm(param, pres_itemnos)
 %INIT_NETWORK_TCM   Initialize network variables for TCM.
 %
-%  [f, c, w_fc, w_cf, w_cf_pre, env] = init_network_tcm(param, env, pres_itemnos)
+%  net = init_network_tcm(param, pres_itemnos)
 %
-%  INPUTS:
-%         param:  structure of model parameters.
+%  INPUTS
+%  param - struct
+%      Parameter struct defining a model network. See
+%      check_param_tcm for details. Special fields used here:
+%      sem_vec - [dimensions x items] matrix
+%          Pre-experimental feature vector associated with each
+%          item. Item with item number x is in sem_vec(:,x).
+%      sem_mat - [items x items] matrix
+%          Pre-experimental associations between each pair of
+%          items. The strength of association between items with
+%          numbers x and y is in sem_mat(x,y). The diagonal
+%          (self-strengths) is generally assumed to be zero, though
+%          that isn't required here.
 %
-%     var_param:  which parameters are variable.  if B_ipi and B_ri
-%                 exist, then extra units will be created. 
-%           env:  structure to keep track of time and unit indices
-%
-%  pres_itemnos:  [lists X items] matrix of item numbers.
+%  pres_itemnos - [lists X items] numeric array
+%      Number of each presented item in the wordpool. Used to look
+%      up semantic vectors and matrices.
 %
 %  OUTPUTS:
-%         f:  [list length+1 X 1] vector feature layer, with no units
-%             activated.
-%
-%         c:  [list length+1 X 1] vector context layer, set to an
-%             initial state of context orthogonal to all presented
-%             items.
-%
-%      w_fc:  [list length+1 X list length+1] matrix of item-to-context
-%             associative weights. Set to zeros, except for the
-%             diagonal, which is 1 - param.G.
-%
-%      w_cf:  [list length+1 X list length+1] matrix of context-to-item
-%             associative weights. Off-diagonal entries are set to
-%             param.C, plus scaled semantic similarity if param.sem_mat
-%             is defined. Diagonal entries are set to param.D.
-%
-%  semantic:  [list length X list length] matrix of scaled semantic
-%             similarity values used to construct w_cf.
+%  net - struct
+%      Struct defining the network. Fields are:
+%      f - [nf x 1] vector
+%          Feature (item) vector. Items are assumed to be localist,
+%          so there is just one unit for each item.
+%      c - [nc x 1] vector
+%          Context vector. States of context may be in the same space
+%          as f (localist context), or may have a different feature
+%          space (distributed context).
+%      w_fc_exp - [nc x nf] matrix
+%          Weight matrix of non-semantic associations linking f to c.
+%      w_fc_pre - [nc x nf] matrix
+%          Weight matrix of semantic associations linking f to c.
+%      w_cf_exp - [nf x nc] matrix
+%          Weight matrix of non-semantic associations linking c to f.
+%      w_cf_pre - [nf x nc] matrix
+%          Weight matrix of semantic associations linking c to f.
+%      dc - logical
+%          True if context is distributed (i.e., a different
+%          feature space than the feature vectors).
+%      f_item - [1 x items] vector
+%          Indices of item units in f.
+%      c_item - [1 x items] vector
+%          Indices of item units in c.
+%      f_start - numeric
+%          Index of start unit in f.
+%      c_start - numeric
+%          Index of start unit in c.
 
 LL = size(pres_itemnos, 2);
 
-n_start_units = 1;
-n_item_units = LL;
-n_ipi_units = 0;
-n_ri_units = 0;
+% item units
+if isfield(param, 'sem_vec') && ~isempty(param.sem_vec)
+    net.dc = true;
+    IU = size(param.sem_vec, 1);
+    item_vecs = param.sem_vec(:,pres_itemnos);
+else
+    net.dc = false;
+    IU = LL;
+    item_vecs = [];
+end
+net.f_item = 1:LL;
+net.c_item = 1:IU;
+n_f = LL;
+n_c = IU;
 
-if isfield(param, 'B_ipi')  
-    n_ipi_units = LL;
-    env.ipi_dist_unit = [LL+1:(2*LL)];
+% ipi units
+if isfield(param, 'B_ipi') && param.B_ipi ~= 0
+    net.f_ipi = (n_f+1):(n_f+LL);
+    net.c_ipi = (n_c+1):(n_c+LL);
+    n_f = n_f + LL;
+    n_c = n_c + LL;
+else
+    net.f_ipi = [];
+    net.c_ipi = [];
 end
 
-if isfield(param, 'B_ri')  
-    n_ri_units = 1;
-    if isfield(param, 'B_ipi')  
-        env.ri_dist_unit = (2*LL)+1;
-    else
-        env.ri_dist_unit = LL+1;
-    end
+% ri units
+if isfield(param, 'B_ri') && param.B_ri ~= 0
+    net.f_ri = n_f + 1;
+    net.c_ri = n_c + 1;
+    n_f = n_f + 1;
+    n_c = n_c + 1;
+else
+    net.f_ri = [];
+    net.c_ri = [];
 end
 
-n_units = n_start_units + n_item_units + n_ipi_units + n_ri_units;
-
-env.s_unit = n_units;
+% start unit
+net.f_start = n_f + 1;
+net.c_start = n_c + 1;
+n_f = n_f + 1;
+n_c = n_c + 1;
 
 % initialize the model representations
-f = zeros(n_units, 1);
-c = zeros(n_units, 1);
+f = zeros(n_f, 1);
+c = zeros(n_c, 1);
+
 % this is the start unit
-c(env.s_unit) = 1;
+c(net.c_start) = 1;
 
-w_fc = eye(n_units) * (1 - param.G);
-% w_fc = zeros(n_units);
-w_cf = zeros(n_units);
-w_cf_pre = zeros(n_units);
+w_fc_exp = zeros(n_c, n_f);
+w_fc_pre = zeros(n_c, n_f);
+w_cf_exp = zeros(n_f, n_c);
+w_cf_pre = zeros(n_f, n_c);
 
+% have a separate semantic matrix, to allow for item-based semantic
+% cuing
+w_cf_sem = zeros(n_f, n_c);
+
+% constant connection strength within item units
 if param.Afc ~= 0
-    % add constant connection strength between each item unit and
-    % every other item unit
-    w_fc(1:LL, 1:LL) = w_fc(1:LL, 1:LL) + param.Afc;
+    w_fc_pre(net.c_item,net.f_item) = w_fc_pre(net.c_item,net.f_item) + ...
+        param.Afc;
 end
 
 if param.Acf ~= 0
-    w_cf(1:LL, 1:LL) = w_cf(1:LL, 1:LL) + param.Acf;
+    w_cf_pre(net.f_item,net.c_item) = w_cf_pre(net.f_item,net.c_item) + ...
+        param.Acf;
 end
 
-if param.Dfc ~= 0
-    % set diagonal strength (overrides C for diag entries), for
-    % item self-associations
-    for i = 1:LL
-        w_fc(i,i) = param.Dfc;
+% strength of pre-experimental associations
+if net.dc
+    if param.Dfc ~= 0
+        w_fc_pre(net.c_item,net.f_item) = w_fc_pre(net.c_item,net.f_item) + ...
+            item_vecs * param.Dfc;
     end
-end
-
-if param.Dcf ~= 0
-    for i = 1:LL
-        w_cf(i,i) = param.Dcf;
+    if param.Dcf ~= 0
+        w_cf_pre(net.f_item,net.c_item) = w_cf_pre(net.f_item,net.c_item) + ...
+            item_vecs' * param.Dcf;
+    end
+else
+    if param.Dfc ~= 0
+        for i = 1:LL
+            w_fc_pre(i,i) = w_fc_pre(i,i) + param.Dfc;
+        end
+    end
+    if param.Dcf ~= 0
+        for i = 1:LL
+            w_cf_pre(i,i) = w_cf_pre(i,i) + param.Dcf;
+        end
     end
 end
 
 if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
     % scale by a free parameter
-    semantic = param.sem_mat(pres_itemnos, pres_itemnos);
+    if net.dc
+        semantic = param.sem_mat(:, pres_itemnos);
+    else
+        semantic = param.sem_mat(pres_itemnos, pres_itemnos);
+    end
 
-    if param.Sfc ~= 0  
-        w_fc(1:LL, 1:LL) = w_fc(1:LL, 1:LL) + semantic * param.Sfc;
+    if param.Sfc ~= 0
+        w_fc_sem(net.c_item,net.f_item) = w_fc_sem(net.c_item,net.f_item) + ...
+            semantic * param.Sfc;
     end
     if param.Scf ~= 0
-        w_cf_pre(1:LL, 1:LL) = w_cf_pre(1:LL, 1:LL) + semantic * param.Scf;
+        w_cf_sem(net.f_item,net.c_item) = w_cf_sem(net.f_item,net.c_item) + ...
+            semantic' * param.Scf;
     end
-else
-    semantic = [];
 end
+
+% put standard fields on net struct
+net.f = f;
+net.c = c;
+net.w_fc_exp = w_fc_exp;
+net.w_fc_pre = w_fc_pre;
+net.w_cf_exp = w_cf_exp;
+net.w_cf_pre = w_cf_pre;
+net.w_cf_sem = w_cf_sem;
