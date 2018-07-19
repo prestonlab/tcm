@@ -81,6 +81,11 @@ param = testCase.TestData.param;
 data = testCase.TestData.data;
 sem = testCase.TestData.sem;
 
-%param.sem_vec = sem.vectors';
-param.sem_mat = sem.sem_mat;
-%logl_mex = logl_mex_tcm(param, data);
+param_vec = param_vec_tcm(param);
+logl_mex = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                      2, data.pres_itemnos, sem.vectors');
+
+param.sem_vec = sem.vectors';
+[logl, logl_all] = logl_tcm(param, data);
+logl_mat = nansum(logl(:));
+assert(abs(logl_mex - logl_mat) < .001);
