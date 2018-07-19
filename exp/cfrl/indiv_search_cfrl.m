@@ -32,7 +32,7 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %      Number of parallel workers to use when optimizing parameters
 %      for diferrent subjects.
 
-def.f_logl = @logl_tcm;
+def.f_logl = @logl_mex_tcm;
 def.f_check_param = @check_param_cfrl;
 def.n_search = 1;
 def.n_workers = 1;
