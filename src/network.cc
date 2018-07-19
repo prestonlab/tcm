@@ -1,11 +1,9 @@
 #include <iostream>
 #include <iomanip>
-#include <vector>
 #include <cmath>
 #include <algorithm>
+
 #include "network.h"
-#include "context.cc"
-#include "weights.cc"
 
 using namespace std;
 

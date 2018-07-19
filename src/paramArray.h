@@ -1,6 +1,8 @@
 #ifndef PARAMARRAY_H_
 #define PARAMARRAY_H_
 
+#include <vector>
+
 #include "parameters.h"
 
 /**

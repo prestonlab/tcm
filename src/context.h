@@ -1,6 +1,8 @@
 #ifndef CONTEXT_H_
 #define CONTEXT_H_
 
+#include <vector>
+
 /**
  * @short Distributed representation of temporal context
  *

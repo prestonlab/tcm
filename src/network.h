@@ -1,8 +1,10 @@
 #ifndef NETWORK_H_
 #define NETWORK_H_
 
-#include "context.h"
+#include <vector>
+
 #include "parameters.h"
+#include "context.h"
 #include "weights.h"
 
 /**
@@ -70,8 +72,8 @@ class Network {
    * @param poolno index of each item in the semantic matrix.
    * @param poolsem matrix of semantic association strengths.
    */
-  void setSem (vector<unsigned int> * poolno,
-	       vector< vector<double> > * poolsem);
+  void setSem (std::vector<unsigned int> * poolno,
+	       std::vector< std::vector<double> > * poolsem);
 
   /**
    * Add semantic vectors to pre-experimental connection weights.
@@ -79,8 +81,8 @@ class Network {
    * @param vecno index of each item in the vector matrix.
    * @param vecsem matrix of semantic vectors.
    */
-  void setVec (vector<unsigned int> * vecno,
-	       vector< vector<double> > * vecsem);
+  void setVec (std::vector<unsigned int> * vecno,
+	       std::vector< std::vector<double> > * vecsem);
 
   /**
    * Clear model layers and connection weights.

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
-#include <vector>
 #include <cmath>
+
 #include "context.h"
 
 using namespace std;

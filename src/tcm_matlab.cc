@@ -1,9 +1,13 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
+
 #include "mex.h"
-#include "parameters.cc"
-#include "paramArray.cc"
-#include "recall.cc"
+#include "parameters.h"
+#include "paramArray.h"
+#include "recall.h"
+
+using namespace std;
 
 double run_tcm (double *r_mat, double *param_mat, unsigned int R, 
 		unsigned int P, unsigned int N) {
