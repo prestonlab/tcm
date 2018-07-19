@@ -1,4 +1,4 @@
-function logl = run_logl(ver, imp)
+function logl = run_logl(ver, imp, list)
 %RUN_LOGL   Run a basic test of likelihood calculation.
 %
 %  logl = run_logl(ver, imp)
@@ -42,6 +42,7 @@ param.S = 2.5;
 param.I = 0;
 param.stop_rule = 'op';
 param.init_item = 0;
+param.B_ipi = 0;
 param.B_ri = 0;
 param.Dfc = 70.46;
 param.Dcf = 100 - 1.22; % adjust for new parameter definition
@@ -53,6 +54,14 @@ param.Lcf = 1;
 param.Scf = 2.5;
 
 data = getfield(load('cfr_benchmark_data.mat', 'data'), 'data');
+
+if nargin > 2
+    data.recalls = data.recalls(list,:);
+    data.pres_itemnos = data.pres_itemnos(list,:);
+    data.rec_itemnos = data.rec_itemnos(list,:);
+    data.recalls_vec = recalls_vec_tcm(data.recalls, data.listLength);
+end
+
 sem = load('cfr_wikiw2v.mat');
 
 if imp == 1
@@ -61,6 +70,13 @@ if imp == 1
         param.sem_mat = sem.sem_mat;
       case 3
         param.sem_vec = sem.vectors';
+      case 4
+        if nargin > 2
+            param.sem_vec = eye(24);
+            data.pres_itemnos = 1:24;
+        else
+            param.sem_vec = eye(768);
+        end
     end
     [logl_mat, logl_all] = logl_tcm(param, data);
     logl = nansum(logl_mat(:));
@@ -74,6 +90,14 @@ else
                           1, data.pres_itemnos, sem.sem_mat);
       case 3
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
-                          2, data.pres_itemnos, sem.vectors');
+                          2, data.pres_itemnos, sem.vectors(:,1:3)');
+      case 4
+        if nargin > 2
+            logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                              2, 1:24, eye(24));
+        else
+            logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                              2, data.pres_itemnos, eye(768));
+        end
     end
 end
