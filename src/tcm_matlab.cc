@@ -167,12 +167,7 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   param_mat = mxGetPr(prhs[2]);
   P = mxGetN(prhs[2]);
   
-  cout << "List length: " << N << endl;
-  cout << "Number of recall events: " << R << endl;
-  cout << "Calculating likelihood..." << endl;
-  
   if (nrhs == 3) {
-    cout << "Using no semantic information." << endl;
     logl = run_tcm(r_mat, param_mat, R, P, N);
   } else {
     unsigned int sem_type;
@@ -188,12 +183,10 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     sem_cols = mxGetN(prhs[5]);
     if (sem_type == 1) {
       // use semantic similarity to affect cuing in the model
-      cout << "Using a " << sem_rows << "x" << sem_cols << " semantic matrix." << endl;
       logl = run_tcm_sem(r_mat, param_mat, R, P, N, itemno_mat, sem_mat,
      			 n_list, sem_rows);
     } else {
       // use semantic feature vectors to drive context evolution
-      cout << "Using " << sem_rows << "x" << sem_cols << " semantic vectors." << endl;
       logl = run_tcm_distcon(r_mat, param_mat, R, P, N, itemno_mat, sem_mat,
 			     n_list, sem_rows, sem_cols);
     }
