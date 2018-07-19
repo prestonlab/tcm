@@ -177,8 +177,8 @@ void Network::getCue () {
 }
 
 void Network::presentDistract (unsigned int unit) {
-  f.setUnit(unit);
-  c.updateOrthog(&f);
+  cin_pre.setUnit(unit);
+  c.updateOrthog(&cin_pre);
 }
 
 void Network::presentItem (unsigned int unit) {
