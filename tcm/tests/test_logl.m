@@ -24,6 +24,7 @@ param.S = 2.5;
 param.I = 0;
 param.stop_rule = 'op';
 param.init_item = 0;
+param.B_ipi = 0;
 param.B_ri = 0;
 param.Dfc = 70.46;
 param.Dcf = 100 - 1.22; % adjust for new parameter definition

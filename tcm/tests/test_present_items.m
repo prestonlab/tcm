@@ -18,6 +18,8 @@ param.Lcf = 1;
 param.P1 = 1;
 param.P2 = 1;
 param.B_enc = 0.6;
+param.B_ipi = 0;
+param.B_ri = 0;
 param.B_s = 0.3;
 testCase.TestData.param = param;
 
