@@ -61,7 +61,8 @@ class Network {
    * @param n_units number of item units in the context layer.
    * @param model_param model parameters
    */
-  Network (unsigned int n_items, unsigned int n_units, Parameters model_param);
+  Network (unsigned int n_items, unsigned int n_units, bool isdc,
+	   Parameters model_param);
 
   /**
    * Add semantic associations to connection weights.
@@ -71,6 +72,15 @@ class Network {
    */
   void setSem (vector<unsigned int> * poolno,
 	       vector< vector<double> > * poolsem);
+
+  /**
+   * Add semantic vectors to pre-experimental connection weights.
+   *
+   * @param vecno index of each item in the vector matrix.
+   * @param vecsem matrix of semantic vectors.
+   */
+  void setVec (vector<unsigned int> * vecno,
+	       vector< vector<double> > * vecsem);
 
   /**
    * Clear model layers and connection weights.

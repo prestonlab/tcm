@@ -13,14 +13,14 @@ using namespace std;
 
 Recall::Recall () {};
 
-Recall::Recall (unsigned int n_items, unsigned int n_units,
+Recall::Recall (unsigned int n_items, unsigned int n_units, bool isdc,
 		Parameters model_param, vector<unsigned int> recalls) {
   // initialize parameters
   param_array.add(model_param);
 
   // create network with standard f and c representations and weights
   list_length = n_items;
-  net = Network(n_items, n_units, model_param);
+  net = Network(n_items, n_units, isdc, model_param);
 
   // set recalls vector
   r = recalls;
@@ -36,9 +36,10 @@ Recall::Recall (unsigned int n_items, unsigned int n_units,
     p[i].resize(n_items+1);
   }
   has_sem = false;
+  has_vec = false;
 }
 
-Recall::Recall (unsigned int n_items, unsigned int n_units,
+Recall::Recall (unsigned int n_items, unsigned int n_units, bool isdc,
 		ParamArray param_set, vector<unsigned int> recalls,
 		vector<unsigned int> index_vector) {
   Parameters param;
@@ -48,7 +49,7 @@ Recall::Recall (unsigned int n_items, unsigned int n_units,
   index = index_vector;
   n_lists = index.size();
   param = param_array.getParam(0);
-  net = Network(n_items, n_units, param);
+  net = Network(n_items, n_units, isdc, param);
   r = recalls;
   extractLists();
   p.resize(r.size());
@@ -56,6 +57,7 @@ Recall::Recall (unsigned int n_items, unsigned int n_units,
     p[i].resize(n_items+1);
   }
   has_sem = false;
+  has_vec = false;
 }
 
 void Recall::setNLists () {
@@ -117,6 +119,13 @@ void Recall::setPoolSim (vector< vector<unsigned int> > * itemno, vector< vector
   has_sem = true;
 }
 
+void Recall::setPoolVec (vector< vector<unsigned int> > * itemno, vector< vector<double> > * item_sem) {
+  // just copy pointers to the recall object
+  vecno = itemno;
+  vecsem = item_sem;
+  has_vec = true;
+}
+
 void Recall::recallPeriod (unsigned int list) {
   double output_pos;
   for (size_t i = 0; i < r_list.size(); ++i) {
@@ -125,7 +134,7 @@ void Recall::recallPeriod (unsigned int list) {
     net.pstop(output_pos);
     net.removeRepeats();
     net.recallComp();
-    
+
     p[i_list[i]] = net.getProb();
     if (i < (r_list.size() - 1)) {
       net.reactivateItem(r_list[i] - 1);
@@ -171,6 +180,9 @@ void Recall::task () {
     if (has_sem) {
       net.setSem(&(*poolno)[i], poolsem);
     }
+    if (has_vec) {
+      net.setVec(&(*vecno)[i], vecsem);
+    }
     net.setB(1);
     net.presentDistract(net.f_start[0]);
 
@@ -183,13 +195,13 @@ void Recall::task () {
       net.setB(net.param.Bri);
       net.presentDistract(net.f_ri[0]);
     }
-      
+
     // reinstate start-of-list context
     if (net.param.Bstart != 0) {
       net.setB(net.param.Bstart);
       net.reactivateStart();
     }
-
+    
     // calculate and store recall probabilities for this list
     net.setB(net.param.Brec);
     r_list = r_mat[i];

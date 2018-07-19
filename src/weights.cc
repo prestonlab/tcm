@@ -19,6 +19,16 @@ Weights::Weights (unsigned int N, unsigned int M, double base, double diag) {
   }
 }
 
+Weights::Weights (unsigned int N, unsigned int M, double base) {
+  n_in = N;
+  n_out = M;
+  L = 1;
+  connect.resize(n_in);
+  for (size_t i = 0; i < connect.size(); ++i) {
+    connect[i].resize(n_out, base);
+  }
+}
+
 void Weights::learnOrthog (unsigned int unit, Context &c) {
   for (size_t i = 0; i < connect[unit].size(); ++i) {
     connect[unit][i] += c.getUnit(i) * L;

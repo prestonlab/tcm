@@ -11,7 +11,7 @@ using namespace std;
 
 Network::Network () {};
 
-Network::Network (unsigned int n_items, unsigned int n_units, Parameters model_param) {
+Network::Network (unsigned int n_items, unsigned int n_units, bool isdc, Parameters model_param) {
   
   // parameters
   param = model_param;
@@ -92,19 +92,29 @@ Network::Network (unsigned int n_items, unsigned int n_units, Parameters model_p
   p.resize(n_items+1);
 
   // weights
-  wfc_exp = Weights(n_c, n_f, 0, 0);
-  wfc_pre = Weights(n_c, n_f, param.Afc, param.Dfc);
+  wfc_exp = Weights(n_f, n_c, 0, 0);
   wcf_exp = Weights(n_f, n_c, 0, 0);
-  wcf_pre = Weights(n_f, n_c, param.Acf, param.Dcf);
+  if (isdc) {
+    wfc_pre = Weights(n_f, n_c, param.Afc);
+    wcf_pre = Weights(n_f, n_c, param.Acf);
+  } else {
+    wfc_pre = Weights(n_f, n_c, param.Afc, param.Dfc);
+    wcf_pre = Weights(n_f, n_c, param.Acf, param.Dcf);
+  }
   wcf_sem = Weights(n_f, n_c, 0, 0);
 
   // set pre-experimental weights between non-item units and items to zero
-  for (size_t i = 0; i < wcf_pre.connect.size(); ++i) {
-    for (size_t j = 0; j < n_other; ++j) {
-      wcf_pre.connect[i][f_other[j]] = 0;
+  for (size_t i = 0; i < n_other; ++i) {
+    // cols
+    for (size_t j = 0; j < wcf_pre.connect.size(); ++j) {
+      wcf_pre.connect[j][c_other[i]] = 0;
+    }
+    // rows
+    for (size_t j = 0; j < wcf_pre.connect[i].size(); ++j) {
+      wcf_pre.connect[f_other[i]][j] = 0;
     }
   }
-
+  
   // store initial states of c_study and wcf
   wfc_exp_init = wfc_exp;
   wfc_pre_init = wfc_pre;
@@ -117,6 +127,24 @@ void Network::setSem (vector<unsigned int> * poolno, vector< vector<double> > * 
     for (unsigned int i = 0; i < n_f_item; ++i) {
       for (unsigned int j = 0; j < n_c_item; ++j) {
 	wcf_sem.connect[i][j] = (*poolsem)[(*poolno)[i]-1][(*poolno)[j]-1] * param.Scf;
+      }
+    }
+  }
+}
+
+void Network::setVec (vector<unsigned int> * vecno, vector< vector<double> > * vecsem) {
+  if (param.Dfc != 0) {
+    for (unsigned int i = 0; i < n_f_item; ++i) {
+      for (unsigned int j = 0; j < n_c_item; ++j) {
+	wfc_pre.connect[i][j] += (*vecsem)[j][(*vecno)[i]-1] * param.Dfc;
+      }
+    }
+  }
+  
+  if (param.Dcf != 0) {
+    for (unsigned int i = 0; i < n_f_item; ++i) {
+      for (unsigned int j = 0; j < n_c_item; ++j) {
+	wcf_pre.connect[i][j] += (*vecsem)[j][(*vecno)[i]-1] * param.Dcf;
       }
     }
   }

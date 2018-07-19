@@ -24,11 +24,12 @@ class Weights {
   /**
    * Constructor indicating number of units and initial weights.
    *
-   * @param N number of units for the connected layers.
+   * @param N number of units for the input layer.
+   * @param M number of units for the output layer.
    * @param base connection strength for off-diagonal entries.
    * @param diag connection strength for diagonal entries.
    */
-  Weights (unsigned int N, double base, double diag);
+  Weights (unsigned int N, unsigned int M, double base, double diag);
 
   /**
    * Constructor indicating number of units and initial weights.
@@ -36,9 +37,8 @@ class Weights {
    * @param N number of units for the input layer.
    * @param M number of units for the output layer.
    * @param base connection strength for off-diagonal entries.
-   * @param diag connection strength for diagonal entries.
    */
-  Weights (unsigned int N, unsigned int M, double base, double diag);
+  Weights (unsigned int N, unsigned int M, double base);
 
   /**
    * Add semantic association strengths to weights.
