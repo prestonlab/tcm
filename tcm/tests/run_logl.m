@@ -90,7 +90,7 @@ else
                           1, data.pres_itemnos, sem.sem_mat);
       case 3
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
-                          2, data.pres_itemnos, sem.vectors(:,1:3)');
+                          2, data.pres_itemnos, sem.vectors');
       case 4
         if nargin > 2
             logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
