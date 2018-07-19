@@ -184,7 +184,7 @@ void Recall::task () {
       net.setVec(&(*vecno)[i], vecsem);
     }
     net.setB(1);
-    net.presentDistract(net.f_start[0]);
+    net.presentDistract(net.c_start[0]);
 
     // present the list
     net.setB(net.param.Benc);
@@ -201,7 +201,7 @@ void Recall::task () {
       net.setB(net.param.Bstart);
       net.reactivateStart();
     }
-    
+
     // calculate and store recall probabilities for this list
     net.setB(net.param.Brec);
     r_list = r_mat[i];
