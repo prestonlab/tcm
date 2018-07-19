@@ -29,7 +29,8 @@ function net = present_items_tcm(net, param)
 c_in = zeros(size(net.c));
 for i = 1:length(net.f_item)
     % interpresentation interval
-    if isfield(param, 'B_ipi')
+
+    if param.B_ipi > 0;
         % assuming context input is orthgonal to current context
         rho = sqrt(1 - param.B_ipi^2);
         c_in(:) = 0;
@@ -61,7 +62,7 @@ for i = 1:length(net.f_item)
 end
 
 % retention interval
-if isfield(param, 'B_ri');
+if param.B_ri > 0;
     % assuming context input is orthogonal to current context
     rho = sqrt(1 - param.B_ri^2);
     c_in(:) = 0;
@@ -69,7 +70,7 @@ if isfield(param, 'B_ri');
     net.c = rho * net.c + param.B_ri * c_in;
 end
 
-if isfield(param, 'B_s')
+if param.B_s > 0;
     % retrieve start-list context
     c_in(:) = 0;
     c_in(net.c_start) = 1;
