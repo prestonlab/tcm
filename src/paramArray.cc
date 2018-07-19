@@ -1,4 +1,3 @@
-#include <vector>
 #include <iostream>
 #include "paramArray.h"
 
@@ -29,7 +28,6 @@ void ParamArray::addVector (unsigned int n_sets,
       param_vec[j] = param_mat[j][i];
     }
     param = Parameters(param_vec);
-    //add(param);
     setParam(param, i);
   }
 }

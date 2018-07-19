@@ -2,6 +2,7 @@
 #define PARAMETERS_H_
 
 #include <string>
+#include <vector>
 
 /**
  * @short Params used to determine the behavior of TCM

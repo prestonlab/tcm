@@ -1,8 +1,7 @@
 #include <iostream>
 #include <iomanip>
-#include <vector>
+
 #include "weights.h"
-#include "context.h"
 
 using namespace std;
 

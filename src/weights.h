@@ -1,6 +1,8 @@
 #ifndef WEIGHTS_H_
 #define WEIGHTS_H_
 
+#include <vector>
+
 #include "context.h"
 
 /**

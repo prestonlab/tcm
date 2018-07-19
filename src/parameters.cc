@@ -1,8 +1,7 @@
-#include <string>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
-#include <vector>
+
 #define AMIN .000001
 #define PMIN .000001
 

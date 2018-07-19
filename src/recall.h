@@ -1,6 +1,8 @@
 #ifndef RECALL_H_
 #define RECALL_H_
 
+#include <vector>
+
 #include "network.h"
 #include "parameters.h"
 #include "paramArray.h"

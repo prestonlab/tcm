@@ -1,12 +1,11 @@
-#include <vector>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <cassert>
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "network.cc"
-#include "parameters.h"
+
 #include "recall.h"
 
 using namespace std;
