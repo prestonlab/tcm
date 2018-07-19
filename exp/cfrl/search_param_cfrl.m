@@ -27,6 +27,8 @@ init.T = [0 1];
 % fixed parameters
 fixed = struct;
 fixed.model_type = model_type;
+fixed.B_ipi = 0;
+fixed.B_ri = 0;
 fixed.Afc = 0;
 fixed.Dfc = 0;
 fixed.Sfc = 0;
@@ -37,10 +39,15 @@ fixed.Lcf = 1;
 par = core;
 
 % semantic scaling
-if namecheck({'wikiw2v'}, model_type) && ...
-        namecheck({'qc' 'qi' 'qic'}, model_type)
-    par.Scf = [0 100];
-    init.Scf = [0 1];
+if namecheck({'wikiw2v'}, model_type)
+    if namecheck({'qc' 'qi' 'qic'}, model_type)
+        par.Scf = [0 100];
+        init.Scf = [0 1];
+    else
+        par.Dfc = [0 100];
+        init.Dfc = [0 1];
+        fixed = rmfield(fixed, 'Dfc');
+    end
 else
     fixed.Scf = 0;
 end
