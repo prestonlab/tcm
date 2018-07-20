@@ -98,4 +98,3 @@ double Context::getUnit (unsigned int unit) {
 void Context::setB (double Bnew) {
   B = Bnew;
 }
-
