@@ -29,7 +29,6 @@ function net = present_items_tcm(net, param)
 c_in = zeros(size(net.c));
 for i = 1:length(net.f_item)
     % interpresentation interval
-
     if param.B_ipi > 0;
         % assuming context input is orthgonal to current context
         rho = sqrt(1 - param.B_ipi^2);
@@ -40,18 +39,9 @@ for i = 1:length(net.f_item)
     
     % update context with item input
     ind = net.f_item(i);
-    if ~net.dc
-        % assuming context input is orthogonal to current context
-        c_in(:) = 0;
-        c_in(net.c_item(ind)) = 1;
-        rho = sqrt(1 - param.B_enc^2);
-        net.c = rho * net.c + param.B_enc * c_in;
-    else
-        % scaling of context input depends on overlap with current context
-        c_in(:) = normalize_vector(net.w_fc_pre(:,ind));
-        rho = scale_context(net.c, c_in, param.B_enc);
-        net.c = rho * net.c + param.B_enc * c_in;
-    end
+    c_in(:) = normalize_vector(net.w_fc_pre(:,ind));
+    rho = scale_context(net.c, c_in, param.B_enc);
+    net.c = rho * net.c + param.B_enc * c_in;
     
     % learning rate
     Lcf = param.Lcf + (param.P1 * exp(-param.P2 * (i - 1)));

@@ -1,43 +1,64 @@
 function [err, logl, logl_all] = eval_param_tcm(param, varargin)
-%EVAL_PARAM_TCM   Calculate likelihood for TCM with a given set of paramters.
+%EVAL_PARAM_TCM   Calculate likelihood for TCM with a given set of parameters.
 %
-%  [err, logl, logl_all] = eval_param_tcm(param, ...)
+%  Used to evaluate parameters within a search algorithm like
+%  de_search. Takes a vector of free parameters, unpacks them and
+%  combines them with fixed parameters, and evaluates the log
+%  likelihood of the data. 
 %
-%  INPUTS:
-%     param:  parameter structure, or numeric vector of parameter
-%             values (if numeric, must also pass param_info; see below).
+%  Negative log likelihood is returned; this is convenient for search
+%  algorithms, as they are generally designed to minimize error. In
+%  this case, they will minimize negative log likelihood, resulting in
+%  parameters under which the data have a high likelihood.
 %
-%  OUTPUTS:
-%      logl:  likelihood of the observed data.
+%  [err, logl, logl_all] = eval_param_tcm(param, fstruct)
 %
-%  logl_all:  likelihood for possible outcome, conditional on the
-%             recalls made up to that point in the observed data.
+%  INPUTS
+%  param - struct
+%      Parameter structure, or numeric vector of parameter values (if
+%      numeric, must also pass param_info; see below).
 %
-%  OPTIONS:
-%  These options may be set using parameter, value pairs, or by
-%  passing a structure with these fields. Defaults shown in parentheses.
-%   data          - REQUIRED. Either a behavioral data structure,
-%                   or the path to a MAT-file containing the data,
-%                   saved as a variable named 'data'.
-%   param_info    - see unpack_param for details.
-%   f_logl        - handle to a function of the form:
-%                    [logl, logl_all] = f_logl(param, data)
-%                   Calculates likelihood. (@tcm_general)
-%   f_check_param - handle to a function of the form:
-%                    param = f_check_param(param)
-%                   Used to set default values and run sanity
-%                   checks on parameters. (@check_param_tcm)
-%   verbose       - if true, more information is printed.
-%                   (isstruct(param))
-%  May also pass additional parameter fields for f_logl.
+%  fstruct - struct
+%      Structure with settings for evaluating the parameters. Fields
+%      may include:
+%      data - frdata struct - required
+%          Standard free recall data structure. See logl_tcm for details.
+%      param_info - [1 x parameters] struct
+%          Information about free parameters. See unpack_param for
+%          details.
+%      f_logl - function_handle - @logl_tcm
+%          Handle to a function of the form:
+%              logl = f_logl(param, data)
+%                  or
+%              [logl, logl_all] = f_logl(param, data)
+%          that calculates log likelihood.
+%      f_check_param - function_handle - @check_param_tcm
+%          Handle to a function of the form:
+%              param = f_check_param(param)
+%          Used to run sanity checks on parameters and/or set
+%          parameters that are derived from the free parameters.
+%      verbose - bool - isstruct(param)
+%          If true, more information is printed.
+%      May also pass additional parameter fields for f_logl.
+%
+%  OUTPUTS
+%  err - double
+%      Negative total log likelihood of the data.
+%
+%  logl - [lists x recall events] numeric array
+%      Log likelihood for all recall events in data.recalls, plus
+%      stopping events.
+%
+%  logl_all - [lists x recall events x possible events] numeric array
+%      Likelihood for all possible events, after each recall event
+%      in data.recalls.
 
 % param evaluation configuration
 def.data = '';
 def.param_info = [];
-def.f_logl = @tcm_general;
+def.f_logl = @logl_tcm;
 def.f_check_param = @check_param_tcm;
 def.verbose = isstruct(param);
-def.load_data = true;
 [opt, custom_param] = propval_lite(varargin, def);
 
 if ~isstruct(param)
@@ -60,13 +81,7 @@ if opt.verbose
     disp(param)
 end
 
-% load the behavioral data if necessary
-if opt.load_data && ischar(opt.data)
-    opt.data = getfield(load(opt.data, 'data'), 'data');
-end
-
 % calculate log likelihood
-%tic
 if nargout(opt.f_logl) == 2
     [logl, logl_all] = opt.f_logl(param, opt.data);
 else
@@ -74,11 +89,11 @@ else
     logl_all = [];
 end
 err = -nansum(logl(:));
+
 if err == 0
     err = Inf;
 end
 
 if opt.verbose
-    %fprintf('Log likelihood: %.4f\n%.3f seconds elapsed.\n', -err, toc)
     fprintf('Log likelihood: %.4f\n', -err)
 end

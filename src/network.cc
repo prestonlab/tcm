@@ -104,10 +104,16 @@ Network::Network (unsigned int n_items, unsigned int n_units, bool isdc, Paramet
   // set pre-experimental weights between non-item units and items to zero
   for (size_t i = 0; i < n_other; ++i) {
     // cols
+    for (size_t j = 0; j < wfc_pre.connect.size(); ++j) {
+      wfc_pre.connect[j][c_other[i]] = 0;
+    }
     for (size_t j = 0; j < wcf_pre.connect.size(); ++j) {
       wcf_pre.connect[j][c_other[i]] = 0;
     }
     // rows
+    for (size_t j = 0; j < wfc_pre.connect[i].size(); ++j) {
+      wfc_pre.connect[f_other[i]][j] = 0;
+    }
     for (size_t j = 0; j < wcf_pre.connect[i].size(); ++j) {
       wcf_pre.connect[f_other[i]][j] = 0;
     }

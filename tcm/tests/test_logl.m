@@ -11,29 +11,26 @@ function setupOnce(testCase)
 param = struct();
 param.B_enc = 0.79;
 param.B_rec = 0.94;
-param.P1 = 16.84;
-param.P2 = 1.64;
-param.G = 1;
-param.X1 = 0.0093;
-param.X2 = 0.32;
-param.C = 1.22;
-param.D = 100;
-param.T = 4.64;
-param.B_s = 0.1;
-param.S = 2.5;
-param.I = 0;
-param.stop_rule = 'op';
-param.init_item = 0;
-param.B_ipi = 0;
-param.B_ri = 0;
-param.Dfc = 70.46;
-param.Dcf = 100 - 1.22; % adjust for new parameter definition
 param.Afc = 0;
 param.Acf = 1.22;
+param.Dfc = 70.46;
+param.Dcf = 100 - 1.22; % adjust for new parameter definition
 param.Sfc = 0;
+param.Scf = 2.5;
 param.Lfc = 1;
 param.Lcf = 1;
-param.Scf = 2.5;
+param.P1 = 16.84;
+param.P2 = 1.64;
+param.T = 4.64;
+param.X1 = 0.0093;
+param.X2 = 0.32;
+param.stop_rule = 'op';
+param.B_s = 0.1;
+param.B_ipi = 0;
+param.B_ri = 0;
+param.I = 0;
+param.init_item = 0;
+
 testCase.TestData.param = param;
 
 % data for cfr, subject 1

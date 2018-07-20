@@ -1,7 +1,7 @@
-function param = unpack_param(param_vec, param_info)
+function param = unpack_param(param_vec, param_info, fixed)
 %UNPACK_PARAM   Translate from a parameter vector to a struct.
 %
-%  param = unpack_param(param_vec, param_info)
+%  param = unpack_param(param_vec, param_info, fixed)
 %
 %  INPUTS:
 %   param_vec:  numeric vector of parameter values.
@@ -14,7 +14,11 @@ function param = unpack_param(param_vec, param_info)
 %  OUTPUTS:
 %    param:  parameter structure for use in running simulations.
 
-param = struct;
+if nargin < 3
+    fixed = struct();
+end
+
+param = fixed;
 vector_index = [param_info.vector_index];
 for i = 1:length(param_vec)
     % find this element in the info struct

@@ -1,32 +1,35 @@
 function logl = logl_mex_tcm(param, data)
 %LOGL_MEX_TCM   Calculate log likelihood for free recall using TCM.
 %
-%  Similar to tcm_general, but calls C++ code that is much faster
-%  (about 18-30X faster, depending on the data and model type). Unlike
-%  tcm_general_bin.m, uses a direct interface to C++ that passes data
-%  much more quickly. Currently does not support var_param.
+%  Calculates log likelihood for multiple lists. param and data are
+%  assumed to be pre-processed, including setting defaults for
+%  missing parameters, etc.
+%
+%  Similar to logl_tcm, but calls C++ code that is much faster
+%  (about 10-30X faster, depending on the data and model type).
 %
 %  logl = logl_mex_tcm(param, data)
 %
-%  INPUTS:
-%   param:  structure with model parameters. Each field must contain a
-%           scalar or a string. 
+%  INPUTS
+%  param - struct
+%      Structure with model parameters. See check_param_tcm for details.
 %
-%    data:  free recall data structure, with repeats and intrusions
-%           removed. Required fields:
-%            recalls
-%            pres_itemnos
-%    
-% var_param: structure with information about parameters that vary
-%            by trial, by study event, or by recall event.
-%            Required fields:
-%             name
-%             update_level
-%             val
+%  data - frdata struct
+%      Standard free recall data structure. Must have repeats and
+%      intrusions removed. Required fields:
+%      recalls_vec - [1 x recall events] numeric array
+%          Serial position of each recalled item. Stop events
+%          should be coded as list length + 1. See recalls_vec_tcm.
 %
-%  OUTPUTS:
-%      logl:  [lists X recalls] matrix with log likelihood values for
-%             all recall events in data.recalls (plus stopping events).
+%      pres_itemnos - [lists x input position] numeric array
+%          Number of each presented item. If modeling semantic
+%          similarity, indicates the position of each item in the
+%          semantic matrix.
+%
+%  OUTPUTS
+%  logl - [lists x recall events] numeric array
+%      Log likelihood for all recall events in data.recalls, plus
+%      stopping events.
 
 param_vec = param_vec_tcm(param);
 

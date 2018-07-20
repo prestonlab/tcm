@@ -11,7 +11,7 @@ function setupOnce(testCase)
 param = struct();
 param.Afc = 0;
 param.Acf = 0;
-param.Dfc = 0;
+param.Dfc = 1;
 param.Dcf = 0;
 param.Lfc = 0.5;
 param.Lcf = 1;

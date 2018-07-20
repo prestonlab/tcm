@@ -3,22 +3,27 @@ function p = p_stop_tcm(output_pos, prev_rec, strength, param, p_min)
 %
 %  p = p_stop_tcm(output_pos, prev_rec, strength, param, p_min)
 %
-%  INPUTS:
-%  output_pos:  output position (the number of items previously
-%               recalled; the first recall attempt is 0).
+%  INPUTS
+%  output_pos - int
+%      Output position (the number of items previously recalled; the
+%      first recall attempt is 0).
 %
-%    prev_rec:  vector of the serial positions of previous recalls.
+%  prev_rec - [1 x recalls] numeric array
+%      Vector of the serial positions of previous recalls.
 %
-%    strength:  vector of activation strengths for all recallable items.
+%  strength - [1 x items] numeric array
+%      Vector of activation strengths for all recallable items.
 %
-%       param:  structure with model parameters.
+%  param - struct
+%      Structure with model parameters.
 %
-%       p_min:  (optional) minimum probability. Returned probability
-%               will be at least this distance from both 0 and 1.
-%               Default is 0.
+%  p_min - double - 0
+%      (Optional) minimum probability. Returned probability will be at
+%      least this distance from both 0 and 1.
 %
-%  OUTPUTS:
-%        p:  probability of stopping.
+%  OUTPUTS
+%  p - double
+%      Probability of stopping.
 
 if nargin < 5
     p_min = 0;

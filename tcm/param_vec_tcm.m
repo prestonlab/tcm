@@ -3,15 +3,14 @@ function param_vec = param_vec_tcm(param)
 %
 %  param_vec_tcm(param, param_file)
 %
-%  INPUTS:
-%       param:  structure specifying parameter values. Must include:
-%                B_enc, B_rec, C, G, X1, X2, P1, P2, T, S, D, and
-%                stop_rule ('op' or 'ratio').
-%               Each field (except stop_rule) may be a scalar or a
-%               vector, if that parameter varies by group or subject.
-%               Each vector must have the same length.
+%  INPUTS
+%  param - struct
+%      Structure specifying parameter values. See check_param_tcm for
+%      details.
 %
-%  param_file:  path to file to write parameters in.
+%  OUTPUTS
+%  param_vec - [1 x parameters] numeric array
+%      Parameter values in standard vector format.
 
 % must match the order the c++ code is expecting
 names = {'B_enc' 'B_rec' ...

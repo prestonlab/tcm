@@ -41,8 +41,10 @@ par_def = {...
     'X2', 'numeric', [0 1]
     'stop_rule', 'char', {'strength' 'op' 'ratio'}
     'B_s', 'numeric', [0 1]
+    'B_ipi', 'numeric', [0 1]
     'B_ri', 'numeric', [0 1]
     'I', 'numeric', [0 1]
+    'init_item', 'logical', [0 1]
     };
 
 for i = 1:size(par_def, 1)

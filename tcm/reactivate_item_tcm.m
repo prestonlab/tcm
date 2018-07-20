@@ -1,33 +1,28 @@
-function net = reactivate_item_tcm(net, unit, param)
+function net = reactivate_item_tcm(net, item, param)
 %REACTIVATE_ITEM_TCM   Reactivate a recalled item and update context.
 %
-%  [f, c] = reactivate_item_tcm(f, c, w_fc, unit, param)
+%  net = reactivate_item_tcm(net, item, param)
 %
-%  INPUTS:
-%       f:  [list length+1 X 1] vector feature layer.
+%  INPUTS
+%  net - struct
+%      Struct with network components. See init_network_tcm for
+%      details. Context updated depends on c, w_fc_exp, and w_fc_pre.
 %
-%       c:  [list length+1 X 1] vector context layer.
+%  item - int
+%      Serial position of the recalled item.
 %
-%    w_fc:  [list length+1 X list length+1] matrix of item-to-context
-%           associative weights.
+%  param - struct
+%      Structure of model parameters.
 %
-%    unit:  index of the recalled item in the feature layer.
-%
-%   param:  structure of model parameters.
-%
-%  OUTPUTS:
-%        f:  the recalled item is activated.
-%
-%        c:  context is updated through associations with the
-%            retrieved item.
+%  OUTPUTS
+%  net - struct
+%      Network with c updated to reflect the recalled item.
 
-% reactivate the recalled item
-net.f(:) = 0;
-net.f(unit) = 1;
+% context associated with the recalled item
+ind = net.f_item(item);
+c_in = normalize_vector(net.w_fc_exp(:,ind) + net.w_fc_pre(:,ind));
 
-% update context based on what was recalled
-c_in = (net.w_fc_exp + net.w_fc_pre) * net.f;
-c_in = normalize_vector(c_in);
+% update context
 rho = scale_context(dot(net.c, c_in), param.B_rec);
 net.c = rho * net.c + param.B_rec * c_in;
 

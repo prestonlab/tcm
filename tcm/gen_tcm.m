@@ -50,25 +50,23 @@ for i = 1:n_rep
         % the others
         n = n + 1;
 
-        env.trial = j;
-        env.event = 1;
-
-        seq_trial = run_trial(param, env, data.pres_itemnos(j,:));
+        seq_trial = run_trial(param, data.pres_itemnos(j,:));
         seq(n,1:length(seq_trial)) = seq_trial;
     end
 end
 
 
-function seq = run_trial(param, env, pres_itemnos)
+function seq = run_trial(param, pres_itemnos)
     
     LL = size(pres_itemnos, 2);
 
     % initialize the model
-    [f, c, w_fc, w_cf, w_cf_pre, env] = init_network_tcm(param, env, pres_itemnos);
+    net = init_network_tcm(param, pres_itemnos);
+    net.itemnos = pres_itemnos;
     
     % study
-    [f, c, w_fc, w_cf, env] = present_items_tcm(f, c, w_fc, w_cf, param, ...
-                                                env, LL);
+    net = present_items_tcm(net, param);
+
     % recall
     stopped = false;
     pos = 0;
@@ -76,7 +74,7 @@ function seq = run_trial(param, env, pres_itemnos)
     while ~stopped
         % recall probability given associations, the current cue, and
         % given that previously recalled items will not be repeated
-        prob_model = p_recall_tcm(w_cf, c, LL, seq, pos, param, w_cf_pre);
+        prob_model = p_recall_tcm(net, param, seq);
         
         % sample an event
         event = randsample(1:(LL+1), 1, true, prob_model);
@@ -107,9 +105,6 @@ function seq = run_trial(param, env, pres_itemnos)
             % pause
             
             % reactivate the item and reinstate context
-            [f, c] = reactivate_item_tcm(f, c, w_fc, event, param);
+            net = reactivate_item_tcm(net, event, param);
         end
-
-        % update event
-        env.event = env.event + 1;
     end
