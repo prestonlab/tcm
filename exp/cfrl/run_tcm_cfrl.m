@@ -2,6 +2,8 @@
 %% fits using the MortPoly17 models
 
 fits = {'base', 'wikiw2v_context' 'wikiw2v_item' 'wikiw2v_context_item'};
+
+fits = {'dc_wikiw2v' 'dc_ncf_wikiw2v'};
 experiments = {'cfr'};
 
 flags = '-t 04:00:00 --mem=8gb --cpus-per-task=12';

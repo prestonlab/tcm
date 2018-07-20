@@ -43,10 +43,6 @@ if namecheck({'wikiw2v'}, model_type)
     if namecheck({'qc' 'qi' 'qic'}, model_type)
         par.Scf = [0 100];
         init.Scf = [0 1];
-    else
-        par.Dfc = [0 100];
-        init.Dfc = [0 1];
-        fixed = rmfield(fixed, 'Dfc');
     end
 else
     fixed.Scf = 0;
@@ -62,6 +58,17 @@ if namecheck('_qi', model_type)
 end
 if namecheck('_qc', model_type)
     fixed.I = 0;
+end
+
+% vector matrices
+if namecheck('_ncf', model_type)
+    % no context-to-feature vectors. There can still be a constant
+    % pre-experimental association strength, and learning of
+    % experimental associations, but there won't be any "readout"
+    % of context during retrieval
+    fixed.Dcf = 0;
+    par = rmfield(par, 'Dcf');
+    init = rmfield(init, 'Dcf');
 end
 
 names = fieldnames(par);
