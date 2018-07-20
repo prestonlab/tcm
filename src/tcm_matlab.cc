@@ -162,7 +162,7 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   size_t R; // number of recalls
   unsigned int P; // number of parameters
   unsigned int N; // list length
-  double logl; // output scalar with log likelihood
+  double logl = 0; // output scalar with log likelihood
 
   // read list length, recall events, and parameters
   N = mxGetScalar(prhs[0]);
@@ -192,7 +192,7 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     } else {
       // use semantic feature vectors to drive context evolution
       logl = run_tcm_distcon(r_mat, param_mat, R, P, N, itemno_mat, sem_mat,
-			     n_list, sem_rows, sem_cols);
+  			     n_list, sem_rows, sem_cols);
     }
   }
   plhs[0] = mxCreateDoubleScalar(logl);

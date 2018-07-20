@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <cmath>
+#include <math.h>
 #include <cassert>
 #include <string>
 #include <sstream>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-Recall::Recall () {};
+Recall::Recall () {}
 
 Recall::Recall (unsigned int n_items, unsigned int n_units, bool isdc,
 		Parameters model_param, vector<unsigned int> recalls) {

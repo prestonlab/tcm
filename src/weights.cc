@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Weights::Weights () {};
+Weights::Weights () {}
 
 Weights::Weights (unsigned int N, unsigned int M, double base, double diag) {
   n_in = N;

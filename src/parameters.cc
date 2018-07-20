@@ -2,12 +2,12 @@
 #include <iostream>
 #include <iomanip>
 
-#define AMIN .000001
-#define PMIN .000001
-
 #include "parameters.h"
 
 using namespace std;
+
+const double AMIN = .000001;
+const double PMIN = .000001;
 
 Parameters::Parameters () {
   Benc = 0.9;
@@ -33,7 +33,7 @@ Parameters::Parameters () {
   init_item = 1;
   amin = AMIN;
   pmin = PMIN;
-};
+}
 
 Parameters::Parameters (vector<double> &param_vec) {
   Benc = param_vec[0];

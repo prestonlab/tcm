@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Network::Network () {};
+Network::Network () {}
 
 Network::Network (unsigned int n_items, unsigned int n_units, bool isdc, Parameters model_param) {
   
