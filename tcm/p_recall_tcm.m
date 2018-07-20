@@ -1,27 +1,25 @@
 function p = p_recall_tcm(net, param, prev_rec)
 %P_RECALL_TCM   Probability of recall according to TCM.
 %
-%  p = p_recall_tcm(w_cf, c, LL, prev_rec, output_pos, param)
+%  p = p_recall_tcm(net, param, prev_rec)
 %
-%  INPUTS:
-%        w_cf:  [list length+1 X list length+1] matrix of
-%               context-to-item associative weights.
+%  INPUTS
+%  net - struct
+%      Struct with network components. See init_network_tcm for
+%      details. Recall probability depends on c, w_cf_exp,
+%      w_cf_pre, and w_cf_sem.
 %
-%           c:  [list length+1 X 1] vector indicating the state of
-%               context to use as a cue.
+%  param - struct
+%      Structure of model parameters.
 %
-%          LL:  list length.
+%  prev_rec - [1 x recalls] numeric array
+%      Serial positions of previously recalled items.
 %
-%    prev_rec:  vector of the serial positions of previous recalls.
-%
-%  output_pos:  output position (the number of items previously
-%               recalled; the first recall attempt is 0).
-%
-%       param:  structure with model parameter values.
-%
-%  OUTPUTS:
-%        p:  [1 X list length+1] vector of recall event probabilities;
-%            p(LL+1) is the probability of stopping.
+%  OUTPUTS
+%  p - [1 x list length+1] numeric array
+%      Recall event probabilities. p(i) gives the probability of
+%      recalling the item in serial position i. p(LL+1) is the
+%      probability of stopping.
 
 AMIN = 0.000001;
 PMIN = 0.000001;
