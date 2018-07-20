@@ -14,7 +14,7 @@ This will add the necessary directories to your Matlab path. To compile the c++ 
 
 ```matlab
 cd project_directory/src
-mex tcm_matlab.cc
+mex tcm_matlab.cc parameters.cc paramArray.cc recall.cc network.cc weights.cc context.cc 
 ```
 
 You may need to first specify some settings for your compiler. To test your installation, run:
