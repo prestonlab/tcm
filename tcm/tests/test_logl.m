@@ -54,6 +54,21 @@ logl_mat = nansum(logl(:));
 assert(abs(logl_mex - logl_mat) < .001);
 
 
+function test_distract(testCase)
+
+param = testCase.TestData.param;
+data = testCase.TestData.data;
+
+param.B_ipi = 0.1;
+param.B_ri = 0.2;
+
+logl_mex = logl_mex_tcm(param, data);
+[logl, logl_all] = logl_tcm(param, data);
+logl_mat = nansum(logl(:));
+
+assert(abs(logl_mex - logl_mat) < .001);
+
+
 function test_local_sem(testCase)
 % local model with semantic connections
 
