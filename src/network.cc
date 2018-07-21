@@ -36,13 +36,13 @@ Network::Network (unsigned int n_items, unsigned int n_units, bool isdc, Paramet
   if (param.Bipi > 0) {
     f_ipi.resize(n_items, 0);
     for (size_t i = 0; i < f_ipi.size(); ++i) {
-      f_item[i] = n_f + i;
+      f_ipi[i] = n_f + i;
     }
     n_f += n_items;
 
     c_ipi.resize(n_items, 0);
     for (size_t i = 0; i < c_ipi.size(); ++i) {
-      c_item[i] = n_c + i;
+      c_ipi[i] = n_c + i;
     }
     n_c += n_items;
   }

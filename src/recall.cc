@@ -103,6 +103,12 @@ void Recall::checkRecallCodes () {
 void Recall::presentList () {
   double prim;
   for (unsigned int i = 0; i < list_length; ++i) {
+    if (net.param.Bipi != 0) {
+      net.setB(net.param.Bipi);
+      net.presentDistract(net.c_ipi[i]);
+      net.setB(net.param.Benc);
+    }
+    
     // TODO: use Lcf instead of 1, to allow changing the base learning
     // rate
     prim = (net.param.P1 * exp(-net.param.P2 * static_cast<double>(i))) + 1;
@@ -192,7 +198,7 @@ void Recall::task () {
     // retention interval context disruption
     if (net.param.Bri != 0) {
       net.setB(net.param.Bri);
-      net.presentDistract(net.f_ri[0]);
+      net.presentDistract(net.c_ri[0]);
     }
 
     // reinstate start-of-list context
@@ -228,7 +234,7 @@ void Recall::taskSameList () {
 	net.setSem(&(*poolno)[i], poolsem);
       }
       net.setB(1);
-      net.presentDistract(net.f_start[0]);
+      net.presentDistract(net.c_start[0]);
 
       // present the list
       net.setB(net.param.Benc);
@@ -237,7 +243,7 @@ void Recall::taskSameList () {
       // retention interval context disruption
       if (net.param.Bri != 0) {
 	net.setB(net.param.Bri);
-	net.presentDistract(net.f_ri[0]);
+	net.presentDistract(net.c_ri[0]);
       }
       
       // reinstate start-of-list context
