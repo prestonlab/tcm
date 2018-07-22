@@ -1,4 +1,9 @@
 
+restoredefaultpath
+cd ~/matlab/tcm
+init_tcm
+addpath ~/matlab/accre
+
 %% fits using the MortPoly17 models
 
 fits = {'base', 'wikiw2v_context' 'wikiw2v_item' 'wikiw2v_context_item'};
