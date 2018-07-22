@@ -61,10 +61,11 @@ end
 data = getfield(load('cfr_benchmark_data.mat', 'data'), 'data');
 [logl, logl_all, param, seq] = run_logl_fit(data);
 
-% record context after presentation of each item and before each
-% recall
-param.record = {'c'};
-[logl, logl_all, net] = logl_tcm(param, data);
+% run an actual fit of one subject, with relatively lax optimization
+res = indiv_search_cfrl('cfr', 'full_wikiw2v', 'n_workers', 1, ...
+                        'search_type', 'de_fast', 'subject', 1);
+
+stats = plot_subj_sim_results(res);
 
 % set up decoding
 labels = data.pres.category';
@@ -167,3 +168,6 @@ end
 clf
 y = squeeze(mean(x, 4));
 plot(y');
+l = legend(ttype);
+ylabel('classifier evidence');
+xlabel('train position');
