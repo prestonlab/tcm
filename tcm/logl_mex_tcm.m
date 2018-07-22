@@ -65,11 +65,26 @@ end
 function logl = run_tcm(data, param, param_vec)
 
     if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
+        issem = true;
+    else
+        issem = false;
+    end
+    if isfield(param, 'sem_vec') && ~isempty(param.sem_vec)
+        isvec = true;
+    else
+        isvec = false;
+    end
+    
+    if issem && ~isvec
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
                           1, data.pres_itemnos, param.sem_mat);
-    elseif isfield(param, 'sem_vec') && ~isempty(param.sem_vec)
+    elseif isvec && ~issem
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
                           2, data.pres_itemnos, param.sem_vec);
+    elseif isvec && issem
+        logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                          3, data.pres_itemnos, param.sem_vec, ...
+                          param.sem_mat);
     else
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec);
     end
