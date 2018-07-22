@@ -1,6 +1,9 @@
 # TCM
 A fast and flexible implementation of the Temporal Context Model/Context Maintenance and Retrieval model.
 
+![example fit](https://github.com/prestonlab/tcm/blob/master/figs/fit_example.png)
+Top row: serial position curve, probability of first recall, temporal organization, and semantic organization for data from Morton et al. (2013). Bottom row: data simulated using TCM with maximum likelihood parameters.
+
 ## Installation
 
 Download or clone the code project to some local `project_directory`. If cloning, you may need to first install [git-lfs](https://git-lfs.github.com) to get the sample data files, which are used to run tests of the code. In Matlab:
