@@ -99,7 +99,7 @@ Network::Network (unsigned int n_items, unsigned int n_units, bool isdc, Paramet
     wfc_pre = Weights(n_f, n_c, param.Afc, param.Dfc);
     wcf_pre = Weights(n_f, n_c, param.Acf, param.Dcf);
   }
-  wcf_sem = Weights(n_f, n_c, 0, 0);
+  wcf_sem = Weights(n_f, n_f, 0, 0);
 
   // set pre-experimental weights between non-item units and items to zero
   for (size_t i = 0; i < n_other; ++i) {
@@ -129,7 +129,7 @@ Network::Network (unsigned int n_items, unsigned int n_units, bool isdc, Paramet
 void Network::setSem (vector<unsigned int> * poolno, vector< vector<double> > * poolsem) {
   if (param.Scf != 0) {
     for (unsigned int i = 0; i < n_f_item; ++i) {
-      for (unsigned int j = 0; j < n_c_item; ++j) {
+      for (unsigned int j = 0; j < n_f_item; ++j) {
 	wcf_sem.connect[i][j] = (*poolsem)[(*poolno)[i]-1][(*poolno)[j]-1] * param.Scf;
       }
     }
@@ -262,7 +262,6 @@ void Network::cueItemSemSplit (double I) {
     // item units
     for (unsigned int j = 0; j < n_c_item; ++j) {
       a[i] += context[j] * (wcf_exp.connect[i][j] + wcf_pre.connect[i][j]);
-      a[i] += (context[j] * (1 - I) + item[j] * I) * wcf_sem.connect[i][j];
     }
 
     // other units
@@ -270,6 +269,19 @@ void Network::cueItemSemSplit (double I) {
       a[i] += context[c_other[j]] * wcf_exp.connect[i][c_other[j]];
     }
 
+    // semantic cuing
+    if (I == 1) {
+      // if item only, use just the item features
+      for (unsigned int j = 0; j < n_f_item; ++j) {
+	a[i] += item[j] * wcf_sem.connect[i][j];
+      }
+    } else {
+      // use context; item and context must have same number of units
+      for (unsigned int j = 0; j < n_c_item; ++j) {
+	a[i] += (context[j] * (1 - I) + item[j] * I) * wcf_sem.connect[i][j];
+      }
+    }
+    
     // transformed activation
     a[i] = pow(max(a[i], param.amin), param.T);
   }
