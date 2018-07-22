@@ -37,6 +37,8 @@ To get an idea of how to run a fit of the model to some free recall data, look a
 
 Morton, N. W., Kahana, M. J., Rosenberg, E. A., Baltuch, G. H., Litt, B. B., Sharan, A. D., et al. (2013). Category-specific neural oscillations predict recall organization during memory search. Cerebral Cortex, 23(10), 2407–2422. http://doi.org/10.1093/cercor/bhs229
 
+Kragel, J. E., Morton, N. W., & Polyn, S. M. (2015). Neural activity in the medial temporal lobe reveals the fidelity of mental time travel. The Journal of Neuroscience : the Official Journal of the Society for Neuroscience, 35(7), 2914–2926. http://doi.org/10.1523/JNEUROSCI.3378-14.2015
+
 Morton, N. W., & Polyn, S. M. (2016). A predictive framework for evaluating models of semantic organization in free recall. Journal of Memory and Language, 86, 119–140. http://doi.org/10.1016/j.jml.2015.10.002
 
 Morton, N. W., & Polyn, S. M. (2017). Beta-band activity represents the recent past during episodic encoding. NeuroImage, 147, 692–702. http://doi.org/10.1016/j.neuroimage.2016.12.049
