@@ -51,12 +51,21 @@ end
 if namecheck('_qci', model_type)
     par.I = [0 1];
     init.I = [0 1];
+    fixed = rmfield(fixed, 'Scf');
+    par.Scf = [0 100];
+    init.Scf = [0 1];
 end
 if namecheck('_qi', model_type)
     fixed.I = 1;
+    fixed = rmfield(fixed, 'Scf');
+    par.Scf = [0 100];
+    init.Scf = [0 1];
 end
 if namecheck('_qc', model_type)
     fixed.I = 0;
+    fixed = rmfield(fixed, 'Scf');
+    par.Scf = [0 100];
+    init.Scf = [0 1];
 end
 
 % vector matrices
@@ -68,6 +77,14 @@ if namecheck('_ncf', model_type)
     fixed.Dcf = 0;
     par = rmfield(par, 'Dcf');
     init = rmfield(init, 'Dcf');
+end
+
+if namecheck('_loc', model_type)
+    % context is combined localist-distributed. The SL parameter scales
+    % the localist portion of the pre-experimental context vectors,
+    % relative to the distributed portion
+    par.SL = [0 1];
+    init.SL = [0 1];
 end
 
 names = fieldnames(par);

@@ -45,4 +45,9 @@ if isfield(param, 'S')
     param.Scf = param.S;
 end
 
+if isfield(param, 'SL')
+    x = [eye(768) * param.SL; param.sem_vec * (1 - param.SL)];
+    param.sem_vec = x ./ sqrt(sum(x.^2,1));    
+end
+
 param = check_param_tcm(param);
