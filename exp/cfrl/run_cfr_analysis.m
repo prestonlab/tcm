@@ -76,7 +76,7 @@ for i = 1:3
 end
 list = repmat([1:30]', [1 24])';
 list = list(:);
-c = net.pres.c';
+c = stats.net.pres.c';
 pattern = cat(2, c{:})';
 
 % run decoding
@@ -87,7 +87,7 @@ opt.f_test = @test_logreg;
 
 % target is 58.9%
 target_perf = .589;
-n = linspace(.05, .15, 10);
+n = linspace(.05, .25, 11);
 n_rep = 10;
 perf = NaN(length(n), n_rep);
 for i = 1:length(n)
