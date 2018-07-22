@@ -26,6 +26,7 @@ param.S = 2.5;
 param.I = 0;
 param.stop_rule = 'op';
 param.init_item = 0;
+param.B_ipi = 0;
 param.B_ri = 0;
 param.Dfc = 70.46;
 param.Dcf = 100;
@@ -41,11 +42,9 @@ disp('Testing implementations with parameters from wikiw2v_context fit...')
 disp('No semantics:')
 logl_mex = logl_mex_tcm(param, data);
 if ver == 1
-    param.Dcf = param.Dcf - param.Acf;
     [logl, logl_all] = logl_tcm(param, data);
 else
     param.sem_vec = eye(768);
-    param.Dcf = param.Dcf - param.Acf;
     [logl, logl_all] = logl_tcm(param, data);
 end
 logl_mat = nansum(logl(:));
@@ -61,11 +60,9 @@ disp('With semantics:')
 param.sem_mat = sem.sem_mat;
 logl_mex = logl_mex_tcm(param, data);
 if ver == 1
-    param.Dcf = param.Dcf - param.Acf;
     logl = logl_tcm(param, data);
 else
     param.sem_vec = eye(768);
-    param.Dcf = param.Dcf - param.Acf;
     logl = logl_tcm(param, data);
 end
 logl_mat = nansum(logl(:));
