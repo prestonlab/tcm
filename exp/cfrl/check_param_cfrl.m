@@ -26,15 +26,10 @@ if ~isfield(param, 'B_ri')
     param.B_ri = 0;
 end
 
-if ~isfield(param, 'Dfc')
-    if isfield(param, 'G') && ~isempty(param.G)
-        param.Dfc = (1 - param.G) / param.G;
-        param.G = 1;
-    else
-        param.Dfc = 0;
-    end
-else
-    % setting diagonal, so don't need the G parameter to vary
+% translate the G parameter (a ratio) to Dfc (a value for
+% pre-experimental context relative to a fixed learning rate of 1)
+if isfield(param, 'G') && ~isempty(param.G)
+    param.Dfc = (1 - param.G) / param.G;
     param.G = 1;
 end
 
