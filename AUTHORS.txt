@@ -1,0 +1,7 @@
+Neal Morton: Helped develop likelihood-based version of the model; developed Matlab implementation of the likelihood model, and tools for parameter optimization and model analysis; developed model implementation in c++ and interface with Matlab; prepared this version of the model for public release.
+
+Sean Polyn: Developed earlier implementations of CMR in Matlab; helped develop likelihood-based version of the model and implementation in Matlab.
+
+James Kragel: Helped develop likelihood-based version of the model and implementation in Matlab, as well as tools for parameter optimization and model analysis.
+
+Joshua McCluey: Adapted differential evolution parameter optimization for model fitting in Matlab.
