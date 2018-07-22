@@ -15,7 +15,7 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %      Results of the parameter search.
 %
 %  OPTIONS:
-%  f_logl - function_handle - @tcm_general_mex
+%  f_logl - function_handle - @logl_mex_tcm
 %      Handle to function to evaluate likelihood, of the form:
 %          logl = f_logl(param, data)
 %
