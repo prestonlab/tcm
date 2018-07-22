@@ -30,7 +30,6 @@ fixed.model_type = model_type;
 fixed.B_ipi = 0;
 fixed.B_ri = 0;
 fixed.Afc = 0;
-fixed.Dfc = 0;
 fixed.Sfc = 0;
 fixed.Scf = 0;
 fixed.Lfc = 1;
