@@ -24,6 +24,12 @@ switch fit
     model_type = 'tcm_dc_wikiw2v';
   case 'dc_ncf_wikiw2v'
     model_type = 'tcm_dc_ncf_wikiw2v';
+  case 'dc_wikiw2v_item'
+    model_type = 'tcm_dc_wikiw2v_qi';
+  case 'hybrid_wikiw2v_item'
+    model_type = 'tcm_dc_loc_wikiw2v_qi';
+  case 'hybrid_wikiw2v'
+    model_type = 'tcm_dc_loc_wikiw2v';
   otherwise
     error('Unknown fit type: %s', fit);
 end

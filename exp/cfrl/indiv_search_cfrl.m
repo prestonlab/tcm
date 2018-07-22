@@ -37,6 +37,7 @@ def.f_check_param = @check_param_cfrl;
 def.n_search = 1;
 def.n_workers = 1;
 def.search_type = 'de';
+def.subject = [];
 run_opt = propval(varargin, def);
 
 if run_opt.n_workers > 1 && isempty(gcp('nocreate'))
@@ -76,7 +77,11 @@ fstruct.f_check_param = run_opt.f_check_param;
 
 % initialize the random number generator, so that replications of
 % the search will be independent
-subject = unique(fstruct.data.subject);
+if isempty(run_opt.subject)
+    subject = unique(fstruct.data.subject);
+else
+    subject = run_opt.subject;
+end
 n_subj = length(subject);
 if exist('pool', 'var')
     % we have a parpool open, so must use a different random stream for
@@ -163,7 +168,7 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     fitness = [];
     for i = 1:run_opt.n_search
         switch run_opt.search_type
-          case 'de'
+          case {'de' 'de_fast'}
             [par, fval] = de_search(f, ranges, search_opt);
           otherwise
             error('Unsupported search type: %s', run_opt.search_type)
@@ -174,7 +179,7 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     
     % save out details about the search
     res = [];
-    res.fstruct = rmfield(fstruct, 'sem_mat');
+    res.fstruct = fstruct;
     res.fstruct.data = subj_data_orig;
     res.parameters = parameters;
     res.fitness = fitness;

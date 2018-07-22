@@ -110,7 +110,7 @@ w_cf_pre = zeros(n_f, n_c);
 
 % have a separate semantic matrix, to allow for item-based semantic
 % cuing
-w_cf_sem = zeros(n_f, n_c);
+w_cf_sem = zeros(n_f, n_f);
 
 % constant connection strength within item units
 if param.Afc ~= 0
@@ -148,18 +148,16 @@ end
 
 if isfield(param, 'sem_mat') && ~isempty(param.sem_mat)
     % scale by a free parameter
-    if net.dc
-        semantic = param.sem_mat(:, pres_itemnos);
-    else
-        semantic = param.sem_mat(pres_itemnos, pres_itemnos);
-    end
+    semantic = param.sem_mat(pres_itemnos, pres_itemnos);
 
+    % semantic matrix will be items x items regardless of the
+    % number of context units
     if param.Sfc ~= 0
-        w_fc_sem(net.c_item,net.f_item) = w_fc_sem(net.c_item,net.f_item) + ...
+        w_fc_sem(net.f_item,net.f_item) = w_fc_sem(net.f_item,net.f_item) + ...
             semantic * param.Sfc;
     end
     if param.Scf ~= 0
-        w_cf_sem(net.f_item,net.c_item) = w_cf_sem(net.f_item,net.c_item) + ...
+        w_cf_sem(net.f_item,net.f_item) = w_cf_sem(net.f_item,net.f_item) + ...
             semantic' * param.Scf;
     end
 end

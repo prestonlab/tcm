@@ -150,20 +150,17 @@ void Recall::recallPeriod (unsigned int list) {
 void Recall::recallPeriodSem (unsigned int list) {
   double output_pos;
   for (size_t i = 0; i < r_list.size(); ++i) {
-    if (i > 0 || net.param.init_item) {
-      // if a recall has already been made, or if using the last item
-      // on the list as a cue, include item information in the
-      // semantic cue
-      net.cueItemSemSplit(net.param.I);
-    } else if (net.param.I == 1) {
-      // it's the first recall, not using the last item as a cue, and
-      // never using context as a semantic cue. Just cue with context
-      // through episodic associations only
-      net.cueItem();
+    if (i == 0) {
+      if (net.param.I == 1) {
+	// if no recalls made yet, use normal temporal cuing with context
+	net.cueItem();
+      } else {
+	// no item cue yet, but using context as a semantic cue
+	net.cueItemSem();
+      }
     } else {
-      // it's the first recall, not using the last item as a cue, but
-      // am using context as a semantic cue
-      net.cueItemSem();
+      // using some combination of item and context semantic cuing
+      net.cueItemSemSplit(net.param.I);
     }
     output_pos = static_cast<double>(i);
     net.pstop(output_pos);

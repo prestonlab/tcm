@@ -73,6 +73,14 @@ if imp == 1
         else
             param.sem_vec = eye(768);
         end
+      case 5
+        param.sem_mat = sem.sem_mat;
+        param.sem_vec = sem.vectors';
+        param.I = 1;
+      case 6
+        param.sem_mat = sem.sem_mat;
+        param.sem_vec = [eye(768); sem.vectors'];
+        param.I = 1;
     end
     [logl_mat, logl_all] = logl_tcm(param, data);
     logl = nansum(logl_mat(:));
@@ -95,5 +103,16 @@ else
             logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
                               2, data.pres_itemnos, eye(768));
         end
+      case 5
+        param.I = 1;
+        param_vec = param_vec_tcm(param);
+        logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                          3, data.pres_itemnos, sem.vectors', sem.sem_mat);
+      case 6
+        param.I = 1;
+        param_vec = param_vec_tcm(param);
+        vec = [eye(768); sem.vectors'];
+        logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
+                          3, data.pres_itemnos, vec, sem.sem_mat);
     end
 end

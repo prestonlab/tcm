@@ -59,6 +59,8 @@ for i = 1:n_trials
             rc = net_trial.rec.(param.record{j});
             net.rec.(param.record{j})(i,1:length(rc)) = rc;
         end
+    else
+        net = net_trial;
     end
     
     ind = 1:length(logl_trial);

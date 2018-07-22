@@ -83,14 +83,28 @@ opt = struct;
 opt.f_train = @train_logreg;
 opt.train_args = {struct('penalty', 10)};
 opt.f_test = @test_logreg;
-res = xval(pattern, list, targets, opt);
+
+% target is 58.9%
+target_perf = .589;
+n = linspace(.05, .15, 10);
+n_rep = 100;
+perf = NaN(length(n), n_rep);
+evidence_all = NaN(size(targets, 1), size(targets, 2), n_rep, length(n));
+for i = 1:length(n)
+    for j = 1:n_rep
+        noise = randn(size(pattern)) * n(i);
+        res = xval(pattern+noise, list, targets, opt);
+        perf(i,j) = mean([res.iterations.perf]);
+        for k = 1:length(res.iterations)
+            test_ind = res.iterations(k).test_idx;
+            evidence_all(test_ind,:,j,i) = res.iterations(k).acts';
+        end
+    end
+end
 
 % unpack evidence for each category on each trial
-evidence = NaN(size(targets));
-for i = 1:length(res.iterations)
-    test_ind = res.iterations(i).test_idx;
-    evidence(test_ind,:) = res.iterations(i).acts';
-end
+[~, ind] = min(abs(mean(perf, 2) - target_perf));
+evidence = mean(evidence_all(:,:,:,ind), 3);
 
 % plot individual lists
 colors = get(groot, 'defaultAxesColorOrder');
@@ -138,3 +152,6 @@ for i = 1:n_subj
         end
     end
 end
+
+y = squeeze(mean(x, 4));
+plot(y');
