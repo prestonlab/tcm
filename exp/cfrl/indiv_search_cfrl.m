@@ -72,6 +72,26 @@ if simdef.opt.dc
 else
     fstruct.sem_vec = [];
 end
+% item localist
+n_item = length(unique(fstruct.data.pres_itemnos));
+if simdef.opt.loc
+    fstruct.loc_vec = eye(n_item);
+else
+    fstruct.loc_vec = [];
+end
+% category localist
+if simdef.opt.cat
+    [~, ind] = unique(fstruct.data.pres_itemnos);
+    category = fstruct.data.pres.category(ind);
+    ucat = unique(category);
+    cat_vec = zeros(length(ucat), n_item);
+    for i = 1:length(ucat)
+        cat_vec(i,category==ucat(i)) = 1;
+    end
+    fstruct.cat_vec = cat_vec;
+else
+    fstruct.cat_vec = [];
+end
 fstruct.f_logl = run_opt.f_logl;
 fstruct.f_check_param = run_opt.f_check_param;
 
@@ -149,13 +169,13 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
                                             fstruct.data.listLength);
     subj_data_orig = subj_data;
 
-    % trim the semantic matrix to just hold the relevant items;
-    % change item number accordingly. This speeds up execution
-    if ~isempty(fstruct.sem_mat) || ~isempty(fstruct.sem_vec)
-        [subj_data.pres_itemnos, fstruct.sem_mat, fstruct.sem_vec] = ...
-            trim_sem_mat(subj_data.pres_itemnos, fstruct.sem_mat, ...
-                         fstruct.sem_vec);
-    end
+    % % trim the semantic matrix to just hold the relevant items;
+    % % change item number accordingly. This speeds up execution
+    % if ~isempty(fstruct.sem_mat) || ~isempty(fstruct.sem_vec)
+    %     [subj_data.pres_itemnos, fstruct.sem_mat, fstruct.sem_vec] = ...
+    %         trim_sem_mat(subj_data.pres_itemnos, fstruct.sem_mat, ...
+    %                      fstruct.sem_vec);
+    % end
 
     % prep the eval function
     fstruct.data = subj_data;

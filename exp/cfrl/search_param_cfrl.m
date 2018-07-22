@@ -83,8 +83,16 @@ if namecheck('_loc', model_type)
     % context is combined localist-distributed. The SL parameter scales
     % the localist portion of the pre-experimental context vectors,
     % relative to the distributed portion
-    par.SL = [0 1];
+    par.SL = [0 100];
     init.SL = [0 1];
+end
+
+if namecheck('_cat', model_type)
+    % context includes category features. The SC parameter scales
+    % the category portion of the pre-experimental context vectors,
+    % relative to the distributed portion
+    par.SC = [0 100];
+    init.SC = [0 1];
 end
 
 names = fieldnames(par);

@@ -46,7 +46,21 @@ if isfield(param, 'S')
 end
 
 if isfield(param, 'SL')
-    x = [eye(768) * param.SL; param.sem_vec * (1 - param.SL)];
+    if isfield(param, 'SC')
+        SL = param.SL;
+        SC = param.SC;
+        SD = 1;
+        ST = SL + SC + SD;
+        x = [(SL/ST) * param.loc_vec
+             (SC/ST) * param.cat_vec
+             (SD/ST) * param.sem_vec];
+    else
+        SL = param.SL;
+        SD = 1;
+        ST = SL + SD;
+        x = [(SL/ST) * param.loc_vec
+             (SD/ST) * param.sem_vec];
+    end
     param.sem_vec = x ./ sqrt(sum(x.^2,1));    
 end
 

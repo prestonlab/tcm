@@ -61,10 +61,11 @@ end
 data = getfield(load('cfr_benchmark_data.mat', 'data'), 'data');
 [logl, logl_all, param, seq] = run_logl_fit(data);
 
-% record context after presentation of each item and before each
-% recall
-param.record = {'c'};
-[logl, logl_all, net] = logl_tcm(param, data);
+% run an actual fit of one subject, with relatively lax optimization
+res = indiv_search_cfrl('cfr', 'full_wikiw2v', 'n_workers', 1, ...
+                        'search_type', 'de_fast', 'subject', 1);
+
+stats = plot_subj_sim_results(res);
 
 % set up decoding
 labels = data.pres.category';
@@ -75,7 +76,7 @@ for i = 1:3
 end
 list = repmat([1:30]', [1 24])';
 list = list(:);
-c = net.pres.c';
+c = stats.net.pres.c';
 pattern = cat(2, c{:})';
 
 % run decoding
@@ -86,7 +87,7 @@ opt.f_test = @test_logreg;
 
 % target is 58.9%
 target_perf = .589;
-n = linspace(.05, .15, 10);
+n = linspace(.05, .25, 11);
 n_rep = 10;
 perf = NaN(length(n), n_rep);
 for i = 1:length(n)
@@ -167,3 +168,6 @@ end
 clf
 y = squeeze(mean(x, 4));
 plot(y');
+l = legend(ttype);
+ylabel('classifier evidence');
+xlabel('train position');
