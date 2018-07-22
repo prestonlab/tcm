@@ -22,10 +22,15 @@ stats = getfield(load(info.res_file, 'stats'), 'stats');
 % load data
 simdef = sim_def_cfrl(experiment, fit);
 data = getfield(load(simdef.data_file, 'data'), 'data');
-if ~isempty(simdef.sem_mat_file)
+if simdef.opt.qsem
     sem_mat = getfield(load(simdef.sem_mat_file, 'sem_mat'), 'sem_mat');
 else
     sem_mat = [];
+end
+if simdef.opt.dc
+    sem_vec = getfield(load(simdef.sem_mat_file, 'sem_vec'), 'sem_vec');
+else
+    sem_vec = [];
 end
 
 subject = unique(data.subject);
@@ -39,12 +44,13 @@ for i = 1:n_subj
     param = propval(custom, param, 'strict', false);
     param = check_param_cfrl(param);
     param.sem_mat = sem_mat;
+    param.sem_vec = sem_vec;
     
     % prep subject data for simulation
     subj_data = trial_subset(data.subject == subject(i), ...
                              rmfieldifexist(data, 'recalls_vec'));
-    subj_data.recalls_vec = recalls_vec_tcmbin(subj_data.recalls, ...
-                                               data.listLength);
+    subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
+                                            data.listLength);
     
     % run simulation
     seq = gen_tcm(param, subj_data, [], opt.n_rep);
