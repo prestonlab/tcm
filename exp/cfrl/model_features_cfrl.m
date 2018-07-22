@@ -21,6 +21,16 @@ if namecheck('_dc', model_type)
 else
     opt.dc = false;
 end
+if namecheck('_loc', model_type)
+    opt.loc = true;
+else
+    opt.loc = false;
+end
+if namecheck('_cat', model_type)
+    opt.cat = true;
+else
+    opt.cat = false;
+end
 
 opt.stop_rule = 'op';
 opt.init_item = false;

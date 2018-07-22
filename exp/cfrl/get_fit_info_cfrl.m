@@ -30,6 +30,8 @@ switch fit
     model_type = 'tcm_dc_loc_wikiw2v_qi';
   case 'hybrid_wikiw2v'
     model_type = 'tcm_dc_loc_wikiw2v';
+  case 'full_wikiw2v'
+    model_type = 'tcm_dc_loc_cat_wikiw2v';
   otherwise
     error('Unknown fit type: %s', fit);
 end
