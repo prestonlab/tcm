@@ -3,6 +3,13 @@ function res = load_full_de_cfrl(job, experiments, fits)
 %
 %  res = load_full_de_cfrl(job, experiments, fits)
 
+if ischar(experiments)
+    experiments = {experiments};
+end
+if ischar(fits)
+    fits = {fits};
+end
+
 try
     out = fetchOutputsRobust(job);
 catch
@@ -64,4 +71,3 @@ for i = 1:length(out)
     res.(f).names = stats(1).names;
     res.(f).stats = stats;
 end
-
