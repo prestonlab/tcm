@@ -1,5 +1,5 @@
 # TCM
-A fast and flexible implementation of the Temporal Context Model/Context Maintenance and Retrieval model.
+A fast and flexible implementation of the Temporal Context Model/Context Maintenance and Retrieval model of free recall.
 
 ![example fit](https://github.com/prestonlab/tcm/blob/master/figs/fit_example.png)
 Top row: serial position curve, probability of first recall, temporal organization, and semantic organization for data from Morton et al. (2013). Bottom row: data simulated using TCM with maximum likelihood parameters. See Morton & Polyn (2016) for model details.
