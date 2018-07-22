@@ -54,3 +54,87 @@ for i = 1:length(fits)
                   fullfile(res_dir, 'sem_crp_between.eps'), ...
                   'mask', category ~= category');
 end
+
+%% test out context recording
+
+% run a quick fit to get some parameters
+data = getfield(load('cfr_benchmark_data.mat', 'data'), 'data');
+[logl, logl_all, param, seq] = run_logl_fit(data);
+
+% record context after presentation of each item and before each
+% recall
+param.record = {'c'};
+[logl, logl_all, net] = logl_tcm(param, data);
+
+% set up decoding
+labels = data.pres.category';
+labels = labels(:);
+targets = zeros(length(labels), 3);
+for i = 1:3
+    targets(labels==i,i) = 1;
+end
+list = repmat([1:30]', [1 24])';
+list = list(:);
+c = net.pres.c';
+pattern = cat(2, c{:})';
+
+% run decoding
+opt = struct;
+opt.f_train = @train_logreg;
+opt.train_args = {struct('penalty', 10)};
+opt.f_test = @test_logreg;
+res = xval(pattern, list, targets, opt);
+
+% unpack evidence for each category on each trial
+evidence = NaN(size(targets));
+for i = 1:length(res.iterations)
+    test_ind = res.iterations(i).test_idx;
+    evidence(test_ind,:) = res.iterations(i).acts';
+end
+
+% plot individual lists
+colors = get(groot, 'defaultAxesColorOrder');
+for i = 1:30
+    clf
+    hold on
+    ind = list == i;
+    for j = 1:3
+        plot(evidence(ind,j), '-', 'Color', colors(j,:));
+        plot(targets(ind,j), 'o', 'Color', colors(j,:));
+    end
+    pause
+end
+
+% sort by curr, prev, base
+mat = struct;
+[mat.curr, mat.prev, mat.base, mat.trainpos] = ...
+    train_category(data.pres.category);
+
+subject = repmat(data.subject, [1 24]);
+v_subject = subject';
+v_subject = v_subject(:);
+usubject = unique(data.subject);
+
+vec = struct;
+f = fieldnames(mat);
+for i = 1:length(f)
+    m = mat.(f{i})';
+    vec.(f{i}) = m(:);
+end
+
+n_subj = length(unique(data.subject));
+x = NaN(n_subj, 3, 6, 3);
+ttype = {'curr' 'prev' 'base'};
+for i = 1:n_subj
+    for j = 1:length(ttype)
+        tvec = vec.(ttype{j});
+        for k = 1:6
+            for l = 1:3
+                ind = v_subject == usubject(i) & ...
+                      vec.trainpos == k & ...
+                      tvec == l;
+                x(i,j,k,l) = nanmean(evidence(ind,l));
+            end
+        end
+    end
+end

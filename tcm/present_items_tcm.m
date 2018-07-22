@@ -26,6 +26,12 @@ function net = present_items_tcm(net, param)
 %      Learning modifies w_fc_exp and w_cf_exp. Context (c) is also
 %      updated to its end state after list presentation.
 
+if isfield(param, 'record') && ~isempty(param.record)
+    for i = 1:length(param.record)
+        net.pres.(param.record{i}) = cell(1, length(net.f_item));
+    end
+end
+
 c_in = zeros(size(net.c));
 for i = 1:length(net.f_item)
     % interpresentation interval
@@ -49,6 +55,12 @@ for i = 1:length(net.f_item)
     % update weights
     net.w_fc_exp(:,ind) = net.w_fc_exp(:,ind) + (param.Lfc * net.c);
     net.w_cf_exp(ind,:) = net.w_cf_exp(ind,:) + (Lcf * net.c');
+    
+    if isfield(param, 'record') && ~isempty(param.record)
+        for j = 1:length(param.record)
+            net.pres.(param.record{j}){i} = net.(param.record{j});
+        end
+    end
 end
 
 % retention interval

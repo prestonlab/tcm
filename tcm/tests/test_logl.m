@@ -54,6 +54,21 @@ logl_mat = nansum(logl(:));
 assert(abs(logl_mex - logl_mat) < .001);
 
 
+function test_distract(testCase)
+
+param = testCase.TestData.param;
+data = testCase.TestData.data;
+
+param.B_ipi = 0.1;
+param.B_ri = 0.2;
+
+logl_mex = logl_mex_tcm(param, data);
+[logl, logl_all] = logl_tcm(param, data);
+logl_mat = nansum(logl(:));
+
+assert(abs(logl_mex - logl_mat) < .001);
+
+
 function test_local_sem(testCase)
 % local model with semantic connections
 
@@ -69,12 +84,44 @@ logl_mat = nansum(logl(:));
 assert(abs(logl_mex - logl_mat) < .001);
 
 
-function test_dc_mex(testCase)
+function test_distract_sem(testCase)
+
+param = testCase.TestData.param;
+data = testCase.TestData.data;
+sem = testCase.TestData.sem;
+param.sem_mat = sem.sem_mat;
+param.B_ipi = 0.1;
+param.B_ri = 0.2;
+
+logl_mex = logl_mex_tcm(param, data);
+[logl, logl_all] = logl_tcm(param, data);
+logl_mat = nansum(logl(:));
+
+assert(abs(logl_mex - logl_mat) < .001);
+
+
+function test_dc(testCase)
 
 param = testCase.TestData.param;
 data = testCase.TestData.data;
 sem = testCase.TestData.sem;
 param.sem_vec = sem.vectors';
+
+logl_mex = logl_mex_tcm(param, data);
+[logl, logl_all] = logl_tcm(param, data);
+logl_mat = nansum(logl(:));
+
+assert(abs(logl_mex - logl_mat) < .001);
+
+
+function test_distract_dc(testCase)
+
+param = testCase.TestData.param;
+data = testCase.TestData.data;
+sem = testCase.TestData.sem;
+param.sem_vec = sem.vectors';
+param.B_ipi = 0.1;
+param.B_ri = 0.2;
 
 logl_mex = logl_mex_tcm(param, data);
 [logl, logl_all] = logl_tcm(param, data);
