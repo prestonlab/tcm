@@ -28,26 +28,36 @@ output_pos = length(prev_rec);
 LL = length(net.f_item);
 
 % determine cue strength
-if isfield(param, 'I') && param.I ~= 0 && ~isempty(prev_rec)
-    % at least part of the cue is item-based
-
-    % temporal cuing (context)
-    strength_temp = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
-
-    % semantic cuing (item and context)
-    net.f(:) = 0;
-    net.f(prev_rec(end)) = 1;
-    pre_exp_cue = param.I * net.f + (1 - param.I) * net.c;
-    strength_sem = (net.w_cf_sem * pre_exp_cue)';
-    
-    % combine temporal and semantic cues
-    strength = strength_temp + strength_sem;
-elseif isfield(param, 'I') && param.I == 1 && isempty(prev_rec)
-    % item semantic cuing only, but no item to cue with
-    strength = ((net.w_cf_exp + net.w_cf_pre + net.w_cf_sem) * net.c)';
+if isempty(prev_rec)
+    if param.I == 1 || net.dc
+        % no recalls made yet
+        strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
+    else
+        % no recalls, but using context as a semantic cue
+        strength = ((net.w_cf_exp + net.w_cf_pre + net.w_cf_sem) * net.c)';
+    end
 else
-    % context used for both cues
-    strength = ((net.w_cf_exp + net.w_cf_pre + net.w_cf_sem) * net.c)';
+    if param.I == 1
+        % semantic is item only
+        strength_temp = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
+        strength_sem = net.w_cf_sem(prev_rec(end),:);
+        strength = strength_temp + strength_sem;
+    elseif net.dc
+        % no semantic cuing allowed if I < 1
+        strength = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
+    elseif param.I > 0
+        % combined semantic cue (requires same number of units for
+        % item and context)
+        strength_temp = ((net.w_cf_exp + net.w_cf_pre) * net.c)';
+        net.f(:) = 0;
+        net.f(prev_rec(end)) = 1;
+        pre_exp_cue = param.I * net.f + (1 - param.I) * net.c;
+        strength_sem = (net.w_cf_sem * pre_exp_cue)';
+        strength = strength_temp + strength_sem;
+    else
+        % semantic cue is context only
+        strength = ((net.w_cf_exp + net.w_cf_pre + net.w_cf_sem) * net.c)';
+    end
 end
 
 % get strength just for items; set to minimum activation level
