@@ -45,7 +45,7 @@ if isfield(param, 'S')
     param.Scf = param.S;
 end
 
-if isfield(param, 'SL')
+if isfield(param, 'SL') && isfield(param, 'loc_vec') && ~isempty(param.loc_vec)
     if isfield(param, 'SC')
         SL = param.SL;
         SC = param.SC;
