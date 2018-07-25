@@ -96,8 +96,23 @@ for i = 1:length(f)
 end
 
 res.logl = model_logl;
-filename = sprintf('search_rep_%s.mat', timestamp);
-rep_file = get_next_file(fullfile(info.model_dir, filename));
 if save_results
+    file = sprintf('search_rep_%s.mat', timestamp);
+    rep_file = get_next_file(fullfile(info.model_dir, file));
     save(rep_file, 'res');
 end
+
+
+function out_file = get_next_file(file)
+%GET_NEXT_FILE   Add serial numbers until a new file is obtained.
+%
+%  out_file = get_next_file(file)
+
+[pathstr, name, ext] = fileparts(file);
+out_name = name;
+n = 0;
+while exist(fullfile(pathstr, [out_name ext]), 'file')
+  n = n + 1;
+  out_name = sprintf('%s%d', name, n);
+end
+out_file = fullfile(pathstr, [out_name ext]);

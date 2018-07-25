@@ -4,10 +4,11 @@ function opt = search_opt_cfrl(search_type, varargin)
 %  opt = search_opt_cfrl(search_type, ...)
 
 def.generations = 100000;
-%def.tol = 0.0001;
-def.tol = 0.01;
-def.popsize = 1000;
-def.stall_gen_limit = 100;
+def.tol = 0.0001;
+%def.tol = 0.01;
+def.popsize = 100;
+def.stall_gen_limit = 50;
+%def.stall_gen_limit = 10;
 def.init_ranges = [];
 [base, other] = propval(varargin, def);
 other = propval(other, struct, 'strict', false);

@@ -1,8 +1,12 @@
 # TCM
 A fast and flexible implementation of the Temporal Context Model/Context Maintenance and Retrieval model of free recall.
 
+This toolbox is designed to fit data from free recall studies, where partipants study a list and are then asked to recall the items in any order. The model fits not just statistics of free recall, such as the percentage of items recalled in each list, but instead uses the exact sequence of recalls made on each list to estimate different properties of each individual's memory system. The fitted model can then be used to generate new, simulated data, which can be analyzed and compared to the real data.
+
 ![example fit](https://github.com/prestonlab/tcm/blob/master/figs/fit_example.png)
 Top row: serial position curve, probability of first recall, temporal organization, and semantic organization for data from Morton et al. (2013). Bottom row: data simulated using TCM with maximum likelihood parameters estimated for each individual subject. See Morton & Polyn (2016) for model details.
+
+The main code is implemented in Matlab for ease of use, but the most computationally intensive work is implemented in compiled code written in c++. This makes evaluating a model about 8-70X faster (depending on the version of the model used) than is possible using pure Matlab code, making data fitting much faster. For example, fitting 373 recall events from free recall of 30 lists, using a model with 11 parameters, takes about 30 seconds on a fast desktop computer. See `tcm/tests/run_logl_fit.m` for details.
 
 ## Installation
 
