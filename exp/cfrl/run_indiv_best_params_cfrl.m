@@ -23,14 +23,26 @@ stats = getfield(load(info.res_file, 'stats'), 'stats');
 simdef = sim_def_cfrl(experiment, fit);
 data = getfield(load(simdef.data_file, 'data'), 'data');
 if simdef.opt.qsem
-    sem_mat = getfield(load(simdef.sem_mat_file, 'sem_mat'), 'sem_mat');
-else
-    sem_mat = [];
+    custom.sem_mat = getfield(load(simdef.sem_mat_file, 'sem_mat'), 'sem_mat');
 end
+
+% define vector components
 if simdef.opt.dc
-    sem_vec = getfield(load(simdef.sem_mat_file, 'sem_vec'), 'sem_vec');
-else
-    sem_vec = [];
+    custom.sem_vec = getfield(load(simdef.sem_mat_file, 'vectors'), 'vectors')';
+end
+n_item = length(unique(data.pres_itemnos));
+if simdef.opt.loc
+    custom.loc_vec = eye(n_item);
+end
+if simdef.opt.cat
+    [~, ind] = unique(data.pres_itemnos);
+    category = data.pres.category(ind);
+    ucat = unique(category);
+    cat_vec = zeros(length(ucat), n_item);
+    for i = 1:length(ucat)
+        cat_vec(i,category==ucat(i)) = 1;
+    end
+    custom.cat_vec = cat_vec;
 end
 
 subject = unique(data.subject);
@@ -43,8 +55,6 @@ for i = 1:n_subj
     param = stats(i).param;
     param = propval(custom, param, 'strict', false);
     param = check_param_cfrl(param);
-    param.sem_mat = sem_mat;
-    param.sem_vec = sem_vec;
     
     % prep subject data for simulation
     subj_data = trial_subset(data.subject == subject(i), ...
@@ -53,7 +63,7 @@ for i = 1:n_subj
                                             data.listLength);
     
     % run simulation
-    seq = gen_tcm(param, subj_data, [], opt.n_rep);
+    seq = gen_tcm(param, subj_data, opt.n_rep);
     
     % prepare full data structure for analysis
     subj_net_data = rmfield(subj_data, 'recalls_vec');
