@@ -33,6 +33,8 @@ table(result)
 
 This will run a set of tests on sample data and show the results. If any of the tests in test_logl failed, this may be due to a problem calling the binary version of TCM.
 
+To analyze real or simulated free recall data, get a copy of [EMBAM](https://github.com/seanpolyn/EMBAM). EMBAM is not required for running simulations or parameter fits, but is required to run some of the analysis code in `exp/cfrl`. Download or clone a copy, then cd to that directory and run init_embam to set your path to include all subdirectories.
+
 ## Getting Started
 
 To get an idea of how to run a fit of the model to some free recall data, look at `tcm/tests/run_logl_fit.m`. It will fit a relatively simple version of TCM to some sample data (or other free recall data), determine the set of parameters that maximizes the likelihood of the data, and generate simulated data based on the best-fitting parameters. These simulated data can then be analyzed in a similar way to actual data, for example to calculate a serial position curve for both the data and the model.
