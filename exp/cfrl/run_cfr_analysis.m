@@ -63,7 +63,7 @@ for i = 1:length(fits)
                   'mask', category ~= category');
 end
 
-%% test out context recording
+%% test out context decoding with added noise
 
 % run a quick fit to get some parameters
 data = getfield(load('cfr_benchmark_data.mat', 'data'), 'data');
@@ -74,8 +74,6 @@ res = indiv_search_cfrl('cfr', 'full_wikiw2v', 'n_workers', 1, ...
                         'search_type', 'de_fast', 'subject', 1);
 
 stats = plot_subj_sim_results(res);
-
-
 
 % set up decoding
 labels = data.pres.category';
@@ -197,7 +195,7 @@ for i = 1:length(res)
                                  sprintf('logl_all_%s.png', subjno)));
 end
 
-%% classification of context
+%% decoding category from EEG and context
 
 % get context recordings for each subject
 search = load('~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018-07-24.mat');
@@ -205,29 +203,7 @@ simdef = sim_def_cfrl('cfr', 'full_wikiw2v');
 
 [subj_data, subj_param, c_pres, c_rec] = indiv_context_cfrl(search.stats, simdef);
 
-con_evidence = decode_context(c_pres{1}, subj_data{1}.pres.category);
-
-%% redoing classification of power
-
-load ~/work/cfr/eeg/study_patterns/psz_abs_emc_sh_rt_t2_LTP001.mat
-eeg_evidence_inc = decode_eeg(pat);
-
-% the EEG has some trials; expand to the a matrix with all trials
-% (missing ones set to NaN)
-eeg_evidence = NaN(size(con_evidence));
-session = repmat(subj_data{1}.session, [1 24])';
-session = session(:);
-itemno = subj_data{1}.pres_itemnos';
-itemno = itemno(:);
-
-events = pat.dim.ev.mat;
-for i = 1:length(events)
-    ind = session == events(i).session & itemno == events(i).itemno;
-    eeg_evidence(ind,:) = eeg_evidence_inc(i,:);
-end
-
-%% classification for all subjects
-
+% run decoding
 load(simdef.data_file);
 subjnos = unique(data.subject);
 con_evidence = cell(1, length(subjnos));
@@ -240,8 +216,6 @@ for i = 1:length(subjnos)
     pat = getfield(load(filepath, 'pat'), 'pat');
     eeg_evidence{i} = decode_eeg(pat);
 end
-
-con_evidence = decode_context(c_pres{1}, subj_data{1}.pres.category);
 
 %% evidence by train position
 
@@ -274,6 +248,7 @@ for i = 1:n_subj
                               subj_data{i}.pres.category);
 end
 
+% category integration rate
 x = 1:3;
 stats = struct;
 ctypes = {'curr' 'prev' 'base'};
