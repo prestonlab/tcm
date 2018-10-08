@@ -15,7 +15,8 @@ create_sem_crp_bins(real.data, sem.sem_mat, files.wikiw2v.bin);
 
 % make standard plots, get some stats
 fig_dir = '~/work/cfr/figs';
-fits = {'data' 'base' 'wikiw2v_context' 'wikiw2v_item' 'wikiw2v_context_item'};
+%fits = {'data' 'base' 'wikiw2v_context' 'wikiw2v_item' 'wikiw2v_context_item'};
+fits = {'data' 'full_wikiw2v'};
 lbc_scores = NaN(29, length(fits));
 cat_types = {'within' 'from' 'to'};
 [~, ind] = unique(real.data.pres_itemnos);
@@ -35,9 +36,16 @@ for i = 1:length(fits)
     print_crp_cat(data, 1, 'cat', fullfile(res_dir, 'crp_within_cat.eps'));
     print_crp_cat(data, 2, 'cat', fullfile(res_dir, 'crp_from_cat.eps'));
     print_crp_cat(data, 3, 'cat', fullfile(res_dir, 'crp_to_cat.eps'));
+
+    % category clustering
+    rec_mask = make_clean_recalls_mask2d(data.recalls);
     s_lbc = lbc(data.pres.category, data.rec.category, data.subject, ...
-                'recall_mask', make_clean_recalls_mask2d(data.recalls));
+                'recall_mask', rec_mask);
     lbc_scores(:,i) = s_lbc;
+
+    % probability of within-category transition, conditional on the
+    % category of the previous recall
+    print_clust_cat(data, fullfile(res_dir, 'clust_cat.eps'));
     
     % semantic crp
     bin = load(files.wikiw2v.bin);
@@ -66,6 +74,8 @@ res = indiv_search_cfrl('cfr', 'full_wikiw2v', 'n_workers', 1, ...
                         'search_type', 'de_fast', 'subject', 1);
 
 stats = plot_subj_sim_results(res);
+
+
 
 % set up decoding
 labels = data.pres.category';
@@ -171,3 +181,115 @@ plot(y');
 l = legend(ttype);
 ylabel('classifier evidence');
 xlabel('train position');
+
+%% look at results from a search
+
+fig_dir = '~/work/cfr/tests';
+for i = 1:length(res)
+    param = unpack_param(res(i).parameters, ...
+                         res(i).fstruct.param_info, res(i).fstruct)
+    param = check_param_cfrl(param);
+    subj_data = res(i).fstruct.data;
+    [logl, logl_all] = logl_tcm(param, subj_data);
+    plot_logl_all(logl_all, subj_data.recalls, [5 6], [10 500]);
+    subjno = sprintf('%02d', subj_data.subject(1));
+    print(gcf, '-dpng', fullfile(fig_dir, ...
+                                 sprintf('logl_all_%s.png', subjno)));
+end
+
+%% classification of context
+
+% get context recordings for each subject
+search = load('~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018-07-24.mat');
+simdef = sim_def_cfrl('cfr', 'full_wikiw2v');
+
+[subj_data, subj_param, c_pres, c_rec] = indiv_context_cfrl(search.stats, simdef);
+
+con_evidence = decode_context(c_pres{1}, subj_data{1}.pres.category);
+
+%% redoing classification of power
+
+load ~/work/cfr/eeg/study_patterns/psz_abs_emc_sh_rt_t2_LTP001.mat
+eeg_evidence_inc = decode_eeg(pat);
+
+% the EEG has some trials; expand to the a matrix with all trials
+% (missing ones set to NaN)
+eeg_evidence = NaN(size(con_evidence));
+session = repmat(subj_data{1}.session, [1 24])';
+session = session(:);
+itemno = subj_data{1}.pres_itemnos';
+itemno = itemno(:);
+
+events = pat.dim.ev.mat;
+for i = 1:length(events)
+    ind = session == events(i).session & itemno == events(i).itemno;
+    eeg_evidence(ind,:) = eeg_evidence_inc(i,:);
+end
+
+%% classification for all subjects
+
+load(simdef.data_file);
+subjnos = unique(data.subject);
+con_evidence = cell(1, length(subjnos));
+eeg_evidence = cell(1, length(subjnos));
+for i = 1:length(subjnos)
+    subjno = subjnos(i);
+    con_evidence{i} = decode_context(c_pres{i}, subj_data{i}.pres.category);
+    filename = sprintf('psz_abs_emc_sh_rt_t2_LTP%03d.mat', subjno);
+    filepath = fullfile('~/work/cfr/eeg/study_patterns', filename);
+    pat = getfield(load(filepath, 'pat'), 'pat');
+    eeg_evidence{i} = decode_eeg(pat);
+end
+
+con_evidence = decode_context(c_pres{1}, subj_data{1}.pres.category);
+
+%% evidence by train position
+
+% get mean evidence for each trainpos, ctype, and category
+n_subj = length(subjnos);
+m_eeg = cell(1, n_subj);
+m_con = cell(1, n_subj);
+n = cell(1, n_subj);
+for i = 1:n_subj
+    eeg_evidence_exp = NaN(size(con_evidence{i}));
+    session = repmat(subj_data{i}.session, [1 24])';
+    session = session(:);
+    itemno = subj_data{i}.pres_itemnos';
+    itemno = itemno(:);
+    
+    filename = sprintf('psz_abs_emc_sh_rt_t2_LTP%03d.mat', subjnos(i));
+    filepath = fullfile('~/work/cfr/eeg/study_patterns', filename);
+    pat = getfield(load(filepath, 'pat'), 'pat');
+    events = pat.dim.ev.mat;
+    for j = 1:length(events)
+        ind = session == events(j).session & itemno == events(j).itemno;
+        if nnz(ind) == 0
+            keyboard
+        end
+        eeg_evidence_exp(ind,:) = eeg_evidence{i}(j,:);
+    end
+    
+    [m_eeg{i}, m_con{i}, n{i}] = ...
+        evidence_trainpos_cat(eeg_evidence_exp, con_evidence{i}, ...
+                              subj_data{i}.pres.category);
+end
+
+x = 1:3;
+stats = struct;
+ctypes = {'curr' 'prev' 'base'};
+eeg_b = NaN(n_subj, length(ctypes));
+con_b = NaN(n_subj, length(ctypes));
+for i = 1:3
+    for j = 1:n_subj
+        tot_n = sum(n{j}(x,i,:), 3);
+        y_eeg = mean(m_eeg{j}(x,i,:), 3);
+        y_con = mean(m_con{j}(x,i,:), 3);
+        [b, dev, stats] = glmfit(x, y_eeg, 'normal', 'weights', tot_n);
+        eeg_b(j,i) = b(2);
+        [b, dev, stats] = glmfit(x, y_con, 'normal', 'weights', tot_n);
+        con_b(j,i) = b(2);
+    end
+end
+
+eeg_int = eeg_b(:,1) - eeg_b(:,2);
+con_int = con_b(:,1) - con_b(:,2);
