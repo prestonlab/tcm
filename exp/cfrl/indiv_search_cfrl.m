@@ -58,40 +58,11 @@ fstruct = simdef.fixed;
 fstruct.data = getfield(load(simdef.data_file), 'data');
 fstruct.load_data = false;
 fstruct.param_info = simdef.param_info;
-% semantic cuing
-if simdef.opt.qsem
-    fstruct.sem_mat = getfield(load(simdef.sem_mat_file, ...
-                                    'sem_mat'), 'sem_mat');
-else
-    fstruct.sem_mat = [];
-end
-% semantic context
-if simdef.opt.dc
-    fstruct.sem_vec = getfield(load(simdef.sem_mat_file, ...
-                                    'vectors'), 'vectors')';
-else
-    fstruct.sem_vec = [];
-end
-% item localist
-n_item = length(unique(fstruct.data.pres_itemnos));
-if simdef.opt.loc
-    fstruct.loc_vec = eye(n_item);
-else
-    fstruct.loc_vec = [];
-end
-% category localist
-if simdef.opt.cat
-    [~, ind] = unique(fstruct.data.pres_itemnos);
-    category = fstruct.data.pres.category(ind);
-    ucat = unique(category);
-    cat_vec = zeros(length(ucat), n_item);
-    for i = 1:length(ucat)
-        cat_vec(i,category==ucat(i)) = 1;
-    end
-    fstruct.cat_vec = cat_vec;
-else
-    fstruct.cat_vec = [];
-end
+
+% load data, such as semantic vectors, that are used in the model
+fstruct = prep_param_cfrl(fstruct, simdef);
+
+% run functions
 fstruct.f_logl = run_opt.f_logl;
 fstruct.f_check_param = run_opt.f_check_param;
 
@@ -168,14 +139,6 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
                                             fstruct.data.listLength);
     subj_data_orig = subj_data;
-
-    % % trim the semantic matrix to just hold the relevant items;
-    % % change item number accordingly. This speeds up execution
-    % if ~isempty(fstruct.sem_mat) || ~isempty(fstruct.sem_vec)
-    %     [subj_data.pres_itemnos, fstruct.sem_mat, fstruct.sem_vec] = ...
-    %         trim_sem_mat(subj_data.pres_itemnos, fstruct.sem_mat, ...
-    %                      fstruct.sem_vec);
-    % end
 
     % prep the eval function
     fstruct.data = subj_data;
