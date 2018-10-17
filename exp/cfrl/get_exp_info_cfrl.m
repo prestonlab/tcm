@@ -16,6 +16,12 @@ switch experiment
     files.data_dir = fullfile(proj_dir, 'data');
     files.data = fullfile(files.data_dir, 'cfr_eeg_mixed_data_clean.mat');
     files.data_raw = fullfile(files.data_dir, 'cfr_eeg_mixed_data.mat');
+  case 'cdcfr2'
+    files.res_dir = '~/work/cdcfr2';
+    files.model_dir = '~/work/cdcfr2/tcm';
+    files.data_dir = fullfile(proj_dir, 'data');
+    files.data = fullfile(files.data_dir, 'cdcfr2_data_clean.mat');
+    files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
   otherwise
     error('Unknown experiment: %s.', experiment)
 end
