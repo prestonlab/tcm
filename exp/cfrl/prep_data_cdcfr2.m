@@ -1,7 +1,7 @@
 function prep_data_cdcfr2()
 
-data_file = '~/work/cdcatfr2/stat_data_cdcatfr2.mat';
-wiki_w2v_file = '~/work/cdcatfr2/models/mat_wiki_w2v.mat';
+data_file = '~/work/cdcfr2/stat_data_cdcatfr2.mat';
+wiki_w2v_file = '~/work/cdcfr2/models/mat_wiki_w2v.mat';
 
 proj_dir = fileparts(mfilename('fullpath'));
 data_dir = fullfile(proj_dir, 'data');
