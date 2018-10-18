@@ -1,4 +1,4 @@
-function param = prep_param_cfrl(param, simdef, data)
+function param = prep_param_cfrl(param, simdef, category)
 %PREP_PARAM_CFRL   Prepare parameters for a search or simulation.
 %
 %  This function sets special parameters that contain data, such as
@@ -6,7 +6,7 @@ function param = prep_param_cfrl(param, simdef, data)
 %  these data are actually used in the simulation; for example,
 %  param.SC sets the weighting of localist category units.
 %
-%  param = prep_param_cfrl(param, simdef, data)
+%  param = prep_param_cfrl(param, simdef, category)
 
 % semantic cuing
 if simdef.opt.qsem
@@ -29,7 +29,7 @@ if simdef.opt.loc
     if ~exist('data', 'var')
         load(simdef.data_file)
     end
-    n_item = length(unique(data.pres_itemnos));
+    n_item = length(category);
     param.loc_vec = eye(n_item);
 else
     param.loc_vec = [];
@@ -40,8 +40,6 @@ if simdef.opt.cat
     if ~exist('data', 'var')
         load(simdef.data_file)
     end
-    [~, ind] = unique(data.pres_itemnos);
-    category = data.pres.category(ind);
     ucat = unique(category);
     cat_vec = zeros(length(ucat), n_item);
     for i = 1:length(ucat)
