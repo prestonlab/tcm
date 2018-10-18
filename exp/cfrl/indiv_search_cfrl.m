@@ -30,9 +30,13 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %
 %  n_workers - int - 1
 %      Number of parallel workers to use when optimizing parameters
-%      for diferrent subjects.
+%      for different subjects.
 
-def.f_logl = @logl_mex_tcm;
+if strcmp(experiment, 'cdcfr2')
+    def.f_logl = @logl_cdcfr2;
+else
+    def.f_logl = @logl_mex_tcm;
+end
 def.f_check_param = @check_param_cfrl;
 def.n_search = 1;
 def.n_workers = 1;
@@ -136,10 +140,26 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     % prepare the data for the subject
     subj_data = trial_subset(fstruct.data.subject == subject(ind), ...
                              rmfieldifexist(fstruct.data, 'recalls_vec'));
-    subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
-                                            fstruct.data.listLength);
     subj_data_orig = subj_data;
-
+    
+    % split by distraction
+    if isfield(subj_data.pres, 'distractor')
+        udistract = unique(subj_data.pres.distractor(:,1));
+        distract = cell(1, length(udistract));
+        for i = 1:length(udistract)
+            d = trial_subset(subj_data.pres.distractor(:,1)==udistract(i), ...
+                             subj_data);
+            d.recalls_vec = recalls_vec_tcm(d.recalls, ...
+                                            fstruct.data.listLength);
+            d.distract_len = udistract(i);
+            distract{i} = d;
+        end
+        subj_data.distract = distract;
+    else
+        subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
+                                                fstruct.data.listLength);
+    end
+    
     % prep the eval function
     fstruct.data = subj_data;
     f = @(x) eval_param_tcm(x, fstruct);
