@@ -27,6 +27,9 @@ rec_cat(isnan(data.rec.category)) = NaN;
 data.pres.category = pres_cat;
 data.rec.category = rec_cat;
 
+% change distractor field from ms to s
+data.pres.distractor = data.pres.distractor / 1000;
+
 % remove fields that aren't needed for simulations
 data = rmfield(data, {'subjid' 'times' 'intrusions'});
 f = {'period' 'type' 'eegfile' 'eegoffset' 'artifactMS' 'serialpos' ...
@@ -41,6 +44,12 @@ data_full = data;
 % clean the recall matrices (remove repeats and intrusions)
 data = clean_frdata(data);
 save(fullfile(data_dir, 'cdcfr2_data_clean.mat'), 'data')
+
+% category
+[itemno, ind] = unique(data.pres_itemnos);
+category = data.pres.category(ind);
+item = data.pres_items(ind);
+save(fullfile(data_dir, 'cdcfr2_pool.mat'), 'item', 'itemno', 'category');
 
 % semantics
 load(wiki_w2v_file)

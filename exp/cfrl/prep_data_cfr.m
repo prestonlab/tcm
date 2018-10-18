@@ -65,6 +65,12 @@ data_eeg_mixed = data;
 data = clean_frdata(data);
 save(fullfile(data_dir, 'cfr_eeg_mixed_data_clean.mat'), 'data')
 
+% category
+[itemno, ind] = unique(data.pres_itemnos);
+category = data.pres.category(ind);
+item = data.pres_items(ind);
+save(fullfile(data_dir, 'cfr_pool.mat'), 'item', 'itemno', 'category');
+
 % semantics
 load(wiki_w2v_file)
 sem_file = fullfile(data_dir, 'cfr_wikiw2v_raw.mat');
