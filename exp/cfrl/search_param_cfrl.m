@@ -95,6 +95,23 @@ if namecheck('_cat', model_type)
     init.SC = [0 1];
 end
 
+if strcmp(experiment, 'cdcfr2')
+    par.B_ipi1 = [0 1];
+    par.B_ipi2 = [0 1];
+    init.B_ipi1 = [0 1];
+    init.B_ipi2 = [0 1];
+    
+    par.B_ri1 = [0 1];
+    par.B_ri2 = [0 1];
+    init.B_ri1 = [0 1];
+    init.B_ri2 = [0 1];
+    
+    par.X21 = [0 1];
+    par.X22 = [0 1];
+    init.X21 = [0 1];
+    init.X22 = [0 1];
+end
+
 names = fieldnames(par);
 ranges = struct2cell(par);
 init = struct2cell(init);
