@@ -33,7 +33,7 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %      for different subjects.
 
 if ismember(experiment, {'cdcfr2' 'cdcfr2-1'})
-    def.f_logl = @logl_cdcfr2;
+    def.f_logl = @logl_mex_cdcfr2;
 else
     def.f_logl = @logl_mex_tcm;
 end
@@ -145,17 +145,7 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     
     % split by distraction
     if isfield(subj_data.pres, 'distractor')
-        udistract = unique(subj_data.pres.distractor(:,1));
-        distract = cell(1, length(udistract));
-        for i = 1:length(udistract)
-            d = trial_subset(subj_data.pres.distractor(:,1)==udistract(i), ...
-                             subj_data);
-            d.recalls_vec = recalls_vec_tcm(d.recalls, ...
-                                            fstruct.data.listLength);
-            d.distract_len = udistract(i);
-            distract{i} = d;
-        end
-        subj_data.distract = distract;
+        subj_data.distract = split_distract_cfrl(data);
     else
         subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
                                                 fstruct.data.listLength);
