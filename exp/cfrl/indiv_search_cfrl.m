@@ -145,7 +145,7 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     
     % split by distraction
     if isfield(subj_data.pres, 'distractor')
-        subj_data.distract = split_distract_cfrl(data);
+        subj_data.distract = split_distract_cfrl(subj_data);
     else
         subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
                                                 fstruct.data.listLength);
