@@ -34,7 +34,6 @@ for i = 1:n_subj
     % get full parameters, apply any customizations
     param = stats(i).param;
     param = propval(custom, param, 'strict', false);
-    param = check_param_cfrl(param);
     
     % prep subject data for simulation
     subj_data = trial_subset(data.subject == subject(i), ...
@@ -46,7 +45,7 @@ for i = 1:n_subj
     else
         seq = gen_tcm(param, subj_data, opt.n_rep);
     end
-    
+
     % prepare full data structure for analysis
     subj_net_data = subj_data;
     if opt.n_rep > 1
