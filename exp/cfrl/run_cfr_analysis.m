@@ -1,7 +1,7 @@
 
 %% load basic data
 
-files = get_exp_info_cfrl('cfr');
+files = get_exp_info_cfrl('cdcfr2');
 real = load(files.data);
 sem = load(files.wikiw2v.raw);
 
