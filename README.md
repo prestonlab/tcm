@@ -8,6 +8,19 @@ Top row: serial position curve, probability of first recall, temporal organizati
 
 The main code is implemented in Matlab for ease of use, but the most computationally intensive work is implemented in compiled code written in c++. This makes evaluating a model about 8-70X faster (depending on the version of the model used) than is possible using pure Matlab code, making data fitting much faster. For example, fitting 373 recall events from free recall of 30 lists, using a model with 11 parameters, takes about 30 seconds on a fast desktop computer. See `tcm/tests/run_logl_fit.m` for details.
 
+## Features
+
+The current implementation includes the following features for simulating recall data:
+* free parameters that control how context evolves during learning and recall
+* two different mechanisms for fitting the primacy effect (enhanced learning and start-of-list context reinstatement)
+* a number of mechanisms for simulating the effects of semantic similarity between items on a list, including incorporation of semantic features into context
+* mechanisms for simulating distraction during a list and between the end of a list and recall
+
+The following features are part of the CMR framework, but are not currently implemented here:
+* support for different subregions of context that evolve at different rates
+* support for context disruption at specific boundaries between items
+* support for simulating multiple lists at a time (currently, all individual lists are simulated independently, with the model state reset between lists)
+
 ## Installation
 
 Download or clone the code project to some local `project_directory`. If cloning, you may need to first install [git-lfs](https://git-lfs.github.com) to get the sample data files, which are used to run tests of the code. In Matlab:
