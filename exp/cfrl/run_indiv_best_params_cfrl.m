@@ -39,14 +39,16 @@ for i = 1:n_subj
     % prep subject data for simulation
     subj_data = trial_subset(data.subject == subject(i), ...
                              rmfieldifexist(data, 'recalls_vec'));
-    subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
-                                            data.listLength);
     
     % run simulation
-    seq = gen_tcm(param, subj_data, opt.n_rep);
+    if isfield(subj_data.pres, 'distractor')
+        seq = gen_cdcfr2(param, subj_data, opt.n_rep);
+    else
+        seq = gen_tcm(param, subj_data, opt.n_rep);
+    end
     
     % prepare full data structure for analysis
-    subj_net_data = rmfield(subj_data, 'recalls_vec');
+    subj_net_data = subj_data;
     if opt.n_rep > 1
         subj_net_data = repmat_struct(subj_net_data, opt.n_rep);
     end
@@ -85,8 +87,8 @@ function data = update_derived_fields(data)
                                                 data.recalls, 0, NaN);
     end
     if isfield(data, 'rec_items') && isfield(data, 'pres_items')
-        data.rec_items = study_mat2recall_mat(data.pres_items, data.recalls, ...
-                                              {}, {});
+        data.rec_items = study_mat2recall_mat(data.pres_items, ...
+                                              data.recalls, {}, {});
     end
     if isfield(data, 'rec') && isfield(data, 'pres')
         if isfield(data.rec, 'category') && isfield(data.pres, 'category')
