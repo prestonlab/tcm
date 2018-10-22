@@ -55,6 +55,10 @@ for i = 1:n_rep
     end
 end
 
+% remove padding
+cols = ~all(seq==0, 1);
+seq = seq(:,cols);
+
 
 function seq = run_trial(param, pres_itemnos)
     
