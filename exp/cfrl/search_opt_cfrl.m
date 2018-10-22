@@ -29,8 +29,8 @@ switch search_type
     def.step_weight = 0.85;
     def.crossover = 0.9;
     def.plot_func = [];
-    def.popsize = 50;
-    def.tol = 0.01;
+    def.popsize = 100;
+    def.tol = 0.1;
     def.stall_gen_limit = 10;
     opt = propval(other, def, 'strict', false);
   otherwise
