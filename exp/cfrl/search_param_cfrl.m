@@ -95,7 +95,7 @@ if namecheck('_cat', model_type)
     init.SC = [0 1];
 end
 
-if strcmp(experiment, 'cdcfr2')
+if namecheck('cdcfr2', experiment)
     par.B_ipi1 = [0 1];
     par.B_ipi2 = [0 1];
     init.B_ipi1 = [0 1];

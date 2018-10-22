@@ -9,6 +9,7 @@ end
 
 proj_dir = fileparts(mfilename('fullpath'));
 
+sem_exp = experiment;
 switch experiment
   case 'cfr'
     files.res_dir = '~/work/cfr';
@@ -24,6 +25,14 @@ switch experiment
     files.data = fullfile(files.data_dir, 'cdcfr2_data_clean.mat');
     files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
     files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
+  case 'cdcfr2-1'
+    files.res_dir = '~/work/cdcfr2';
+    files.model_dir = '~/work/cdcfr2/tcm';
+    files.data_dir = fullfile(proj_dir, 'data');
+    files.data = fullfile(files.data_dir, 'cdcfr2_data_clean_s1.mat');
+    files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
+    files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
+    sem_exp = 'cdcfr2';
   otherwise
     error('Unknown experiment: %s.', experiment)
 end
@@ -36,11 +45,11 @@ for i = 1:length(sem_models)
     f_bin = [sem_models{i} '_bin'];
     s.name = names{i};
     s.mat = fullfile(files.data_dir, ...
-                     sprintf('%s_%s.mat', experiment, sem_models{i}));
+                     sprintf('%s_%s.mat', sem_exp, sem_models{i}));
     s.raw = fullfile(files.data_dir, ...
-                     sprintf('%s_%s_raw.mat', experiment, sem_models{i}));
+                     sprintf('%s_%s_raw.mat', sem_exp, sem_models{i}));
     s.bin = fullfile(files.data_dir, ...
-                     sprintf('%s_%s_bin.mat', experiment, sem_models{i}));
+                     sprintf('%s_%s_bin.mat', sem_exp, sem_models{i}));
     files.(sem_models{i}) = s;
 end
 
