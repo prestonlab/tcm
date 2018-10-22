@@ -4,11 +4,14 @@ function param = param_cdcfr2(param, distract_len)
 %  param = param_cdcfr2(param, distract_len)
 
 if distract_len == 2.5
-    param.B_ipi = param.B_ipi1;
-    param.B_ri = param.B_ri1;
-    param.X2 = param.X21;
+    dname = 'd1';
 elseif distract_len == 7.5
-    param.B_ipi = param.B_ipi2;
-    param.B_ri = param.B_ri2;
-    param.X2 = param.X22;
+    dname = 'd2';
+else
+    return
+end
+
+for i = 1:length(param.distract_params)
+    f = param.distract_params{i};
+    param.(f) = param.([f '_' dname]);
 end
