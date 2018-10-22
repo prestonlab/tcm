@@ -96,20 +96,15 @@ if namecheck('_cat', model_type)
 end
 
 if namecheck('cdcfr2', experiment)
-    par.B_ipi1 = [0 1];
-    par.B_ipi2 = [0 1];
-    init.B_ipi1 = [0 1];
-    init.B_ipi2 = [0 1];
-    
-    par.B_ri1 = [0 1];
-    par.B_ri2 = [0 1];
-    init.B_ri1 = [0 1];
-    init.B_ri2 = [0 1];
-    
-    par.X21 = [0 1];
-    par.X22 = [0 1];
-    init.X21 = [0 1];
-    init.X22 = [0 1];
+    fixed.distract_params = {};
+    for i = 1:length(fixed.distract_params)
+        param_name = fixed.distract_params{i};
+        for j = 1:2
+            f = sprintf('%s_d%d', param_name, j);
+            par.(f) = [0 1];
+            init.(f) = [0 1];
+        end
+    end
 end
 
 names = fieldnames(par);
