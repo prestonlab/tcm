@@ -64,7 +64,8 @@ fstruct.load_data = false;
 fstruct.param_info = simdef.param_info;
 
 % load data, such as semantic vectors, that are used in the model
-fstruct = prep_param_cfrl(fstruct, simdef);
+stimpool = load(simdef.pool_file);
+fstruct = prep_param_cfrl(fstruct, simdef, stimpool.category);
 
 % run functions
 fstruct.f_logl = run_opt.f_logl;
