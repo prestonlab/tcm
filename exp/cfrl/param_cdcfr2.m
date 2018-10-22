@@ -12,13 +12,3 @@ elseif distract_len == 7.5
     param.B_ri = param.B_ri2;
     param.X2 = param.X22;
 end
-
-if param.B_ipi > 1
-    param.B_ipi = 1;
-end
-if param.B_ri > 1
-    param.B_ri = 1;
-end
-if param.X2 > 1
-    param.X2 = 1;
-end
