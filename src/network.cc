@@ -229,7 +229,7 @@ void Network::cueItem () {
     for (unsigned int j = 0; j < n_c; ++j) {
       a[i] += context[j] * (wcf_exp.connect[i][j] + wcf_pre.connect[i][j]);
     }
-    a[i] = pow(max(a[i], param.amin), param.T);
+    a[i] = exp((2*max(a[i], param.amin))/param.T);
   }
 }
 
@@ -249,7 +249,7 @@ void Network::cueItemSem () {
     }
 
     // transformed activation
-    a[i] = pow(max(a[i], param.amin), param.T);
+    a[i] = exp((2*max(a[i], param.amin))/param.T);
   }
 }
 
@@ -283,7 +283,7 @@ void Network::cueItemSemSplit (double I) {
     }
     
     // transformed activation
-    a[i] = pow(max(a[i], param.amin), param.T);
+    a[i] = exp((2*max(a[i], param.amin))/param.T);
   }
 }
 
