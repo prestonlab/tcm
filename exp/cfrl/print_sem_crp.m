@@ -16,9 +16,11 @@ bin_crp = dist_item_crp(act, poss, sem_mat, 'edges', edges, ...
 
 mat = bin_crp(:,1:end-1);
 n = sum(~isnan(mat), 1);
-mat(:,n < 10) = NaN;
+if size(mat, 1) > 1
+    mat(:,n < 10) = NaN;
+end
 x = centers;
-y = nanmean(mat);
+y = nanmean(mat, 1);
 [l, u] = bootstrap_ci(mat, 1, 5000, .05);
 
 clf
