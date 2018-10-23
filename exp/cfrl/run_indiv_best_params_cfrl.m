@@ -34,6 +34,7 @@ for i = 1:n_subj
     % get full parameters, apply any customizations
     param = stats(i).param;
     param = propval(custom, param, 'strict', false);
+    param = check_param_cfrl(param);
     
     % prep subject data for simulation
     subj_data = trial_subset(data.subject == subject(i), ...
@@ -64,6 +65,7 @@ fprintf('\n');
 % save results
 data = net_data;
 data.listLength = data.listLength(1);
+fprintf('Saving statistics in: %s\n', info.stat_file);
 save(info.stat_file, 'data', 'custom', 'simdef');
 
 
