@@ -27,4 +27,4 @@ for i = 1:n_rep
 end
 
 rep = load_rep_de_cfrl(jobs, true);
-job = submit_indiv_best_params_cfrl(experiments, fits, '-t 02:00:00 --mem=4gb');
+job = submit_indiv_best_params_cfrl(experiments, fits, '-t 04:00:00 --mem=4gb');
