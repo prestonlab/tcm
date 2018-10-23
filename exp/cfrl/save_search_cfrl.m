@@ -15,4 +15,4 @@ res_file = get_next_file(fullfile(info.res_dir, filename));
 
 % unpack search results into full format
 stats = unpack_search_cfrl(res, experiment, fit);
-save(res_file, 'stats');
+save(res_file, 'stats', 'res');
