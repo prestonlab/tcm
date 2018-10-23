@@ -32,7 +32,7 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %      Number of parallel workers to use when optimizing parameters
 %      for different subjects.
 
-if ismember(experiment, {'cdcfr2' 'cdcfr2-1'})
+if contains(experiment, 'cdcfr2')
     def.f_logl = @logl_mex_cdcfr2;
 else
     def.f_logl = @logl_mex_tcm;
