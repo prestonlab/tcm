@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
 #include <math.h>
-#include <cassert>
 #include <string>
 #include <sstream>
 #include <stdexcept>
@@ -89,16 +88,16 @@ void Recall::extractLists () {
   }
 }
 
-void Recall::checkRecallCodes () {
-  for (unsigned int i = 0; i < r.size(); ++i) {
-    if (r[i] < 1 || r[i] > (list_length + 1)) {
-      ostringstream ss;
-      ss << r[i];
-      string msg = "Bad recall code: " + ss.str();
-      throw runtime_error(msg);
-    }
-  }
-}
+// void Recall::checkRecallCodes () {
+//   for (unsigned int i = 0; i < r.size(); ++i) {
+//     if (r[i] < 1 || r[i] > (list_length + 1)) {
+//       ostringstream ss;
+//       ss << r[i];
+//       string msg = "Bad recall code: " + ss.str();
+//       throw runtime_error(msg);
+//     }
+//   }
+// }
 
 void Recall::presentList () {
   double prim;

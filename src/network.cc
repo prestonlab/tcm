@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include <cmath>
-#include <algorithm>
+#include <math.h>
 
 #include "network.h"
 
@@ -317,7 +316,7 @@ void Network::pstop (double output_pos) {
 
       p[p.size()-1] = param.X1 + exp(-param.X2 * (tot_not_rec / tot_rec));
     } else {
-      throw runtime_error("Unknown stop rule code.");
+      //throw runtime_error("Unknown stop rule code.");
     }
 
     // keep probabilities from hitting floor or ceiling, to prevent

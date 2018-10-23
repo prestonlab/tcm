@@ -36,10 +36,9 @@ Parameters ParamArray::getParam (unsigned int index) {
   return params[index];
 }
 
-void ParamArray::print () {
-  for (size_t i = 0; i < params.size(); ++i) {
-    cout << i << ":" << endl;
-    params[i].print();
-  }
-}
-
+// void ParamArray::print () {
+//   for (size_t i = 0; i < params.size(); ++i) {
+//     cout << i << ":" << endl;
+//     params[i].print();
+//   }
+// }

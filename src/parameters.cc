@@ -62,38 +62,38 @@ Parameters::Parameters (vector<double> &param_vec) {
   pmin = PMIN;
 }
 
-string Parameters::toString (string name, double val) const {
-  ostringstream ss;
-  string s;
-  ss << fixed << setprecision(4) << val;
-  s = name + " = " + ss.str() + "\n";
-  return s;
-}
+// string Parameters::toString (string name, double val) const {
+//   ostringstream ss;
+//   string s;
+//   ss << fixed << setprecision(4) << val;
+//   s = name + " = " + ss.str() + "\n";
+//   return s;
+// }
 
-void Parameters::print () const {
-  string s = "";
-  s += toString("Benc", Benc);
-  s += toString("Brec", Brec);
-  s += toString("Afc", Afc);
-  s += toString("Dfc", Dfc);
-  s += toString("Sfc", Sfc);
-  s += toString("Lfc", Lfc);
-  s += toString("Acf", Acf);
-  s += toString("Dcf", Dcf);
-  s += toString("Scf", Scf);
-  s += toString("Lcf", Lcf);
-  s += toString("P1", P1);
-  s += toString("P2", P2);
-  s += toString("T", T);
-  s += toString("X1", X1);
-  s += toString("X2", X2);
-  s += toString("stop", stop);
-  s += toString("Bstart", Bstart);
-  s += toString("Bri", Bri);
-  s += toString("I", I);
-  s += toString("Init item", init_item);
-  s += toString("amin", amin);
-  s += toString("pmin", pmin);
+// void Parameters::print () const {
+//   string s = "";
+//   s += toString("Benc", Benc);
+//   s += toString("Brec", Brec);
+//   s += toString("Afc", Afc);
+//   s += toString("Dfc", Dfc);
+//   s += toString("Sfc", Sfc);
+//   s += toString("Lfc", Lfc);
+//   s += toString("Acf", Acf);
+//   s += toString("Dcf", Dcf);
+//   s += toString("Scf", Scf);
+//   s += toString("Lcf", Lcf);
+//   s += toString("P1", P1);
+//   s += toString("P2", P2);
+//   s += toString("T", T);
+//   s += toString("X1", X1);
+//   s += toString("X2", X2);
+//   s += toString("stop", stop);
+//   s += toString("Bstart", Bstart);
+//   s += toString("Bri", Bri);
+//   s += toString("I", I);
+//   s += toString("Init item", init_item);
+//   s += toString("amin", amin);
+//   s += toString("pmin", pmin);
 
-  cout << s;
-}
+//   cout << s;
+// }
