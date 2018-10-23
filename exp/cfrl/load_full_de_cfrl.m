@@ -11,7 +11,7 @@ if ischar(fits)
 end
 
 try
-    out = fetchOutputsRobust(job);
+    out = fetchOutputs(job);
 catch
     fprintf('There was a problem loading job %d\n', job.ID);
     res = [];
