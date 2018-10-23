@@ -95,6 +95,23 @@ if namecheck('_cat', model_type)
     init.SC = [0 1];
 end
 
+if namecheck('cdcfr2', experiment)
+    fixed.distract_params = {'P1' 'B_ipi' 'B_ri' 'X2'};
+    for i = 1:length(fixed.distract_params)
+        param_name = fixed.distract_params{i};
+        for j = 1:2
+            f = sprintf('%s_d%d', param_name, j);
+            if isfield(par, param_name)
+                par.(f) = par.(param_name);
+                init.(f) = init.(param_name);
+            else
+                par.(f) = [0 1];
+                init.(f) = [0 1];
+            end
+        end
+    end
+end
+
 names = fieldnames(par);
 ranges = struct2cell(par);
 init = struct2cell(init);

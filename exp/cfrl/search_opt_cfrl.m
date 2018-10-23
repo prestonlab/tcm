@@ -6,7 +6,7 @@ function opt = search_opt_cfrl(search_type, varargin)
 def.generations = 100000;
 def.tol = 0.0001;
 %def.tol = 0.01;
-def.popsize = 100;
+def.popsize = 200;
 def.stall_gen_limit = 50;
 %def.stall_gen_limit = 10;
 def.init_ranges = [];
@@ -30,6 +30,7 @@ switch search_type
     def.crossover = 0.9;
     def.plot_func = [];
     def.popsize = 100;
+    def.tol = 0.1;
     def.stall_gen_limit = 10;
     opt = propval(other, def, 'strict', false);
   otherwise

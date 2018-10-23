@@ -28,9 +28,9 @@ end
 
 % translate the G parameter (a ratio) to Dfc (a value for
 % pre-experimental context relative to a fixed learning rate of 1)
-if isfield(param, 'G') && ~isempty(param.G) && param.G ~= 1
+if isfield(param, 'G') && ~isempty(param.G) && ~isnan(param.G)
     param.Dfc = (1 - param.G) / param.G;
-    param.G = 1;
+    param.G = NaN;
 end
 
 if isfield(param, 'D')

@@ -32,6 +32,8 @@ switch fit
     model_type = 'tcm_dc_loc_wikiw2v';
   case 'full_wikiw2v'
     model_type = 'tcm_dc_loc_cat_wikiw2v';
+  case 'cat'
+    model_type = 'tcm_loc_cat';
   otherwise
     error('Unknown fit type: %s', fit);
 end

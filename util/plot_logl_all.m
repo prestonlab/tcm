@@ -40,9 +40,13 @@ end
 l_min = min(logl_actual(:));
 l_range = range(logl_actual(:));
 
+defined = ~isnan(logl_all) & ~isinf(logl_all);
+la_min = min(logl_all(defined));
+la_max = max(logl_all(defined));
+
 for i = 1:size(logl_all, 1);
     subplot(grid(1), grid(2), i);
-    imagesc(squeeze(logl_all(i,:,:)));
+    imagesc(squeeze(logl_all(i,:,:)), [la_min la_max]);
     hold on
     rec = [nonzeros(recalls(i,:))' size(logl_all, 3)];
     rec = recall_events{i};

@@ -71,7 +71,7 @@ if isfield(param, 'ST') && param.ST ~= 0
     s = sum(strength(remaining));
     param.T = param.T * (s^param.ST);
 end
-strength = strength .^ param.T;
+strength = exp((2 * strength) ./ param.T);
 
 % if strength is zero for everything, set equal support for everything
 if sum(strength) == 0

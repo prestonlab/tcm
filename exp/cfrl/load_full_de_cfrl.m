@@ -33,38 +33,7 @@ for i = 1:length(out)
         continue
     end
     
-    stats = [];
-    for j = 1:length(out{i})
-        % results for this subject and model
-        sout = out{i}(j);
-        parameters = sout.parameters;
-        fitness = sout.fitness;
-        
-        % best-fitting parameters
-        [fval, ind] = min(fitness);
-        param_vec = parameters(ind,:);
-        param = unpack_param(param_vec, sout.fstruct.param_info);
-        [~, fixed] = search_param_cfrl(sout.fstruct.model_type, experiments{i});
-        param = propval(fixed, param, 'strict', false);
-        param.data = sout.fstruct.data;
-        param = check_param_cfrl(param);
-        
-        % save search information in standard format
-        s = struct;
-        s.model_type = sout.fstruct.model_type;
-        s.param = param;
-        s.fval = fval;
-        s.parameters = parameters;
-        s.fitness = fitness;
-        s.names = {sout.fstruct.param_info.name};
-        s.param_info = sout.fstruct.param_info;
-        s.fixed = fixed;
-        s.search_opt = sout.search_opt;
-        s.run_opt = sout.run_opt;
-        s.rseed = sout.rseed;
-        
-        stats = cat_structs(stats, s);
-    end
+    stats = unpack_search_cfrl(out{i}, experiments{i});
     
     res.(f).fitness = cat(1, stats.fitness);
     res.(f).parameters = cat(1, stats.parameters);

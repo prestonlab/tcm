@@ -19,6 +19,7 @@ simdef.fixed = fixed;
 simdef.param_info = param_info;
 simdef.param_name = {param_info.name};
 simdef.data_file = files.data;
+simdef.pool_file = files.pool;
 if isempty(opt.sem_model)
     simdef.sem_mat_file = '';
 else
