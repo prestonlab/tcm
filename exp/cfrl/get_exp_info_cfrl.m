@@ -33,6 +33,14 @@ switch experiment
     files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
     files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
     sem_exp = 'cdcfr2';
+  case 'cdcfr2-2'
+    files.res_dir = '~/work/cdcfr2-2';
+    files.model_dir = '~/work/cdcfr2-2/tcm';
+    files.data_dir = fullfile(proj_dir, 'data');
+    files.data = fullfile(files.data_dir, 'cdcfr2_data_clean_s2.mat');
+    files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
+    files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
+    sem_exp = 'cdcfr2';
   otherwise
     error('Unknown experiment: %s.', experiment)
 end
