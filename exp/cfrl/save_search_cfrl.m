@@ -5,7 +5,7 @@ function [res_file, stats] = save_search_cfrl(res, experiment, fit)
 
 % get search output file
 model_type = res(1).fstruct.model_type;
-timestamp = datestr(now, 29);
+timestamp = datestr(now, 30);
 filename = sprintf('%s_%s.mat', model_type, timestamp);
 info = get_fit_info_cfrl(fit, experiment);
 if ~exist(info.res_dir, 'dir')
