@@ -117,6 +117,7 @@ for i = 1:n_subj
     all_res = cat_structs(all_res, res_cell{i});
 end
 res = all_res;
+fprintf('Total log likelihood: %.0f\n', -sum(cat(1, res.fitness)));
 
 if exist('pool', 'var')
     try
