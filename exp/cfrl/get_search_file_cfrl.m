@@ -14,18 +14,22 @@ if isempty(files)
 end
 
 % find mat files with a date at the end
-pattern = [model_type '_\d{4}-\d{2}-\d{2}\d?\.mat'];
+%pattern = [model_type '_\d{4}-\d{2}-\d{2}\d?\.mat'];
+pattern = [model_type '_\d{8}T\d{6}\.mat'];
 f = @(x) ~isempty(regexp(x, pattern));
 match = cellfun(f, {files.name}) & ~[files.isdir];
 
 % extract the date strings
 search_files = {files(match).name};
-search_dates = cellfun(@(x) regexp(x, '\d{4}-\d{2}-\d{2}', 'match'), ...
+%search_dates = cellfun(@(x) regexp(x, '\d{4}-\d{2}-\d{2}', 'match'), ...
+%                       search_files);
+search_dates = cellfun(@(x) regexp(x, '\d{8}T\d{6}', 'match'), ...
                        search_files);
 %fprintf('Found %d search files.\n', length(search_files));
 
 % convert to date number and sort
-datenums = datenum(search_dates, 'yyyy-mm-dd');
+%datenums = datenum(search_dates, 'yyyy-mm-dd');
+datenums = datenum(search_dates, 'yyyymmddTHHMMSS');
 latest_num = max(datenums);
 
 % files on most recent date
