@@ -28,3 +28,19 @@ end
 
 rep = load_rep_de_cfrl(jobs, true);
 job = submit_indiv_best_params_cfrl(experiments, fits, '-t 04:00:00 --mem=4gb');
+
+%% cdcfr2 fits
+
+experiments = {'cdcfr2'};
+fits = {'base' 'cat' 'full_wikiw2v'};
+flags = '-t 24:00:00 --mem=12gb --cpus-per-task=12';
+n_rep = 4;
+%jobs = cell(1, n_rep);
+for i = 1:n_rep
+    jobs{end+1} = submit_searches_cfrl(experiments, fits, flags, ...
+                                       'n_workers', 10, ...
+                                       'search_type', 'de_fast');
+end
+rep = load_rep_de_cfrl(jobs, true);
+
+job = submit_indiv_best_params_cfrl(experiments, fits, '-t 01:00:00 --mem=4gb');
