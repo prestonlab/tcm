@@ -33,7 +33,7 @@ for i = 1:length(out)
         continue
     end
     
-    stats = unpack_search_cfrl(out{i}, experiments{i});
+    stats = unpack_search_cfrl(out{i}, experiments{i}, fits{i});
     
     res.(f).fitness = cat(1, stats.fitness);
     res.(f).parameters = cat(1, stats.parameters);
