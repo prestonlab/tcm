@@ -208,7 +208,7 @@ load(simdef.data_file);
 subjnos = unique(data.subject);
 con_evidence = cell(1, length(subjnos));
 eeg_evidence = cell(1, length(subjnos));
-for i = 1:length(subjnos)
+parfor i = 1:length(subjnos)
     subjno = subjnos(i);
     con_evidence{i} = decode_context(c_pres{i}, subj_data{i}.pres.category);
     filename = sprintf('psz_abs_emc_sh_rt_t2_LTP%03d.mat', subjno);
