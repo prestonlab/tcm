@@ -4,7 +4,9 @@ function job = submit_indiv_best_params_cfrl(experiments, fits, ...
 %
 %  job = submit_indiv_best_params_cfrl(experiments, fits, flags, ...)
 
-cluster = getCluster();
+cluster = parallel.cluster.Generic();
+cluster.JobStorageLocation = '~/runs';
+cluster.IntegrationScriptsLocation = '~/matlab/accre';
 cluster.AdditionalProperties.AdditionalSubmitArgs = [' ' flags];
 
 job = createJob(cluster);
@@ -12,6 +14,7 @@ for i = 1:length(experiments)
     for j = 1:length(fits)
         task = createTask(job, @run_indiv_best_params_cfrl, 1, ...
                           {experiments{i}, fits{j}, varargin{:}});
+        set(task, 'CaptureDiary', true);
     end
 end
 
