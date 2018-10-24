@@ -32,7 +32,7 @@ fprintf('\n');
 rc = cat(1, r{:});
 
 % for each model and subject, find the best fitness
-timestamp = datestr(now, 29);
+timestamp = datestr(now, 30);
 f = fieldnames(rc);
 n_model = length(f);
 n_subj = length(rc(1).(f{1}).stats);
@@ -99,7 +99,7 @@ res.logl = model_logl;
 if save_results
     file = sprintf('search_rep_%s.mat', timestamp);
     rep_file = get_next_file(fullfile(info.model_dir, file));
-    save(rep_file, 'res');
+    save(rep_file, 'res', '-v7.3');
 end
 
 
