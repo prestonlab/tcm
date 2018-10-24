@@ -1,4 +1,4 @@
-function res = load_rep_de_cfrl(jobs, save_results)
+function varargout = load_rep_de_cfrl(jobs, save_results)
 %LOAD_REP_DE_CFRL   Load a replicated search.
 %
 %  Looks over a number of search replications, and gets the
@@ -100,6 +100,12 @@ if save_results
     file = sprintf('search_rep_%s.mat', timestamp);
     rep_file = get_next_file(fullfile(info.model_dir, file));
     save(rep_file, 'res', '-v7.3');
+end
+
+if nargout > 0
+    varargout{1} = res;
+else
+    varargout = {};
 end
 
 
