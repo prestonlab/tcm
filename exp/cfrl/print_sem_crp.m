@@ -11,13 +11,14 @@ function print_sem_crp(act, poss, sem_mat, edges, centers, fig_file, ...
 def.mask = true(size(sem_mat));
 opt = propval(varargin, def);
 
-bin_crp = dist_item_crp(act, poss, sem_mat, 'edges', edges, ...
-                        'mask', opt.mask);
+[bin_crp, act_crp] = dist_item_crp(act, poss, sem_mat, 'edges', edges, ...
+                                  'mask', opt.mask);
 
+min_samp = 5;
 mat = bin_crp(:,1:end-1);
-n = sum(~isnan(mat), 1);
+n = sum(act_crp(:,1:end-1) > min_samp, 1);
 if size(mat, 1) > 1
-    mat(:,n < 10) = NaN;
+    mat(:,n < min_samp) = NaN;
 end
 x = centers;
 y = nanmean(mat, 1);
