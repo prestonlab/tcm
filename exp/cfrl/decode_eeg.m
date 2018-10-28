@@ -1,10 +1,10 @@
-function evidence = decode_eeg(pat)
+function [evidence, perf] = decode_eeg(pat)
 %DECODE_EEG   Decode stimulus category based on patterns of oscillatory power.
 %
 %  Use a ridge regression classifier to decode category from measures
 %  of oscillatory power, using cross-validation at the level of lists.
 %
-%  evidence = decode_eeg(pat)
+%  [evidence, perf] = decode_eeg(pat)
 %
 %  INPUTS
 %  pat - pattern struct
@@ -16,6 +16,9 @@ function evidence = decode_eeg(pat)
 %  evidence - [trials x categories] numeric array
 %      Classifier evidence for each category. Categories are in the
 %      sorting order of the category codes.
+%
+%  perf - [1 x lists] numeric array
+%      Classifier performance by list.
 
 pattern = flatten_pattern(pat.mat);
 events = pat.dim.ev.mat;
@@ -42,3 +45,4 @@ for i = 1:length(res.iterations)
     test_ind = res.iterations(i).test_idx;
     evidence(test_ind,:) = res.iterations(i).acts';
 end
+perf = mean([res.iterations.perf]);
