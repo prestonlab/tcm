@@ -41,18 +41,6 @@ opt.verbose = false;
 
 % set noise level
 fprintf('Optimizing noise...\n')
-% options = optimoptions('fmincon');
-% options.UseParallel = true;
-% options.Display = 'iter';
-% options.FunctionTolerance = 0.01;
-% f = @(x) test_noise(x, target_perf, pattern, list, targets, opt, 20);
-% tic; [xhat, fval] = fmincon(f, .2, [], [], [], [], 0, 1, [], options); toc
-% keyboard
-% f = @(x) test_noise(x, target_perf, pattern, list, targets, opt, 2);
-% tic; [xhat, fval] = fmincon(f, xhat, [], [], [], [], 0, 1, [], options); toc
-% keyboard
-
-%n = linspace(0, .25, 51);
 n = 0:.01:.15;
 n_rep_optim = 20;
 perf = NaN(length(n), n_rep_optim);
@@ -97,17 +85,3 @@ end
 evidence_mat = cat(3, evidence_all{:});
 evidence = mean(evidence_mat, 3);
 fitted_perf = mean(rep_perf);
-
-
-function [err, mperf] = test_noise(sigma, target_perf, pattern, list, ...
-                                   targets, opt, n_rep)
-
-perf = NaN(1, n_rep);
-for i = 1:n_rep
-    noise = randn(size(pattern)) * sigma;
-    res = xval(pattern+noise, list, targets, opt);
-    perf(i) = mean([res.iterations.perf]);
-end
-
-mperf = mean(perf);
-err = abs(mperf - target_perf);
