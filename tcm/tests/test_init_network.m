@@ -79,9 +79,9 @@ function test_distrib(testCase)
 param = testCase.TestData.param;
 param.Sfc = 1;
 param.Scf = 1;
-param.sem_vec = reshape(1:60, [10 6]);
-for i = 1:size(param.sem_vec, 2)
-    param.sem_vec(:,i) = param.sem_vec(:,i) / norm(param.sem_vec(:,i));
+param.pre_vec = reshape(1:60, [10 6]);
+for i = 1:size(param.pre_vec, 2)
+    param.pre_vec(:,i) = param.pre_vec(:,i) / norm(param.pre_vec(:,i));
 end
 env = struct;
 pres_itemnos = [2 6 3 4];
