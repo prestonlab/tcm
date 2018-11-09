@@ -86,20 +86,24 @@ for i = 1:length(f)
     if save_results
         save(res_file, 'stats');
     end
-    
-    res.(f{i}).fitness = fitness;
-    res.(f{i}).parameters = parameters;
-    res.(f{i}).stats = stats;
-    res.(f{i}).rep_stats = rep_stats;
-    res.(f{i}).rep_seed = rseed;
-    res.(f{i}).task_seed = rseed(1,:);
+
+    if nargout > 0
+        res.(f{i}).fitness = fitness;
+        res.(f{i}).parameters = parameters;
+        res.(f{i}).stats = stats;
+        res.(f{i}).rep_stats = rep_stats;
+        res.(f{i}).rep_seed = rseed;
+        res.(f{i}).task_seed = rseed(1,:);
+    end
 end
 
 res.logl = model_logl;
 if save_results
     file = sprintf('search_rep_%s.mat', timestamp);
     rep_file = get_next_file(fullfile(info.model_dir, file));
-    save(rep_file, 'res', '-v7.3');
+    if nargout > 0
+        save(rep_file, 'res', '-v7.3');
+    end
 end
 
 if nargout > 0
