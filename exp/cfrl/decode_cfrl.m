@@ -63,13 +63,26 @@ if ~exist('eeg_evidence', 'var')
     save(outfile, 'eeg_evidence', '-append');
 end
 
-disp('Decoding context...')
-con_evidence = cell(1, length(subjnos));
-con_perf = cell(1, length(subjnos));
-sigma = NaN(1, length(subjnos));
-for i = 1:n_subj
-    [con_evidence{i}, con_perf{i}, sigma(i)] = ...
-        decode_context_match(c_pres{i}, subj_data{i}.pres.category, ...
-                             eeg_perf(i));
+if ~exist('con_evidence_raw', 'var')
+    disp('Decoding context...')
+    con_evidence_raw = cell(1, length(subjnos));
+    con_perf_raw = cell(1, length(subjnos));
+    for i = 1:n_subj
+        [con_evidence_raw{i}, con_perf_raw{i}] = ...
+            decode_context(c_pres{i}, subj_data{i}.pres.category);
+    end
+    save(outfile, 'con_evidence_raw', 'con_perf_raw', '-append');
 end
-save(outfile, 'con_evidence', 'con_perf', 'sigma', '-append');
+
+if ~exist('con_evidence', 'var')
+    disp('Decoding context with matched noise...')
+    con_evidence = cell(1, length(subjnos));
+    con_perf = cell(1, length(subjnos));
+    sigma = NaN(1, length(subjnos));
+    for i = 1:n_subj
+        [con_evidence{i}, con_perf{i}, sigma(i)] = ...
+            decode_context_match(c_pres{i}, subj_data{i}.pres.category, ...
+                                 eeg_perf(i));
+    end
+    save(outfile, 'con_evidence', 'con_perf', 'sigma', '-append');
+end
