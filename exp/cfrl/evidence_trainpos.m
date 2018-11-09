@@ -20,14 +20,14 @@ function [eeg_evid, con_evid, n] = evidence_trainpos(eeg, con, category)
 %      eeg and con.
 %
 %  OUTPUTS
-%  eeg_evid - [trainpos x category types x categories] matrix
+%  eeg_evid - [trainpos x category types] matrix
 %      Classifier evidence for EEG by train position, category type
 %      (current, previous, baseline), and category.
 %
-%  con_evid - [trainpos x category types x categories] matrix
+%  con_evid - [trainpos x category types] matrix
 %      Classifier evidence statistics for context.
 %
-%  n - [trainpos x category types x categories] matrix
+%  n - [trainpos x category types] matrix
 %      Number of trials in each bin.
 
 % for each train after the first, get the current, previous, and
