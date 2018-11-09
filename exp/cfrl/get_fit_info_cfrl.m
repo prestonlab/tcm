@@ -32,8 +32,20 @@ switch fit
     model_type = 'tcm_dc_loc_wikiw2v';
   case 'full_wikiw2v'
     model_type = 'tcm_dc_loc_cat_wikiw2v';
+  case 'local'
+    model_type = 'tcm_dc_loc';
   case 'cat'
-    model_type = 'tcm_loc_cat';
+    model_type = 'tcm_dc_cat';
+  case 'wikiw2v'
+    model_type = 'tcm_dc_wikiw2v';
+  case 'local_cat'
+    model_type = 'tcm_dc_loc_cat';
+  case 'local_wikiw2v'
+    model_type = 'tcm_dc_loc_wikiw2v';
+  case 'cat_wikiw2v'
+    model_type = 'tcm_dc_cat_wikiw2v';
+  case 'local_cat_wikiw2v'
+    model_type = 'tcm_dc_loc_cat_wikiw2v';
   otherwise
     error('Unknown fit type: %s', fit);
 end
