@@ -8,9 +8,6 @@ function opt = model_features_cfrl(model_type)
 
 opt.sem_model = '';
 
-if namecheck('wikiw2v', model_type)
-    opt.sem_model = 'wikiw2v';
-end
 if namecheck({'_qc' '_qi' '_qic'}, model_type)
     opt.qsem = true;
 else
@@ -30,6 +27,12 @@ if namecheck('_cat', model_type)
     opt.cat = true;
 else
     opt.cat = false;
+end
+if namecheck('wikiw2v', model_type)
+    opt.sem_model = 'wikiw2v';
+    opt.sem = true;
+else
+    opt.sem = false;
 end
 
 opt.stop_rule = 'op';
