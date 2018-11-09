@@ -101,9 +101,9 @@ function test_distrib(testCase)
 param = testCase.TestData.param;
 param.Dfc = 1;
 param.Dcf = 1;
-param.sem_vec = reshape(1:12, [4 3]);
-for i = 1:size(param.sem_vec, 2)
-    param.sem_vec(:,i) = param.sem_vec(:,i) / norm(param.sem_vec(:,i));
+param.pre_vec = reshape(1:12, [4 3]);
+for i = 1:size(param.pre_vec, 2)
+    param.pre_vec(:,i) = param.pre_vec(:,i) / norm(param.pre_vec(:,i));
 end
 pres_itemnos = 1:3;
 net = init_network_tcm(param, pres_itemnos);
@@ -144,7 +144,7 @@ pres_itemnos = 1:4;
 net1 = init_network_tcm(param, pres_itemnos);
 net1 = present_items_tcm(net1, param);
 
-param.sem_vec = eye(4);
+param.pre_vec = eye(4);
 net2 = init_network_tcm(param, pres_itemnos);
 net2 = present_items_tcm(net2, param);
 

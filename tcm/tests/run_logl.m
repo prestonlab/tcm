@@ -65,21 +65,21 @@ if imp == 1
       case 2
         param.sem_mat = sem.sem_mat;
       case 3
-        param.sem_vec = sem.vectors';
+        param.pre_vec = sem.vectors';
       case 4
         if nargin > 2
-            param.sem_vec = eye(24);
+            param.pre_vec = eye(24);
             data.pres_itemnos = 1:24;
         else
-            param.sem_vec = eye(768);
+            param.pre_vec = eye(768);
         end
       case 5
         param.sem_mat = sem.sem_mat;
-        param.sem_vec = sem.vectors';
+        param.pre_vec = sem.vectors';
         param.I = 1;
       case 6
         param.sem_mat = sem.sem_mat;
-        param.sem_vec = [eye(768); sem.vectors'];
+        param.pre_vec = [eye(768); sem.vectors'];
         param.I = 1;
       case 7
         param.sem_mat = sem.sem_mat;
@@ -87,7 +87,7 @@ if imp == 1
         cat(1,1:256) = 1;
         cat(2,257:512) = 1;
         cat(3,512:end) = 1;
-        param.sem_vec = [eye(768); cat; sem.vectors'];
+        param.pre_vec = [eye(768); cat; sem.vectors'];
         param.I = 1;
     end
     [logl_mat, logl_all] = logl_tcm(param, data);

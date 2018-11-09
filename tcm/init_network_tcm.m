@@ -7,9 +7,9 @@ function net = init_network_tcm(param, pres_itemnos)
 %  param - struct
 %      Parameter struct defining a model network. See
 %      check_param_tcm for details. Special fields used here:
-%      sem_vec - [dimensions x items] matrix
+%      pre_vec - [dimensions x items] matrix
 %          Pre-experimental feature vector associated with each
-%          item. Item with item number x is in sem_vec(:,x).
+%          item. Item with item number x is in pre_vec(:,x).
 %      sem_mat - [items x items] matrix
 %          Pre-experimental associations between each pair of
 %          items. The strength of association between items with
@@ -54,10 +54,10 @@ function net = init_network_tcm(param, pres_itemnos)
 LL = size(pres_itemnos, 2);
 
 % item units
-if isfield(param, 'sem_vec') && ~isempty(param.sem_vec)
+if isfield(param, 'pre_vec') && ~isempty(param.pre_vec)
     net.dc = true;
-    IU = size(param.sem_vec, 1);
-    item_vecs = param.sem_vec(:,pres_itemnos);
+    IU = size(param.pre_vec, 1);
+    item_vecs = param.pre_vec(:,pres_itemnos);
 else
     net.dc = false;
     IU = LL;

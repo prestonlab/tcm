@@ -88,18 +88,18 @@ switch ver
     end
     t2 = toc;
   case 3
-    param.sem_vec = sem.vectors';
+    param.pre_vec = sem.vectors';
     tic;
     for i = 1:n_rep
         logl_tcm(param, data);
     end
     t1 = toc;
     
-    sem_vec = sem.vectors';
+    pre_vec = sem.vectors';
     tic;
     for i = 1:n_rep
         tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
-                   2, data.pres_itemnos, sem_vec);
+                   2, data.pres_itemnos, pre_vec);
     end
     t2 = toc;
 end

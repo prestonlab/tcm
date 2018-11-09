@@ -44,7 +44,7 @@ logl_mex = logl_mex_tcm(param, data);
 if ver == 1
     [logl, logl_all] = logl_tcm(param, data);
 else
-    param.sem_vec = eye(768);
+    param.pre_vec = eye(768);
     [logl, logl_all] = logl_tcm(param, data);
 end
 logl_mat = nansum(logl(:));
@@ -62,7 +62,7 @@ logl_mex = logl_mex_tcm(param, data);
 if ver == 1
     logl = logl_tcm(param, data);
 else
-    param.sem_vec = eye(768);
+    param.pre_vec = eye(768);
     logl = logl_tcm(param, data);
 end
 logl_mat = nansum(logl(:));

@@ -17,7 +17,7 @@ else
 end
 
 % semantic context
-if simdef.opt.dc
+if simdef.opt.sem
     param.sem_vec = getfield(load(simdef.sem_mat_file, ...
                                   'vectors'), 'vectors')';
 else
