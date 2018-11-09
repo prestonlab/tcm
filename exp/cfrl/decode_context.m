@@ -1,4 +1,4 @@
-function evidence = decode_context(context, category)
+function [evidence, perf] = decode_context(context, category)
 %DECODE_CONTEXT   Use pattern classification to decode stimulus category.
 %
 %  Use a ridge regression classifier to decode category from states
@@ -46,3 +46,5 @@ for i = 1:length(res.iterations)
     test_ind = res.iterations(i).test_idx;
     evidence(test_ind,:) = res.iterations(i).acts';
 end
+
+perf = mean([res.iterations.perf]);
