@@ -45,23 +45,13 @@ if isfield(param, 'S')
     param.Scf = param.S;
 end
 
-if isfield(param, 'SL') && isfield(param, 'loc_vec') && ~isempty(param.loc_vec)
-    if isfield(param, 'SC')
-        SL = param.SL;
-        SC = param.SC;
-        SD = 1;
-        ST = SL + SC + SD;
-        x = [(SL/ST) * param.loc_vec
-             (SC/ST) * param.cat_vec
-             (SD/ST) * param.sem_vec];
-    else
-        SL = param.SL;
-        SD = 1;
-        ST = SL + SD;
-        x = [(SL/ST) * param.loc_vec
-             (SD/ST) * param.sem_vec];
-    end
-    param.sem_vec = x ./ sqrt(sum(x.^2,1));    
+if ~isempty(param.loc_vec) || ~isempty(param.cat_vec) || ~isempty(param.sem_vec)
+    x = [param.SL * param.loc_vec
+         param.SC * param.cat_vec
+         param.SD * param.sem_vec];
+    param.pre_vec = x ./ sqrt(sum(x.^2, 1));
+else
+    param.pre_vec = [];
 end
 
 param = check_param_tcm(param);
