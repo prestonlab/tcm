@@ -202,6 +202,32 @@ search = load('~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018
 outfile = '~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018-07-24_decode.mat';
 decode_cfrl(search.stats, 'cfr', 'full_wikiw2v', outfile);
 
+s = load(outfile);
+for i = 1:length(s.subj_data);
+    [m_eeg{i}, m_con{i}, n{i}] = ...
+        evidence_trainpos(s.eeg_evidence{i}, s.con_evidence{i}, ...
+                          s.subj_data{i}.pres.category);
+end
+
+n_subj = length(m_eeg);
+x = 1:3;
+stats = struct;
+ctypes = {'curr' 'prev' 'base'};
+eeg_b = NaN(n_subj, length(ctypes));
+con_b = NaN(n_subj, length(ctypes));
+for i = 1:3
+    for j = 1:n_subj
+        tot_n = n{j}(x,i);
+        y_eeg = m_eeg{j}(x,i);
+        y_con = m_con{j}(x,i);
+        [b, dev, stats] = glmfit(x, y_eeg, 'normal', 'weights', tot_n);
+        eeg_b(j,i) = b(2);
+        [b, dev, stats] = glmfit(x, y_con, 'normal', 'weights', tot_n);
+        con_b(j,i) = b(2);
+    end
+end
+
+
 simdef = sim_def_cfrl('cfr', 'full_wikiw2v');
 
 [subj_data, subj_param, c_pres, c_rec] = indiv_context_cfrl(search.stats, simdef);
@@ -252,6 +278,7 @@ for i = 1:n_subj
 end
 
 % category integration rate
+n_subj = length(m_eeg);
 x = 1:3;
 stats = struct;
 ctypes = {'curr' 'prev' 'base'};
@@ -271,3 +298,18 @@ end
 
 eeg_int = eeg_b(:,1) - eeg_b(:,2);
 con_int = con_b(:,1) - con_b(:,2);
+
+eeg_evid = cat(3, m_eeg{:});
+con_evid = cat(3, m_con{:});
+
+y = NaN(3, size(eeg_evid, 1));
+l = NaN(3, size(eeg_evid, 1));
+u = NaN(3, size(eeg_evid, 1));
+for i = 1:size(eeg_evid, 2)
+    mat = permute(eeg_evid(:,i,:), [3 1 2]);
+    n = sum(~isnan(mat), 1);
+    y(i,:) = nanmean(mat);
+    [l(i,:), u(i,:)] = bootstrap_ci(mat, 1, 5000, .05);
+end
+
+
