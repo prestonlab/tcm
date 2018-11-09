@@ -36,6 +36,44 @@ fixed.Lfc = 1;
 fixed.Lcf = 1;
 
 par = core;
+opt = model_features_cfrl(model_type);
+
+if opt.sem && (opt.loc || opt.cat)
+    % if semantics and other things, semantics are the reference
+    fixed.SD = 1;
+    if opt.loc && opt.cat
+        par.SL = [0 100];
+        init.SL = [0 1];
+        par.SC = [0 100];
+        init.SC = [0 1];
+    elseif opt.loc && ~opt.cat
+        fixed.SC = 0;
+        par.SL = [0 100];
+        init.SL = [0 1];
+    elseif opt.cat && ~opt.loc
+        fixed.SL = 0;
+        par.SC = [0 100];
+        init.SC = [0 1];
+    end
+elseif opt.loc && opt.cat
+    % if localized representations and category, localized is the
+    % reference
+    fixed.SL = 1;
+    fixed.SD = 0;
+    par.SC = [0 100];
+    init.SC = [0 1];
+end
+
+% vector matrices
+if namecheck('_ncf', model_type)
+    % no context-to-feature vectors. There can still be a constant
+    % pre-experimental association strength, and learning of
+    % experimental associations, but there won't be any "readout"
+    % of context during retrieval
+    fixed.Dcf = 0;
+    par = rmfield(par, 'Dcf');
+    init = rmfield(init, 'Dcf');
+end
 
 % semantic scaling
 if namecheck({'wikiw2v'}, model_type)
@@ -66,33 +104,6 @@ if namecheck('_qc', model_type)
     fixed = rmfield(fixed, 'Scf');
     par.Scf = [0 100];
     init.Scf = [0 1];
-end
-
-% vector matrices
-if namecheck('_ncf', model_type)
-    % no context-to-feature vectors. There can still be a constant
-    % pre-experimental association strength, and learning of
-    % experimental associations, but there won't be any "readout"
-    % of context during retrieval
-    fixed.Dcf = 0;
-    par = rmfield(par, 'Dcf');
-    init = rmfield(init, 'Dcf');
-end
-
-if namecheck('_loc', model_type)
-    % context is combined localist-distributed. The SL parameter scales
-    % the localist portion of the pre-experimental context vectors,
-    % relative to the distributed portion
-    par.SL = [0 100];
-    init.SL = [0 1];
-end
-
-if namecheck('_cat', model_type)
-    % context includes category features. The SC parameter scales
-    % the category portion of the pre-experimental context vectors,
-    % relative to the distributed portion
-    par.SC = [0 100];
-    init.SC = [0 1];
 end
 
 if namecheck('cdcfr2', experiment)
