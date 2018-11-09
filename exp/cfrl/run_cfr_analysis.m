@@ -199,6 +199,9 @@ end
 
 % get context recordings for each subject
 search = load('~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018-07-24.mat');
+outfile = '~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018-07-24_decode.mat';
+decode_cfrl(search.stats, 'cfr', 'full_wikiw2v', outfile);
+
 simdef = sim_def_cfrl('cfr', 'full_wikiw2v');
 
 [subj_data, subj_param, c_pres, c_rec] = indiv_context_cfrl(search.stats, simdef);
@@ -208,7 +211,7 @@ load(simdef.data_file);
 subjnos = unique(data.subject);
 con_evidence = cell(1, length(subjnos));
 eeg_evidence = cell(1, length(subjnos));
-for i = 1:length(subjnos)
+parfor i = 1:length(subjnos)
     subjno = subjnos(i);
     con_evidence{i} = decode_context(c_pres{i}, subj_data{i}.pres.category);
     filename = sprintf('psz_abs_emc_sh_rt_t2_LTP%03d.mat', subjno);

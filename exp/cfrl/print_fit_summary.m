@@ -53,6 +53,9 @@ print_sem_crp(act, poss, sem.sem_mat, bin.edges, bin.centers, ...
               'mask', pool.category ~= pool.category');
 
 if isfield(data.pres, 'distractor')
+    print_sem_crp_distract(data, pool, sem, bin, ...
+                           fullfile(res_dir, 'sem_crp_distract.eps'));
+    
     print_spc_distract(data, fullfile(res_dir, 'spc_distract.eps'), 'spc');
     print_spc_distract(data, fullfile(res_dir, 'pfr_distract.eps'), 'pfr');
     print_crp_distract(data, fullfile(res_dir, 'crp_distract.eps'));

@@ -94,11 +94,13 @@ for i = 1:n_iter
   end
 end
 
-if xval_params.verbose
+if xval_params.verbose > 1
   fprintf('TOTAL: %.2f', nanmean([res.iterations.perf]))
-else
+elseif xval_params.verbose == 1
   fprintf('%.2f', nanmean([res.iterations.perf]))
 end
 
-fprintf('\n')
+if xval_params.verbose > 0
+  fprintf('\n')
+end
 
