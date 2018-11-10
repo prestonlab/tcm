@@ -163,7 +163,7 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
     fitness = [];
     for i = 1:run_opt.n_search
         switch run_opt.search_type
-          case {'de' 'de_fast'}
+          case {'de' 'de_fast' 'de_turbo2alpha'}
             [par, fval] = de_search(f, ranges, search_opt);
           otherwise
             error('Unsupported search type: %s', run_opt.search_type)
