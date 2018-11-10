@@ -35,6 +35,10 @@ fixed.Scf = 0;
 fixed.Lfc = 1;
 fixed.Lcf = 1;
 
+fixed.SL = 0;
+fixed.SC = 0;
+fixed.SD = 0;
+
 par = core;
 opt = model_features_cfrl(model_type);
 
@@ -47,11 +51,9 @@ if opt.sem && (opt.loc || opt.cat)
         par.SC = [0 100];
         init.SC = [0 1];
     elseif opt.loc && ~opt.cat
-        fixed.SC = 0;
         par.SL = [0 100];
         init.SL = [0 1];
     elseif opt.cat && ~opt.loc
-        fixed.SL = 0;
         par.SC = [0 100];
         init.SC = [0 1];
     end
