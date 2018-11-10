@@ -8,6 +8,8 @@ function param = prep_param_cfrl(param, simdef, category)
 %
 %  param = prep_param_cfrl(param, simdef, category)
 
+n_item = length(category);
+
 % semantic cuing
 if simdef.opt.qsem
     param.sem_mat = getfield(load(simdef.sem_mat_file, ...
@@ -29,7 +31,6 @@ if simdef.opt.loc
     if ~exist('data', 'var')
         load(simdef.data_file)
     end
-    n_item = length(category);
     param.loc_vec = eye(n_item);
 else
     param.loc_vec = [];
