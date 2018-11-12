@@ -3,10 +3,10 @@ function opt = search_opt_cfrl(search_type, varargin)
 %
 %  opt = search_opt_cfrl(search_type, ...)
 
-def.generations = 100000;
+def.generations = 1000;
 %def.tol = 0.0001;
 def.tol = 0.01;
-def.popsize = 1000;
+def.popsize = 100;
 %def.stall_gen_limit = 50;
 def.stall_gen_limit = 20;
 def.init_ranges = [];
