@@ -29,6 +29,20 @@ end
 rep = load_rep_de_cfrl(jobs, true);
 job = submit_indiv_best_params_cfrl(experiments, fits, '-t 04:00:00 --mem=4gb');
 
+% new fits with the different choice rule, and testing more
+% combinations of context subregions
+fits = {'local' 'cat' 'wikiw2v' ...
+        'local_cat' 'local_wikiw2v' 'cat_wikiw2v' ...
+        'local_cat_wikiw2v'};
+experiments = {'cfr'};
+flags = '-t 24:00:00 --mem=12gb --cpus-per-task=12';
+n_rep = 10;
+jobs = cell(1, n_rep);
+for i = 1:n_rep
+    jobs{i} = submit_searches_cfrl(experiments, fits, flags, 'n_workers', 12);
+end
+
+
 %% cdcfr2 fits
 
 experiments = {'cdcfr2'};
