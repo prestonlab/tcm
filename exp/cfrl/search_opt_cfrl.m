@@ -33,6 +33,17 @@ switch search_type
     def.tol = 0.1;
     def.stall_gen_limit = 10;
     opt = propval(other, def, 'strict', false);
+  case 'de_turbo2alpha'
+    def = base;
+    def.strategy = 3;
+    def.mutate_func = @mutate_edge;
+    def.step_weight = 0.85;
+    def.crossover = 0.9;
+    def.plot_func = [];
+    def.popsize = 10;
+    def.tol = 1;
+    def.stall_gen_limit = 5;
+    opt = propval(other, def, 'strict', false);
   otherwise
     error('Unknown search type: %s', search_type)
 end
