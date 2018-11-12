@@ -45,15 +45,11 @@ opt = model_features_cfrl(model_type);
 if opt.sem && (opt.loc || opt.cat)
     % if semantics and other things, semantics are the reference
     fixed.SD = 1;
-    if opt.loc && opt.cat
+    if opt.loc
         par.SL = [0 100];
         init.SL = [0 1];
-        par.SC = [0 100];
-        init.SC = [0 1];
-    elseif opt.loc && ~opt.cat
-        par.SL = [0 100];
-        init.SL = [0 1];
-    elseif opt.cat && ~opt.loc
+    end
+    if opt.cat
         par.SC = [0 100];
         init.SC = [0 1];
     end
