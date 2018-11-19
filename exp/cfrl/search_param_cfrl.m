@@ -42,37 +42,37 @@ fixed.SD = 0;
 par = core;
 opt = model_features_cfrl(model_type);
 
-if opt.sem && (opt.loc || opt.cat)
-    % if semantics and other things, semantics are the reference
-    fixed.SD = 1;
-    if opt.loc
-        par.SL = [0 100];
-        init.SL = [0 1];
-    end
-    if opt.cat
-        par.SC = [0 100];
-        init.SC = [0 1];
-    end
-elseif opt.loc && opt.cat
-    % if localized representations and category, localized is the
-    % reference
-    fixed.SL = 1;
-    fixed.SD = 0;
-    par.SC = [0 100];
-    init.SC = [0 1];
-else
-    % we've covered all combinations, so just have one contributer
-    % to distributed context
-    if opt.loc
-        fixed.SL = 1;
-    end
-    if opt.cat
-        fixed.SC = 1;
-    end
-    if opt.sem
-        fixed.SD = 1;
-    end
-end
+% if opt.sem && (opt.loc || opt.cat)
+%     % if semantics and other things, semantics are the reference
+%     fixed.SD = 1;
+%     if opt.loc
+%         par.SL = [0 100];
+%         init.SL = [0 1];
+%     end
+%     if opt.cat
+%         par.SC = [0 100];
+%         init.SC = [0 1];
+%     end
+% elseif opt.loc && opt.cat
+%     % if localized representations and category, localized is the
+%     % reference
+%     fixed.SL = 1;
+%     fixed.SD = 0;
+%     par.SC = [0 100];
+%     init.SC = [0 1];
+% else
+%     % we've covered all combinations, so just have one contributer
+%     % to distributed context
+%     if opt.loc
+%         fixed.SL = 1;
+%     end
+%     if opt.cat
+%         fixed.SC = 1;
+%     end
+%     if opt.sem
+%         fixed.SD = 1;
+%     end
+% end
 
 % test version with all parameters free
 n_subregion = opt.loc + opt.cat + opt.sem;
