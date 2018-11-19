@@ -74,6 +74,33 @@ else
     end
 end
 
+% test version with all parameters free
+n_subregion = opt.loc + opt.cat + opt.sem;
+if opt.loc
+    if n_subregion > 1
+        par.SL = [0 100];
+        init.SL = [0 1];
+    else
+        fixed.SL = 1;
+    end
+end
+if opt.cat
+    if n_subregion > 1
+        par.SC = [0 100];
+        init.SC = [0 1];
+    else
+        fixed.SC = 1;
+    end
+end
+if opt.sem
+    if n_subregion > 1
+        par.SD = [0 100];
+        init.SD = [0 1];
+    else
+        fixed.SD = 1;
+    end
+end
+
 % vector matrices
 if namecheck('_ncf', model_type)
     % no context-to-feature vectors. There can still be a constant
@@ -130,6 +157,14 @@ if namecheck('cdcfr2', experiment)
                 init.(f) = [0 1];
             end
         end
+    end
+end
+
+% make sure that no free parameters are set to fixed
+f = fieldnames(par);
+for i = 1:length(f)
+    if isfield(fixed, f{i})
+        fixed = rmfield(fixed, f{i});
     end
 end
 
