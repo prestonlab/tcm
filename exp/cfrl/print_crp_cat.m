@@ -79,6 +79,7 @@ h2 = mseb(x(inc), y(:,inc), cat(3, u(:,inc)-y(:,inc), y(:,inc)-l(:,inc)));
 %h = mseb(x, y, err);
 a = gca;
 set(a, 'XLim', [-(max_lag+1) (max_lag+1)], 'XTick', x)
+set(a, 'YLim', [0 .4], 'YTick', 0:.1:.4)
 xlabel('lag')
 ylabel('conditional recall probability')
 box off
