@@ -6,7 +6,7 @@ function print_fit_summary(fit, experiment, res_dir)
 files = get_exp_info_cfrl(experiment);
 sem = load(files.wikiw2v.raw);
 info = get_fit_info_cfrl(fit, experiment);
-
+close all
 if nargin < 3
     if isfield(info, 'res_file')
         res_dir = info.stat_file(1:end-4);
