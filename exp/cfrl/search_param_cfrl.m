@@ -42,34 +42,61 @@ fixed.SD = 0;
 par = core;
 opt = model_features_cfrl(model_type);
 
-if opt.sem && (opt.loc || opt.cat)
-    % if semantics and other things, semantics are the reference
-    fixed.SD = 1;
-    if opt.loc
+% if opt.sem && (opt.loc || opt.cat)
+%     % if semantics and other things, semantics are the reference
+%     fixed.SD = 1;
+%     if opt.loc
+%         par.SL = [0 100];
+%         init.SL = [0 1];
+%     end
+%     if opt.cat
+%         par.SC = [0 100];
+%         init.SC = [0 1];
+%     end
+% elseif opt.loc && opt.cat
+%     % if localized representations and category, localized is the
+%     % reference
+%     fixed.SL = 1;
+%     fixed.SD = 0;
+%     par.SC = [0 100];
+%     init.SC = [0 1];
+% else
+%     % we've covered all combinations, so just have one contributer
+%     % to distributed context
+%     if opt.loc
+%         fixed.SL = 1;
+%     end
+%     if opt.cat
+%         fixed.SC = 1;
+%     end
+%     if opt.sem
+%         fixed.SD = 1;
+%     end
+% end
+
+% test version with all parameters free
+n_subregion = opt.loc + opt.cat + opt.sem;
+if opt.loc
+    if n_subregion > 1
         par.SL = [0 100];
         init.SL = [0 1];
-    end
-    if opt.cat
-        par.SC = [0 100];
-        init.SC = [0 1];
-    end
-elseif opt.loc && opt.cat
-    % if localized representations and category, localized is the
-    % reference
-    fixed.SL = 1;
-    fixed.SD = 0;
-    par.SC = [0 100];
-    init.SC = [0 1];
-else
-    % we've covered all combinations, so just have one contributer
-    % to distributed context
-    if opt.loc
+    else
         fixed.SL = 1;
     end
-    if opt.cat
+end
+if opt.cat
+    if n_subregion > 1
+        par.SC = [0 100];
+        init.SC = [0 1];
+    else
         fixed.SC = 1;
     end
-    if opt.sem
+end
+if opt.sem
+    if n_subregion > 1
+        par.SD = [0 100];
+        init.SD = [0 1];
+    else
         fixed.SD = 1;
     end
 end
@@ -130,6 +157,14 @@ if namecheck('cdcfr2', experiment)
                 init.(f) = [0 1];
             end
         end
+    end
+end
+
+% make sure that no free parameters are set to fixed
+f = fieldnames(par);
+for i = 1:length(f)
+    if isfield(fixed, f{i})
+        fixed = rmfield(fixed, f{i});
     end
 end
 
