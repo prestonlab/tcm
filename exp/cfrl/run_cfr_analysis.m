@@ -247,10 +247,15 @@ print_fit_clust(stats.cat(:,inc), 'cat', fit_names(inc), ...
 print_fit_clust(stats.sem(:,inc), 'sem', fit_names(inc), ...
                 fullfile(fig_dir, 'clust_sem.eps'));
 
-stats = model_comp_cfrl(fits(2:end), 'cfr');
-[l, u] = bootstrap_ci(stats.swaic, 1, 5000, .05);
-[hbar, herr] = ebar([], mean(stats.swaic), l, u)
-print_fit_stats(stats.swaic, fit_names(2:end), fullfile(fig_dir, 'cfr_fit.eps'));
+print_fit_clust_range(stats.temp, 'temp', fit_names, ...
+                      fullfile(fig_dir, 'clust_range_temp.eps'));
+print_fit_clust_range(stats.cat, 'cat', fit_names, ...
+                      fullfile(fig_dir, 'clust_range_cat.eps'));
+print_fit_clust_range(stats.sem, 'sem', fit_names, ...
+                      fullfile(fig_dir, 'clust_range_sem.eps'));
+
+st = model_comp_cfrl(fits(2:end), 'cfr');
+print_fit_stats(st.swaic, fit_names(2:end), fullfile(fig_dir, 'cfr_fit.eps'));
 
 
 %% decoding category from EEG and context
