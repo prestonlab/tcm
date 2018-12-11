@@ -8,13 +8,33 @@ m = mean(mat);
 [l, u] = bootstrap_ci(mat, 1, 5000, 0.05);
 %x = [1 3:9];
 x = 1:length(fit_names);
-isdata = strcmp(fit_names, 'data');
 
-[hbar, herr] = ebar(x, m, l, u);
-hbar.FaceColor = [.8 .8 .8];
-hbar.LineStyle = 'none';
-hbar.BarWidth = .8;
-herr.CapSize = 15;
+hold on
+for i = 1:length(m)
+    [hbar(i), herr(i)] = ebar(x(i), m(i), l(i), u(i));
+end
+
+colors = [.4078 .4392 .6980
+          .7216 .4314 .4235
+          .7961 .7804 .4157
+          .5922 .4314 .6706
+          .5529 .7490 .5804
+          .7412 .5451 .4078
+          .4627 .4627 .4745];
+
+for i = 1:length(hbar)
+    %hbar.FaceColor = [.8 .8 .8];
+    hbar(i).FaceColor = colors(i,:);
+    hbar(i).LineStyle = 'none';
+    hbar(i).BarWidth = .8;
+    herr(i).CapSize = 15;
+end
+
+% [hbar, herr] = ebar(x, m, l, u);
+% hbar.FaceColor = [.8 .8 .8];
+% hbar.LineStyle = 'none';
+% hbar.BarWidth = .8;
+% herr.CapSize = 15;
 
 set(gca, 'XTick', x, 'XTickLabel', fit_names);
 ylabel('AIC weight')
