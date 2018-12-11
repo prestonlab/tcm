@@ -195,6 +195,64 @@ for i = 1:length(res)
                                  sprintf('logl_all_%s.png', subjno)));
 end
 
+experiment = 'cfr';
+fits = {'local' 'cat' 'wikiw2v' ...
+        'local_cat' 'local_wikiw2v' 'cat_wikiw2v' ...
+        'local_cat_wikiw2v'};
+n_subj = 29;
+fitness = NaN(n_subj, length(fits));
+for i = 1:length(fits)
+    info = get_fit_info_cfrl(fits{i}, experiment);
+    s = load(info.res_file);
+    fitness(:,i) = cat(1, s.stats.fitness);
+end
+
+for i = 1:length(fits)
+    fprintf('%20s ', fits{i});
+end
+fprintf('\n');
+for i = 1:n_subj
+    for j = 1:length(fits)
+        fprintf('%20.1f ', fitness(i,j));
+    end
+    fprintf('\n');
+end
+
+res_dir = '~/work/cfr/figs2';
+all_fits = [{'data'} fits];
+for i = 1:length(all_fits)
+    fig_dir = fullfile(res_dir, all_fits{i});
+    if ~exist(fig_dir, 'dir')
+        mkdir(fig_dir)
+    end
+    print_fit_summary(all_fits{i}, experiment, fig_dir);
+end
+
+%% clustering statistics summary
+
+fits = {'data' 'local' 'cat' 'wikiw2v' ...
+        'local_cat' 'local_wikiw2v' 'cat_wikiw2v' ...
+        'local_cat_wikiw2v'};
+fit_names = {'data' 'I' 'C' 'S' 'IC' 'IS' 'CS' 'ICS'};
+experiments = repmat({'cfr'}, length(fits), 1);
+stats = fit_clust_stats(fits, experiments);
+
+close all
+fig_dir = '~/work/cfr/figs2';
+inc = [2:4 8 1];
+print_fit_clust(stats.temp(:,inc), 'temp', fit_names(inc), ...
+                fullfile(fig_dir, 'clust_temp.eps'));
+print_fit_clust(stats.cat(:,inc), 'cat', fit_names(inc), ...
+                fullfile(fig_dir, 'clust_cat.eps'));
+print_fit_clust(stats.sem(:,inc), 'sem', fit_names(inc), ...
+                fullfile(fig_dir, 'clust_sem.eps'));
+
+stats = model_comp_cfrl(fits(2:end), 'cfr');
+[l, u] = bootstrap_ci(stats.swaic, 1, 5000, .05);
+[hbar, herr] = ebar([], mean(stats.swaic), l, u)
+print_fit_stats(stats.swaic, fit_names(2:end), fullfile(fig_dir, 'cfr_fit.eps'));
+
+
 %% decoding category from EEG and context
 
 % get context recordings for each subject
