@@ -1,8 +1,13 @@
-function decode_cfrl(stats, experiment, fit, outfile)
+function decode_cfrl(experiment, fit, res_name)
 %DECODE_CFRL   Decode EEG and context.
 %
-%  decode_cfrl(stats, experiment, fit, outfile)
+%  decode_cfrl(stats, experiment, fit, res_name)
 
+info = get_fit_info_cfrl('local_cat_wikiw2v', 'cfr');
+[par, base, ext] = fileparts(info.res_file);
+outfile = fullfile(par, sprintf('%s_%s.mat', base, res_name));
+
+stats = getfield(load(info.res_file, 'stats'), 'stats');
 simdef = sim_def_cfrl(experiment, fit);
 load(simdef.data_file);
 subjnos = unique(data.subject);
@@ -14,8 +19,8 @@ end
 
 if ~exist('c_pres', 'var')
     disp('Recording context for best-fitting parameters...')
-    [subj_data, subj_param, c_pres, c_rec] = indiv_context_cfrl(stats, simdef);
-    save(outfile, 'subj_data', 'subj_param', 'c_pres');
+    [subj_data, subj_param, c, c_in, ic] = indiv_context_cfrl(stats, simdef);
+    save(outfile, 'subj_data', 'subj_param', 'c', 'c_in', 'ic');
 end
 
 pat_file = cell(1, length(subjnos));
@@ -69,7 +74,7 @@ if ~exist('con_evidence_raw', 'var')
     con_perf_raw = cell(1, length(subjnos));
     for i = 1:n_subj
         [con_evidence_raw{i}, con_perf_raw{i}] = ...
-            decode_context(c_pres{i}, subj_data{i}.pres.category);
+            decode_context(ic.pres{i}, subj_data{i}.pres.category);
     end
     save(outfile, 'con_evidence_raw', 'con_perf_raw', '-append');
 end
@@ -81,7 +86,7 @@ if ~exist('con_evidence', 'var')
     sigma = NaN(1, length(subjnos));
     for i = 1:n_subj
         [con_evidence{i}, con_perf{i}, sigma(i)] = ...
-            decode_context_match(c_pres{i}, subj_data{i}.pres.category, ...
+            decode_context_match(ic.pres{i}, subj_data{i}.pres.category, ...
                                  eeg_perf(i));
     end
     save(outfile, 'con_evidence', 'con_perf', 'sigma', '-append');
