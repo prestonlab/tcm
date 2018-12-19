@@ -272,6 +272,23 @@ for i = 1:length(s.subj_data);
                           s.subj_data{i}.pres.category);
 end
 
+print_evid_trainpos(cat(3, m_eeg{:}), '~/work/cfr/figs2/integ_eeg.eps');
+print_evid_trainpos(cat(3, m_con{:}), '~/work/cfr/figs2/integ_con.eps');
+
+
+clf
+colors = get(groot, 'defaultAxesColorOrder');
+for i = 1:length(m_eeg)
+    subplot(5,6,i)
+    hold on
+    h1 = plot(m_eeg{i});
+    h2 = plot(m_con{i}, 'LineStyle', '--');
+    for j = 1:length(h1)
+        set(h1(j), 'Color', colors(j,:))
+        set(h2(j), 'Color', colors(j,:))
+    end
+end
+
 n_subj = length(m_eeg);
 x = 1:3;
 stats = struct;
@@ -290,10 +307,23 @@ for i = 1:3
     end
 end
 
+%% testing out item vs. context
 
-simdef = sim_def_cfrl('cfr', 'full_wikiw2v');
+info = get_fit_info_cfrl('local_cat_wikiw2v', 'cfr');
+search = load(info.res_file);
+simdef = sim_def_cfrl('cfr', 'local_cat_wikiw2v');
+[subj_data, subj_param, c, c_in, ic] = indiv_context_cfrl(search.stats, simdef);
 
-[subj_data, subj_param, c_pres, c_rec] = indiv_context_cfrl(search.stats, simdef);
+clf
+subplot(1,3,1)
+plot_rdm(squareform(pdist(cat(2, c.pres{1}{1,:})', 'correlation')));
+subplot(1,3,2)
+plot_rdm(squareform(pdist(cat(2, c_in.pres{1}{1,:})', 'correlation')))
+subplot(1,3,3)
+plot_rdm(squareform(pdist(cat(2, ic.pres{1}{1,:})', 'correlation')))
+print(gcf, '-depsc', '~/work/cfr/figs2/rdm_c_i.eps')
+
+decode_cfrl('cfr', 'local_cat_wikiw2v', 'decode_ic');
 
 % run decoding
 load(simdef.data_file);
