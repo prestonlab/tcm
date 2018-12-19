@@ -65,6 +65,13 @@ sigma = xx(ind);
 fprintf('Target: %.4f Actual: %.4f Sigma: %.4f\n', ...
         target_perf, s(ind), sigma);
 
+% plot
+clf
+plot(xx, s, '-k');
+hold on
+plot(n, optim_perf, 'ro');
+drawnow
+
 % get average evidence for each trial
 fprintf('Running replications with fitted noise level...\n');
 n_rep = 100;
