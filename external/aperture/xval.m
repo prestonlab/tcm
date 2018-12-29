@@ -28,6 +28,8 @@ function res = xval(pattern, selector, targets, varargin)
 %   f_perfmet    - function handle for calculating performance
 %   perfmet_args - cell array of addition arguments for the perfmet
 %                  function
+%   runpar       - if true, cross-validations will be run in
+%                  parallel (requires parallel computing toolbox). (true)
 %   verbose      - if true, more output will be printed. (false)
 
 % input checks
@@ -48,6 +50,7 @@ end
 % options
 defaults.test_targets = [];
 defaults.verbose = false;
+defaults.runpar = true;
 [xval_params, params] = propval(varargin, defaults);
 params = propval(params, struct, 'strict', false);
 params.verbose = false;
@@ -62,13 +65,41 @@ end
 % flatten all dimensions > 2 into one vector
 pattern = flatten_pattern(pattern);
 
-for i = 1:n_iter
+iter_res = cell(1, n_iter);
+if xval_params.runpar
+  parfor i = 1:n_iter
+    iter_res{i} = run_iter(pattern, selector, targets, i, params, xval_params);
+  end
+else
+  for i = 1:n_iter
+    iter_res{i} = run_iter(pattern, selector, targets, i, params, xval_params);
+  end
+end
+
+res.iterations = [iter_res{:}];
+
+if xval_params.verbose > 1
+  fprintf('TOTAL: %.2f', nanmean([res.iterations.perf]))
+elseif xval_params.verbose == 1
+  fprintf('%.2f', nanmean([res.iterations.perf]))
+end
+
+if xval_params.verbose > 0
+  fprintf('\n')
+end
+
+
+function iter_res = run_iter(pattern, selector, targets, iter, params, ...
+                             xval_params)
+
   % find the observations to train and test on
   unused_idx = isnan(selector);
-  train_idx = ~unused_idx & (selector ~= sel_vals(i));
-  test_idx = selector == sel_vals(i);
+  sel_vals = nanunique(selector);
+  train_idx = ~unused_idx & (selector ~= sel_vals(iter));
+  test_idx = selector == sel_vals(iter);
 
   % run classification and assess performance
+  iter_res = struct();
   if ~isempty(xval_params.test_targets)
     % use different targets for train and test (unusual)
     iter_res = traintest(pattern(test_idx,:), pattern(train_idx,:), ...
@@ -86,21 +117,7 @@ for i = 1:n_iter
   %iter_res.unused_idx = unused_idx;
   %iter_res.unknown_idx = [];
 
-  % all other stats come from traintest
-  res.iterations(i) = iter_res;
-
   if xval_params.verbose
-    fprintf('%.2f\t', res.iterations(i).perf)
+    fprintf('%.2f\t', iter_res.perf)
   end
-end
-
-if xval_params.verbose > 1
-  fprintf('TOTAL: %.2f', nanmean([res.iterations.perf]))
-elseif xval_params.verbose == 1
-  fprintf('%.2f', nanmean([res.iterations.perf]))
-end
-
-if xval_params.verbose > 0
-  fprintf('\n')
-end
-
+  
