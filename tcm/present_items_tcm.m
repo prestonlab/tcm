@@ -32,22 +32,22 @@ if isfield(param, 'record') && ~isempty(param.record)
     end
 end
 
-c_in = zeros(size(net.c));
+net.c_in = zeros(size(net.c));
 for i = 1:length(net.f_item)
     % interpresentation interval
     if param.B_ipi > 0;
         % assuming context input is orthgonal to current context
         rho = sqrt(1 - param.B_ipi^2);
-        c_in(:) = 0;
-        c_in(net.c_ipi(i)) = 1;
-        net.c = rho * net.c + param.B_ipi * c_in;
+        net.c_in(:) = 0;
+        net.c_in(net.c_ipi(i)) = 1;
+        net.c = rho * net.c + param.B_ipi * net.c_in;
     end
     
     % update context with item input
     ind = net.f_item(i);
-    c_in(:) = normalize_vector(net.w_fc_pre(:,ind));
-    rho = scale_context(net.c, c_in, param.B_enc);
-    net.c = rho * net.c + param.B_enc * c_in;
+    net.c_in(:) = normalize_vector(net.w_fc_pre(:,ind));
+    rho = scale_context(net.c, net.c_in, param.B_enc);
+    net.c = rho * net.c + param.B_enc * net.c_in;
     
     % learning rate
     Lcf = param.Lcf + (param.P1 * exp(-param.P2 * (i - 1)));
@@ -67,17 +67,17 @@ end
 if param.B_ri > 0;
     % assuming context input is orthogonal to current context
     rho = sqrt(1 - param.B_ri^2);
-    c_in(:) = 0;
-    c_in(net.c_ri) = 1;
-    net.c = rho * net.c + param.B_ri * c_in;
+    net.c_in(:) = 0;
+    net.c_in(net.c_ri) = 1;
+    net.c = rho * net.c + param.B_ri * net.c_in;
 end
 
 if param.B_s > 0;
     % retrieve start-list context
-    c_in(:) = 0;
-    c_in(net.c_start) = 1;
-    rho = scale_context(net.c, c_in, param.B_s);
-    net.c = rho * net.c + param.B_s * c_in;
+    net.c_in(:) = 0;
+    net.c_in(net.c_start) = 1;
+    rho = scale_context(net.c, net.c_in, param.B_s);
+    net.c = rho * net.c + param.B_s * net.c_in;
 end
 
 function rho = scale_context(c, c_in, B)
