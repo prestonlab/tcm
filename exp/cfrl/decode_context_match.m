@@ -53,6 +53,7 @@ fprintf('Optimizing noise...\n')
 %n = 0:.01:.15;
 %n = 0:.05:.2;
 %n = 0:.1:1;
+n = 0:.05:.2
 n_rep_optim = 20;
 [n_item, n_feat] = size(pattern);
 pat_ind = {1:(n_feat/2) (n_feat/2+1):n_feat};
