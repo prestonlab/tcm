@@ -29,7 +29,7 @@ function res = xval(pattern, selector, targets, varargin)
 %   perfmet_args - cell array of addition arguments for the perfmet
 %                  function
 %   runpar       - if true, cross-validations will be run in
-%                  parallel (requires parallel computing toolbox). (true)
+%                  parallel (requires parallel computing toolbox). (false)
 %   verbose      - if true, more output will be printed. (false)
 
 % input checks
@@ -50,7 +50,7 @@ end
 % options
 defaults.test_targets = [];
 defaults.verbose = false;
-defaults.runpar = true;
+defaults.runpar = false;
 [xval_params, params] = propval(varargin, defaults);
 params = propval(params, struct, 'strict', false);
 params.verbose = false;
