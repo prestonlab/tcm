@@ -265,15 +265,31 @@ search = load('~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018
 outfile = '~/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_2018-07-24_decode.mat';
 decode_cfrl(search.stats, 'cfr', 'full_wikiw2v', outfile);
 
+outfile = decode_cfrl('cfr', 'full_wikiw2v', 'decode_ic_evid50', .5);
 s = load(outfile);
-for i = 1:length(s.subj_data);
+s = load('/Users/morton/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_20181120T112127_decode_ic_test50-5.mat');
+n_subj = length(s.c);
+m_eeg = cell(1, n_subj);
+m_con = cell(1, n_subj);
+n = cell(1, n_subj);
+for i = 1:n_subj;
     [m_eeg{i}, m_con{i}, n{i}] = ...
-        evidence_trainpos(s.eeg_evidence{i}, s.con_evidence{i}, ...
+        evidence_trainpos(s.eeg_evidence{i}, s.con_evidence_rep{i}, ...
                           s.subj_data{i}.pres.category);
 end
 
-print_evid_trainpos(cat(3, m_eeg{:}), '~/work/cfr/figs2/integ_eeg.eps');
-print_evid_trainpos(cat(3, m_con{:}), '~/work/cfr/figs2/integ_con.eps');
+if n_subj == 1
+    clf
+    subplot(1,2,1)
+    print_evid_trainpos(m_eeg{1}, '');
+    subplot(1,2,2)
+    print_evid_trainpos(m_con{1}, '');
+end
+
+clf
+print_evid_trainpos(cat(3, m_eeg{:}), '~/work/cfr/figs2/integ_ic150_eeg.eps');
+clf
+print_evid_trainpos(cat(3, m_con{:}), '~/work/cfr/figs2/integ_ic150_con.eps');
 
 
 clf
