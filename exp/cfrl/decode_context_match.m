@@ -1,4 +1,5 @@
-function [evidence, fitted_perf, sigma] = decode_context_match(context, category, target_perf)
+function [evidence, fitted_perf, sigma] = decode_context_match(context, ...
+                                                  category, target_perf, w)
 %DECODE_CONTEXT   Use pattern classification to decode stimulus category.
 %
 %  Use a ridge regression classifier to decode category from states
@@ -12,6 +13,13 @@ function [evidence, fitted_perf, sigma] = decode_context_match(context, category
 %
 %  category - [lists x items] numeric array
 %      The category code for each trial.
+%
+%  target_perf - float
+%      Target decoding performance to match.
+%
+%  w - float
+%      Weight of effect of noise on context, relative to item,
+%      which has a weight of 1.
 %
 %  OUTPUTS
 %  evidence - [trials x categories] numeric array
@@ -38,18 +46,26 @@ opt.f_train = @train_logreg;
 opt.train_args = {struct('penalty', 10)};
 opt.f_test = @test_logreg;
 opt.verbose = false;
+opt.runpar = true;
 
 % set noise level
 fprintf('Optimizing noise...\n')
-n = 0:.01:.15;
+%n = 0:.01:.15;
+%n = 0:.05:.2;
+%n = 0:.1:1;
 n_rep_optim = 20;
+[n_item, n_feat] = size(pattern);
+pat_ind = {1:(n_feat/2) (n_feat/2+1):n_feat};
+w = [w 1];
 perf = NaN(length(n), n_rep_optim);
 for i = 1:length(n)
     fprintf('.')
-    parfor j = 1:n_rep_optim
-        noise = randn(size(pattern)) * n(i);
-        res = xval(pattern+noise, list, targets, opt);
-        perf(i,j) = mean([res.iterations.perf]);
+    for j = 1:n_rep_optim
+        % add noise, with potentially different amounts added to
+        % the item and context parts
+        vec = add_noise(pattern, n(i), pat_ind, w);
+        res = xval(vec, list, targets, opt);
+        perf(i,j) = mean_evidence(res);
     end
 end
 fprintf('\n');
@@ -77,10 +93,10 @@ fprintf('Running replications with fitted noise level...\n');
 n_rep = 100;
 evidence_all = cell(1, n_rep);
 rep_perf = NaN(1, n_rep);
-parfor i = 1:n_rep
-    noise = randn(size(pattern)) * sigma;
-    res = xval(pattern+noise, list, targets, opt);
-    rep_perf(i) = mean([res.iterations.perf]);
+for i = 1:n_rep
+    vec = add_noise(pattern, sigma, pat_ind, w);
+    res = xval(vec, list, targets, opt);
+    rep_perf(i) = mean_evidence(res);
     evidence_rep = NaN(size(targets, 1), size(targets, 2));
     for j = 1:length(res.iterations)
         test_ind = res.iterations(j).test_idx;
@@ -89,6 +105,14 @@ parfor i = 1:n_rep
     evidence_all{i} = evidence_rep;
 end
 
-evidence_mat = cat(3, evidence_all{:});
-evidence = mean(evidence_mat, 3);
-fitted_perf = mean(rep_perf);
+evidence = cat(3, evidence_all{:});
+fitted_perf = rep_perf;
+
+
+function y = add_noise(x, sigma, ind, w)
+
+    noise = randn(size(x)) * sigma;
+    y = NaN(size(x));
+    for i = 1:length(ind)
+        y(:,ind{i}) = x(:,ind{i}) + noise(:,ind{i}) * w(i);
+    end
