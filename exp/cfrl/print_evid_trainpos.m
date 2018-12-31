@@ -4,7 +4,8 @@ function print_evid_trainpos(evid, fig_file)
 %  print_evid_trainpos(evid, fig_file)
 
 %x = 1:size(evid, 1);
-n_trainpos = 3;
+n_subj = size(evid, 3);
+n_trainpos = 6;
 x = 1:n_trainpos;
 y = NaN(3, n_trainpos);
 l = NaN(3, n_trainpos);
@@ -12,12 +13,17 @@ u = NaN(3, n_trainpos);
 for i = 1:size(evid, 2)
     mat = permute(evid(1:n_trainpos,i,:), [3 1 2]);
     n = sum(~isnan(mat), 1);
-    y(i,:) = nanmean(mat);
-    [l(i,:), u(i,:)] = bootstrap_ci(mat, 1, 5000, .05);
+    y(i,:) = nanmean(mat, 1);
+    if n_subj > 1
+        [l(i,:), u(i,:)] = bootstrap_ci(mat, 1, 5000, .05);
+    end
 end
 
-clf
-h = mseb(x, y, cat(3, u-y, y-l));
+if n_subj > 1
+    h = mseb(x, y, cat(3, u-y, y-l));
+else
+    h = plot(x, y');
+end
 a = gca;
 %set(a, 'XLim', [.5 1], 'XTick', .5:.1:1, ...
 %       'YLim', [0 .2], 'YTick', 0:.05:.2)
