@@ -37,7 +37,8 @@ opt = struct;
 opt.f_train = @train_logreg;
 opt.train_args = {struct('penalty', 10)};
 opt.f_test = @test_logreg;
-opt.verbose = true;
+opt.verbose = false;
+opt.runpar = true;
 res = xval(pattern, list, targets, opt);
 
 % unpack results
@@ -47,4 +48,4 @@ for i = 1:length(res.iterations)
     evidence(test_ind,:) = res.iterations(i).acts';
 end
 
-perf = mean([res.iterations.perf]);
+perf = mean_evidence(res);
