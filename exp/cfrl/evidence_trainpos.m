@@ -50,22 +50,23 @@ ctype.base = unwrap(base);
 n_ctypes = length(ctypes);
 
 % for each trial, get each type of evidence
+n_rep = size(con, 3);
 n_trial = size(eeg, 1);
 eeg_ctype = NaN(n_trial, 3);
-con_ctype = NaN(n_trial, 3);
+con_ctype = NaN(n_trial, 3, n_rep);
 for i = 1:n_trial
     for j = 1:n_ctypes
         col = ctype.(ctypes{j})(i);
         if ~isnan(col)
             eeg_ctype(i,j) = eeg(i,col);
-            con_ctype(i,j) = con(i,col);
+            con_ctype(i,j,:) = con(i,col,:);
         end
     end
 end
 
 % average within train position bins
 eeg_evid = NaN(n_trainpos, n_ctypes);
-con_evid = NaN(n_trainpos, n_ctypes);
+con_evid = NaN(n_trainpos, n_ctypes, n_rep);
 n = NaN(n_trainpos, n_ctypes);
 for i = 1:n_trainpos
     for j = 1:n_ctypes
@@ -77,8 +78,8 @@ for i = 1:n_trainpos
                   ~any(isnan(eeg), 2);
         
         % mean evidence for the category of interest
-        eeg_evid(i,j) = mean(eeg_ctype(include,j));
-        con_evid(i,j) = mean(con_ctype(include,j));
+        eeg_evid(i,j) = mean(eeg_ctype(include,j), 1);
+        con_evid(i,j,:) = mean(con_ctype(include,j,:), 1);
         n(i,j) = nnz(include);
     end
 end
