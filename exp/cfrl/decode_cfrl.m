@@ -1,29 +1,76 @@
-function outfile = decode_cfrl(experiment, fit, res_name, w)
+function outfile = decode_cfrl(experiment, fit, res_name, w, varargin)
 %DECODE_CFRL   Decode EEG and context.
 %
-%  outfile = decode_cfrl(stats, experiment, fit, res_name, w)
+%  outfile = decode_cfrl(experiment, fit, res_name, w, ...)
+%
+%  INPUTS
+%  experiment : char
+%      Name of the experiment to process.
+%
+%  fit : char
+%      Name of the model fit to use.
+%
+%  res_name : char
+%      Name of the results. Used in creating the output file.
+%
+%  w : double
+%      Weighting of noise on item features. Item noise will be 
+%      w * sigma, while context noise will be sigma.
+%
+%  OPTIONS
+%  subj_ind : numeric array : []
+%      Index of the subject to include, within the sorted list of
+%      subject numbers. Will create an output file specific to that
+%      subject.
+%
+%  overwrite : boolean : false
+%      If true, will overwrite existing output files.
 
-info = get_fit_info_cfrl('local_cat_wikiw2v', 'cfr');
-[par, base, ext] = fileparts(info.res_file);
-outfile = fullfile(par, sprintf('%s_%s.mat', base, res_name));
+def = struct();
+def.subj_ind = [];
+def.overwrite = false;
+opt = propval(varargin, def);
 
+% simulation info
+info = get_fit_info_cfrl(fit, experiment);
 stats = getfield(load(info.res_file, 'stats'), 'stats');
 simdef = sim_def_cfrl(experiment, fit);
 load(simdef.data_file);
-subjnos = unique(data.subject);
-n_subj = length(subjnos);
 
-if exist(outfile, 'file')
-    load(outfile);
+% output file
+[par, base, ext] = fileparts(info.res_file);
+
+% get subject(s) to process
+subjnos = unique(data.subject);
+if ~isempty(opt.subj_ind)
+    subj_ind = opt.subj_ind;
+    subjnos = subjnos(subj_ind);
+    n_subj = length(subj_ind);
+    outfile = fullfile(par, sprintf('%s_%s_%d.mat', base, res_name, subj_ind));
+else
+    n_subj = length(subjnos);
+    subj_ind = 1:n_subj;
+    outfile = fullfile(par, sprintf('%s_%s.mat', base, res_name));
 end
 
+% load existing results
+if exist(outfile, 'file')
+    if opt.overwrite
+        delete(outfile);
+    else
+        load(outfile);
+    end
+end
+
+% record context
 if ~exist('c', 'var')
     disp('Recording context for best-fitting parameters...')
     [subj_data, subj_param, c, c_in, ic] = ...
-        indiv_context_cfrl(stats(1:n_subj), simdef);
+        indiv_context_cfrl(stats(subj_ind), simdef);
     save(outfile, 'subj_data', 'subj_param', 'c', 'c_in', 'ic');
 end
 
+% decode EEG
 pat_file = cell(1, n_subj);
 for i = 1:n_subj
     switch experiment
@@ -44,6 +91,7 @@ if ~exist('eeg_evidence_raw', 'var')
     save(outfile, 'pat_file', 'eeg_evidence_raw', 'eeg_perf', '-append');
 end
 
+% match EEG to full set of trials
 if ~exist('eeg_evidence', 'var')
     disp('Matching up trials...')
     eeg_evidence = cell(1, n_subj);
@@ -69,6 +117,7 @@ if ~exist('eeg_evidence', 'var')
     save(outfile, 'eeg_evidence', '-append');
 end
 
+% decode context without added noise
 if ~exist('con_evidence_raw', 'var')
     disp('Decoding context...')
     con_evidence_raw = cell(1, n_subj);
@@ -80,6 +129,7 @@ if ~exist('con_evidence_raw', 'var')
     save(outfile, 'con_evidence_raw', 'con_perf_raw', '-append');
 end
 
+% decode context with matched noise
 if ~exist('con_evidence', 'var')
     disp('Decoding context with matched noise...')
     con_evidence_rep = cell(1, n_subj);
