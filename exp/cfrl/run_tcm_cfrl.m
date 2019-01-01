@@ -43,6 +43,11 @@ for i = 1:n_rep
     jobs{end+1} = submit_searches_cfrl(experiments, fits, flags, 'n_workers', 12);
 end
 
+% run classification and noise-level estimation for context
+flags = '-t 03:00:00 --mem=24gb --cpus-per-task=12';
+job = submit_decode_cfrl('cfr', 'local_cat_wikiw2v', ...
+                         'decode_ic_evid25', 25, flags);
+
 %% cdcfr2 fits
 
 experiments = {'cdcfr2'};
