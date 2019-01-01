@@ -29,7 +29,12 @@ function outfile = decode_cfrl(experiment, fit, res_name, w, varargin)
 def = struct();
 def.subj_ind = [];
 def.overwrite = false;
+def.n_workers = [];
 opt = propval(varargin, def);
+
+if ~isempty(opt.n_workers) && isempty(gcp('nocreate'))
+    [pool, cluster] = job_parpool(opt.n_workers);
+end
 
 % simulation info
 info = get_fit_info_cfrl(fit, experiment);
@@ -56,10 +61,14 @@ end
 % load existing results
 if exist(outfile, 'file')
     if opt.overwrite
+        fprintf('Overwriting existing results in: %s\n', outfile);
         delete(outfile);
     else
+        fprintf('Loading existing results from: %s\n', outfile);
         load(outfile);
     end
+else
+    fprintf('Saving results to: %s\n', outfile);
 end
 
 % record context
