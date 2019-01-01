@@ -5,7 +5,7 @@ function print_evid_trainpos(evid, fig_file)
 
 %x = 1:size(evid, 1);
 n_subj = size(evid, 3);
-n_trainpos = 6;
+n_trainpos = 3;
 x = 1:n_trainpos;
 y = NaN(3, n_trainpos);
 l = NaN(3, n_trainpos);
