@@ -32,7 +32,7 @@ def.overwrite = false;
 def.n_workers = [];
 opt = propval(varargin, def);
 
-if ~isempty(opt.n_workers) && isempty(gcp('nocreate'))
+if ~isempty(opt.n_workers)
     [pool, cluster] = job_parpool(opt.n_workers);
 end
 

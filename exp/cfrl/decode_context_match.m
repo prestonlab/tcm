@@ -17,9 +17,9 @@ function [evidence, fitted_perf, sigma] = decode_context_match(context, ...
 %  target_perf - float
 %      Target decoding performance to match.
 %
-%  w - float
-%      Weight of effect of noise on context, relative to item,
-%      which has a weight of 1.
+%  w - [1 x 2] numeric array
+%      Weight of effect of noise on item (w(1)) and context (w(2)). If
+%      either weight is negative, that segment will be omitted.
 %
 %  OUTPUTS
 %  evidence - [trials x categories] numeric array
@@ -50,11 +50,10 @@ opt.runpar = true;
 
 % set noise level
 fprintf('Optimizing noise...\n')
-n = 0:.02:.5; % 24 tests
-n_rep_optim = 20;
+n = 0:.01:.5; % 51 tests
+n_rep_optim = 50;
 [n_item, n_feat] = size(pattern);
 pat_ind = {1:(n_feat/2) (n_feat/2+1):n_feat};
-w = [w 1];
 perf = NaN(length(n), n_rep_optim);
 for i = 1:length(n)
     fprintf('.')
@@ -72,7 +71,7 @@ fprintf('\n');
 optim_perf = mean(perf, 2);
 
 % interpolate to estimate the best noise level
-xx = linspace(n(1), n(end), 1000);
+xx = linspace(n(1), n(end), 10000);
 s = spline(n, optim_perf, xx);
 [~, ind] = min(abs(s - target_perf));
 sigma = xx(ind);
@@ -80,11 +79,11 @@ fprintf('Target: %.4f Actual: %.4f Sigma: %.4f\n', ...
         target_perf, s(ind), sigma);
 
 % plot
-clf
-plot(xx, s, '-k');
-hold on
-plot(n, optim_perf, 'ro');
-drawnow
+% clf
+% plot(xx, s, '-k');
+% hold on
+% plot(n, optim_perf, 'ro');
+% drawnow
 
 % get average evidence for each trial
 fprintf('Running replications with fitted noise level...\n');
@@ -113,4 +112,10 @@ function y = add_noise(x, sigma, ind, w)
     y = NaN(size(x));
     for i = 1:length(ind)
         y(:,ind{i}) = x(:,ind{i}) + noise(:,ind{i}) * w(i);
+    end
+    
+    for i = 1:length(w)
+        if w(i) < 0
+            y(:,ind{i}) = [];
+        end
     end

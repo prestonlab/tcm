@@ -44,9 +44,9 @@ for i = 1:n_rep
 end
 
 % run classification and noise-level estimation for context
-flags = '-t 03:00:00 --mem=24gb --cpus-per-task=12';
+flags = '-t 06:00:00 --mem=24gb --cpus-per-task=12';
 job = submit_decode_cfrl('cfr', 'local_cat_wikiw2v', ...
-                         'decode_ic_evid25', 25, flags);
+                         'decode_ic_evid25', 25, 12, false, flags);
 
 %% cdcfr2 fits
 
