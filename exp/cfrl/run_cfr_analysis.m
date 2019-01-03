@@ -268,7 +268,7 @@ decode_cfrl(search.stats, 'cfr', 'full_wikiw2v', outfile);
 outfile = decode_cfrl('cfr', 'full_wikiw2v', 'decode_ic_evid50', .5);
 s = load(outfile);
 s = load('/Users/morton/work/cfr/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_20181120T112127_decode_ic_test50-5.mat');
-s = load_decode_cfrl('cfr', 'local_cat_wikiw2v', 'decode_ic_evid25');
+s = load_decode_cfrl('cfr', 'local_cat_wikiw2v', 'decode_c_evid');
 n_subj = length(s.c.pres);
 m_eeg = cell(1, n_subj);
 m_con = cell(1, n_subj);
@@ -288,9 +288,9 @@ if n_subj == 1
 end
 
 clf
-print_evid_trainpos(cat(3, m_eeg{:}), '~/work/cfr/figs2/integ_ic_evid25_eeg.eps');
+print_evid_trainpos(cat(3, m_eeg{:}), '~/work/cfr/figs2/integ_c_evid_eeg.eps');
 clf
-print_evid_trainpos(cat(3, m_con{:}), '~/work/cfr/figs2/integ_ic_evid25_con.eps');
+print_evid_trainpos(cat(3, m_con{:}), '~/work/cfr/figs2/integ_c_evid_con.eps');
 
 
 clf
@@ -304,6 +304,7 @@ for i = 1:length(m_eeg)
         set(h1(j), 'Color', colors(j,:))
         set(h2(j), 'Color', colors(j,:))
     end
+    set(gca, 'YLim', [0 .7])
 end
 
 n_subj = length(m_eeg);
@@ -325,9 +326,9 @@ for i = 1:3
 end
 
 clf
-print_class_slope(eeg_b, '~/work/cfr/figs2/integ_ic_slope_eeg.eps');
+print_class_slope(eeg_b, '~/work/cfr/figs2/integ_c_evid_slope_eeg.eps');
 clf
-print_class_slope(con_b, '~/work/cfr/figs2/integ_ic_slope_con.eps');
+print_class_slope(con_b, '~/work/cfr/figs2/integ_c_evid_slope_con.eps');
 
 %% testing out item vs. context
 
