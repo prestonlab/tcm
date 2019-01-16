@@ -23,7 +23,11 @@ if ~isfield(param, 'init_item')
 end
 
 if ~isfield(param, 'B_ri')
-    param.B_ri = 0;
+    if isfield(param, 'B_ipi')
+        param.B_ri = param.B_ipi;
+    else
+        param.B_ri = 0;
+    end
 end
 
 % translate the G parameter (a ratio) to Dfc (a value for
