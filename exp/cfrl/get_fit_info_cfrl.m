@@ -46,6 +46,12 @@ switch fit
     model_type = 'tcm_dc_cat_wikiw2v';
   case 'local_cat_wikiw2v'
     model_type = 'tcm_dc_loc_cat_wikiw2v';
+  case {'local_cat_wikiw2v_dsl' ...
+        'local_cat_wikiw2v_dsc' ...
+        'local_cat_wikiw2v_dsd'}
+    c = regexp(fit, '_', 'split');
+    model_type = ['tcm_dc_loc_cat_wikiw2v_' c{end}];
+    
   otherwise
     error('Unknown fit type: %s', fit);
 end

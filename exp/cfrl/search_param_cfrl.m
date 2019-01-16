@@ -114,7 +114,18 @@ if namecheck('_qc', model_type)
 end
 
 if namecheck('cdcfr2', experiment)
-    fixed.distract_params = {'P1' 'B_ipi' 'X2'};
+    dpar = {'P1' 'B_ipi' 'X2'};
+    if namecheck('_dsl', model_type)
+        dpar = [dpar {'SL'}];
+    end
+    if namecheck('_dsc', model_type)
+        dpar = [dpar {'SC'}];
+    end
+    if namecheck('_dsd', model_type)
+        dpar = [dpar {'SD'}];
+    end
+    
+    fixed.distract_params = dpar;
     for i = 1:length(fixed.distract_params)
         param_name = fixed.distract_params{i};
         for j = 1:2
