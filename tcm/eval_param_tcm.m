@@ -91,7 +91,7 @@ end
 err = -nansum(logl(:));
 
 if err == 0
-    err = Inf;
+    err = 10^6;
 end
 
 if opt.verbose
