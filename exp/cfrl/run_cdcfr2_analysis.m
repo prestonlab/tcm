@@ -92,3 +92,35 @@ for i = 1:length(f)
     end
     set(gca, 'YLim', [0 1])
 end
+
+%% load first searches of different disruption parameters
+
+res.base = load('/Users/morton/work/cdcfr2/tcm/tcm_dc_loc_cat_wikiw2v/tcm_dc_loc_cat_wikiw2v_20190120T131330.mat');
+res.dsl = load('/Users/morton/work/cdcfr2/tcm/tcm_dc_loc_cat_wikiw2v_dsl/tcm_dc_loc_cat_wikiw2v_dsl_20190120T131330.mat');
+res.dsc = load('/Users/morton/work/cdcfr2/tcm/tcm_dc_loc_cat_wikiw2v_dsc/tcm_dc_loc_cat_wikiw2v_dsc_20190120T131330.mat');
+res.dsd = load('/Users/morton/work/cdcfr2/tcm/tcm_dc_loc_cat_wikiw2v_dsd/tcm_dc_loc_cat_wikiw2v_dsd_20190120T131330.mat');
+
+base = [res.base.stats.fitness]';
+dsl = [res.dsl.stats.fitness]';
+dsc = [res.dsc.stats.fitness]';
+dsd = [res.dsd.stats.fitness]';
+
+t = table(base, dsl, dsc, dsd);
+
+
+%% work on setting up faster iteration of distraction models
+
+% load one subject
+experiment = 'cdcfr2-2';
+fit = 'local_cat_wikiw2v';
+files = get_exp_info_cfrl(experiment);
+real = load(files.data);
+
+% base model fit based on likelihood
+res = indiv_search_cfrl(experiment, fit, 'search_type', 'de_fast');
+search = unpack_search_cfrl(res, experiment, fit);
+
+simdef = sim_def_cfrl(experiment, fit);
+data = search.data;
+pool = load(simdef.pool_file);
+custom = prep_param_cfrl(search.param, simdef, pool.category);
