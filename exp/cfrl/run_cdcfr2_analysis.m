@@ -124,3 +124,49 @@ simdef = sim_def_cfrl(experiment, fit);
 data = search.data;
 pool = load(simdef.pool_file);
 custom = prep_param_cfrl(search.param, simdef, pool.category);
+
+%% test out different RDMs
+
+% add plotting functions for rdms
+addpath ~/analysis/wikisim/ana
+
+files = get_exp_info_cfrl('cdcfr2');
+sem = load(files.wikiw2v.mat);
+load(files.data);
+sdata = trial_subset(data.subject==201, data);
+
+pres_itemnos = sdata.pres_itemnos';
+itemnos_vec = pres_itemnos(:);
+
+pres_itemnos1 = [nan(size(sdata.pres_itemnos, 1), 1) ...
+                 sdata.pres_itemnos(:,2:end)];
+itemnos_vec1 = pres_itemnos1(:);
+
+pres_category = sdata.pres.category';
+category_vec = pres_category(:);
+
+pres_session = repmat(sdata.session', [sdata.listLength 1]);
+session_vec = pres_session(:);
+
+pres_list = repmat(1:size(sdata.pres_itemnos, 1), [sdata.listLength 1]);
+list_vec = pres_list(:);
+
+pres_serialpos = repmat([1:sdata.listLength]', ...
+                        [1 size(sdata.pres_itemnos, 1)]);
+serialpos_vec = pres_serialpos(:);
+
+f_exact = @(x,y) double(~all(x==y, 2));
+model = struct();
+model.session = squareform(pdist(session_vec, f_exact));
+model.list = squareform(pdist(list_vec, f_exact));
+model.serialpos = squareform(pdist(serialpos_vec, f_exact));
+model.sem = sem.rdm(itemnos_vec, itemnos_vec);
+model.cat = squareform(pdist(category_vec, f_exact));
+model.item = squareform(pdist(itemnos_vec, f_exact));
+
+f = fieldnames(model);
+for i = 1:length(f)
+    subplot(2,3,i)
+    plot_rdm(model.(f{i}), 'prctile_range', [0 100]);
+    title(f{i}, 'FontSize', 18)
+end
