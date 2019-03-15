@@ -44,6 +44,8 @@ switch search_type
     def.tol = 1;
     def.stall_gen_limit = 5;
     opt = propval(other, def, 'strict', false);
+  case {'so' 'gps' 'pso' 'ga' 'sa'}
+    opt = propval(other, base, 'strict', false);
   otherwise
     error('Unknown search type: %s', search_type)
 end
