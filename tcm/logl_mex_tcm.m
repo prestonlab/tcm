@@ -75,6 +75,10 @@ function logl = run_tcm(data, param, param_vec)
         isvec = false;
     end
     
+    if any(data.recalls_vec <= 0)
+        error('Invalid values in recalls vector.')
+    end
+    
     if issem && ~isvec
         logl = tcm_matlab(data.listLength, data.recalls_vec, param_vec, ...
                           1, data.pres_itemnos, param.sem_mat);
