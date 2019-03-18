@@ -44,11 +44,21 @@ data_full = data;
 % clean the recall matrices (remove repeats and intrusions)
 data = clean_frdata(data);
 save(fullfile(data_dir, 'cdcfr2_data_clean.mat'), 'data')
+data_clean = data;
+
+% save out separate files for each distraction condition
+distlen = [0 2.5 7.5];
+for i = 1:length(distlen)
+    data = trial_subset(data_clean.pres.distractor(:,1) == distlen(i), ...
+                        data_clean);
+    filename = sprintf('cdcfr2_data_clean_d%d.mat', i - 1);
+    save(fullfile(data_dir, filename), 'data');
+end
 
 % category
-[itemno, ind] = unique(data.pres_itemnos);
-category = data.pres.category(ind);
-item = data.pres_items(ind);
+[itemno, ind] = unique(data_clean.pres_itemnos);
+category = data_clean.pres.category(ind);
+item = data_clean.pres_items(ind);
 save(fullfile(data_dir, 'cdcfr2_pool.mat'), 'item', 'itemno', 'category');
 
 % semantics

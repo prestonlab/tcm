@@ -113,7 +113,7 @@ if namecheck('_qc', model_type)
     init.Scf = [0 1];
 end
 
-if namecheck('cdcfr2', experiment)
+if ismember(experiment, {'cdcfr2' 'cdcfr2-1' 'cdcfr2-2'})
     dpar = {'P1' 'B_ipi' 'X2'};
     if namecheck('_dsl', model_type)
         dpar = [dpar {'SL'}];

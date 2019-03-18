@@ -19,12 +19,25 @@ switch experiment
     files.data_raw = fullfile(files.data_dir, 'cfr_eeg_mixed_data.mat');
     files.pool = fullfile(files.data_dir, 'cfr_pool.mat');
   case 'cdcfr2'
+    % full dataset
     files.res_dir = '~/work/cdcfr2';
     files.model_dir = '~/work/cdcfr2/tcm';
     files.data_dir = fullfile(proj_dir, 'data');
     files.data = fullfile(files.data_dir, 'cdcfr2_data_clean.mat');
     files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
     files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
+  case {'cdcfr2-d0' 'cdcfr2-d1' 'cdcfr2-d2'}
+    % one distractor condition at a time
+    c = regexp(experiment, '-', 'split');
+    distract = c{2};
+    files.res_dir = fullfile('~/work', experiment);
+    files.model_dir = fullfile('~/work', experiment, 'tcm');
+    files.data_dir = fullfile(proj_dir, 'data');
+    datafile = sprintf('cdcfr2_data_clean_%s.mat', distract);
+    files.data = fullfile(files.data_dir, datafile);
+    files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
+    files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
+    sem_exp = 'cdcfr2';
   case 'cdcfr2-1'
     files.res_dir = '~/work/cdcfr2-1';
     files.model_dir = '~/work/cdcfr2-1/tcm';
