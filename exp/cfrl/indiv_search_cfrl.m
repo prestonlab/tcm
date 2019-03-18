@@ -32,7 +32,7 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %      Number of parallel workers to use when optimizing parameters
 %      for different subjects.
 
-if contains(experiment, 'cdcfr2')
+if ismember(experiment, {'cdcfr2' 'cdcfr2-1' 'cdcfr2-2'})
     def.f_logl = @logl_mex_cdcfr2;
 else
     def.f_logl = @logl_mex_tcm;
@@ -144,10 +144,11 @@ function res = run_search(fstruct, ind, subject, search_opt, run_opt)
                              rmfieldifexist(fstruct.data, 'recalls_vec'));
     subj_data_orig = subj_data;
     
-    % split by distraction
-    if isfield(subj_data.pres, 'distractor')
+    if strcmp(func2str(fstruct.f_logl), 'logl_mex_cdcfr2')
+        % evaluating all distraction conditions
         subj_data.distract = split_distract_cfrl(subj_data);
     else
+        % no need to split by distraction
         subj_data.recalls_vec = recalls_vec_tcm(subj_data.recalls, ...
                                                 fstruct.data.listLength);
     end
