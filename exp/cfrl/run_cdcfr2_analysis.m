@@ -170,3 +170,26 @@ for i = 1:length(f)
     plot_rdm(model.(f{i}), 'prctile_range', [0 100]);
     title(f{i}, 'FontSize', 18)
 end
+
+%% what if we just fit the full standard model to each distraction condition
+%% individually?
+
+res_dir = '~/work/cdcfr2/figs';
+fits = repmat({'local_cat_wikiw2v'}, [1 3]);
+experiments = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
+for i = 1:length(fits)
+    fig_dir = fullfile(res_dir, strrep(experiments{i}, 'cdcfr2', 'model'));
+    if ~exist(fig_dir, 'dir')
+        mkdir(fig_dir)
+    end
+    print_fit_summary(fits{i}, experiments{i}, fig_dir);
+end
+
+% actual data for comparison
+for i = 1:length(experiments)
+    fig_dir = fullfile(res_dir, strrep(experiments{i}, 'cdcfr2', 'data'));
+    if ~exist(fig_dir, 'dir')
+        mkdir(fig_dir)
+    end
+    print_fit_summary('data', experiments{i}, fig_dir);
+end
