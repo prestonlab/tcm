@@ -164,7 +164,7 @@ for c = C:-1:1
     % or a de-saturated solid colour for the patch surface.
     
     %col=get(H(c).mainLine,'color');
-    col = colors(c,:);
+    col = lineProps.col{c};
     edgeColor=col+(1-col)*0.55;
     patchSaturation=0.15; %How de-saturated or transparent to make the patch
     if transparent
