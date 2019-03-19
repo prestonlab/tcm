@@ -25,7 +25,9 @@ y = nanmean(mat, 1);
 [l, u] = bootstrap_ci(mat, 1, 5000, .05);
 
 clf
-h = mseb(x, y, cat(3, u-y, y-l));
+lineprop = struct;
+lineprop.col = {[0 0 0]};
+h = mseb(x, y, cat(3, u-y, y-l), lineprop);
 a = gca;
 set(a, 'XLim', [.5 1], 'XTick', .5:.1:1, ...
        'YLim', [0 .2], 'YTick', 0:.05:.2)
