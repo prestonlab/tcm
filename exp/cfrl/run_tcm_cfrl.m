@@ -51,11 +51,14 @@ job = submit_decode_cfrl('cfr', 'local_cat_wikiw2v', ...
 
 %% cdcfr2 fits
 
+% starting at Job37; should have 20 jobs before this with the same settings,
+% which can all be merged together, excluding Job36 (an aborted stats job)
 experiments = {'cdcfr2'};
 %fits = {'base' 'cat' 'full_wikiw2v'};
-fits = {'full_wikiw2v'};
-flags = '-t 06:00:00 --mem=12gb --cpus-per-task=12';
-n_rep = 10;
+fits = {'local_cat_wikiw2v' 'local_cat_wikiw2v_dsl' ...
+        'local_cat_wikiw2v_dsc' 'local_cat_wikiw2v_dsd'};
+flags = '-t 10:00:00 --mem=12gb --cpus-per-task=12';
+n_rep = 30;
 jobs = {};
 for i = 1:n_rep
     jobs{end+1} = submit_searches_cfrl(experiments, fits, flags, ...
@@ -68,7 +71,47 @@ end
 load_job = submit_job(@load_rep_de_cfrl, 0, {jobs, true}, ...
                       '-t 00:30:00 --mem=12gb');
 
+clust = getCluster();
+jobs = num2cell(clust.Jobs([16:35 37:66]));
 jobs = cluster.Jobs([80:89 91:130]);
 rep = load_rep_de_cfrl(jobs, true);
 
 sim_job = submit_indiv_best_params_cfrl(experiments, fits, '-t 01:00:00 --mem=4gb');
+
+% new fits of each distraction condition separately
+experiments = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
+fits = {'local_cat_wikiw2v'};
+flags = '-t 10:00:00 --mem=12gb --cpus-per-task=12';
+n_rep = 9;
+%jobs = {};
+for i = 1:n_rep
+    jobs{end+1} = submit_searches_cfrl(experiments, fits, flags, ...
+                                       'n_workers', 10, ...
+                                       'search_type', 'de');
+end
+
+% load distraction condition parameters and fitness
+f = struct;
+p = cell(1, length(experiments));
+for i = 1:length(experiments)
+    c = regexp(experiments{i}, '_', 'split');
+    field = c{2};
+    info = get_fit_info_cfrl(fits{1}, experiments{i});
+    s = load(info.res_file);
+    f.(field) = cat(1, s.stats.fitness);
+    p{i} = cat(1, s.stats.parameters);
+end
+param_names = s.stats(1).names;
+
+ftab = struct2table(f);
+
+% parameter contrasts
+cont = [1 2; 2 3; 1 3];
+ptab = cell(1, length(experiments));
+ctab = cell(1, size(cont, 1));
+for i = 1:size(cont, 1)
+    ptab{i} = array2table(p{i}, 'VariableNames', param_names);
+    
+    p_cont = p{cont(i,1)} - p{cont(i,2)};
+    ctab{i} = array2table(p_cont, 'VariableNames', param_names);
+end
