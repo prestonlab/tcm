@@ -23,6 +23,7 @@ end
 % standard catfr analyses
 print_spc_cat(data, fullfile(res_dir, 'spc_cat.eps'), 'spc');
 print_spc_cat(data, fullfile(res_dir, 'pfr_cat.eps'), 'pfr');
+print_crp(data, fullfile(res_dir, 'crp.eps'));
 print_crp_cat(data, 1, 'cat', fullfile(res_dir, 'crp_within_cat.eps'));
 print_crp_cat(data, 2, 'cat', fullfile(res_dir, 'crp_from_cat.eps'));
 print_crp_cat(data, 3, 'cat', fullfile(res_dir, 'crp_to_cat.eps'));
@@ -52,7 +53,8 @@ print_sem_crp(act, poss, sem.sem_mat, bin.edges, bin.centers, ...
               fullfile(res_dir, 'sem_crp_between.eps'), ...
               'mask', pool.category ~= pool.category');
 
-if isfield(data.pres, 'distractor')
+if isfield(data.pres, 'distractor') && ...
+        length(unique(data.pres.distractor)) > 1
     print_sem_crp_distract(data, pool, sem, bin, ...
                            fullfile(res_dir, 'sem_crp_distract.eps'));
     
