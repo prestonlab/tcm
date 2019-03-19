@@ -41,7 +41,8 @@ for i = 1:n_subj
                              rmfieldifexist(data, 'recalls_vec'));
     
     % run simulation
-    if isfield(subj_data.pres, 'distractor')
+    if isfield(subj_data.pres, 'distractor') && ...
+            length(unique(subj_data.pres.distractor)) > 1
         seq = gen_cdcfr2(param, subj_data, opt.n_rep);
     else
         seq = gen_tcm(param, subj_data, opt.n_rep);
