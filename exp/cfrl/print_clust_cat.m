@@ -16,7 +16,6 @@ colors = get(groot, 'defaultAxesColorOrder');
 [l, u] = bootstrap_ci(p_within, 1, 5000, .05);
 
 clf
-hold on
 x = 1:3;
 y = nanmean(p_within, 1);
 
@@ -25,6 +24,7 @@ y_lim = get(gca, 'YLim');
 delete(htemp)
 
 for i = 1:3
+    hold on
     [hbar(i), herr(i)] = ebar(x(i), y(i), l(i), u(i));
     hbar(i).FaceColor = colors(i,:);
     hbar(i).LineStyle = 'none';
@@ -41,4 +41,5 @@ set(a, 'LineWidth', 1, font_prop{:})
 set(get(a, 'XLabel'), font_prop{:})
 set(get(a, 'YLabel'), font_prop{:})
 ylabel('within-category probability')
+box off
 print(gcf, '-depsc', fig_file);
