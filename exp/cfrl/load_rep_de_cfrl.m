@@ -18,6 +18,9 @@ end
 
 in = fetchInputs(jobs{1});
 experiments = in(:,1);
+for i = 1:length(experiments)
+    experiments{i} = strrep(experiments{i}, '-', '_');
+end
 fits = in(:,2);
 
 fprintf('Loading replications...');

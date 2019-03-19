@@ -26,9 +26,9 @@ switch experiment
     files.data = fullfile(files.data_dir, 'cdcfr2_data_clean.mat');
     files.data_raw = fullfile(files.data_dir, 'cdcfr2_data.mat');
     files.pool = fullfile(files.data_dir, 'cdcfr2_pool.mat');
-  case {'cdcfr2-d0' 'cdcfr2-d1' 'cdcfr2-d2'}
+  case {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'}
     % one distractor condition at a time
-    c = regexp(experiment, '-', 'split');
+    c = regexp(experiment, '_', 'split');
     distract = c{2};
     files.res_dir = fullfile('~/work', experiment);
     files.model_dir = fullfile('~/work', experiment, 'tcm');
