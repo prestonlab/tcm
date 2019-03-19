@@ -7,7 +7,7 @@ files = get_exp_info_cfrl(experiment);
 
 if strcmp(fit, 'data')
     info.res_dir = files.res_dir;
-    info.stat_file = files.data_raw;
+    info.stat_file = files.data;
     return
 end
 
