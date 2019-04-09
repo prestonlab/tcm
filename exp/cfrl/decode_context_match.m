@@ -34,7 +34,8 @@ targets = zeros(length(labels), 3);
 for i = 1:length(ucat)
     targets(labels==ucat(i),i) = 1;
 end
-list = repmat([1:30]', [1 24])';
+[n_list, n_trial] = size(category);
+list = repmat([1:n_list]', [1 n_trial])';
 list = list(:);
 
 c = context';
