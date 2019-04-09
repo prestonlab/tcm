@@ -193,3 +193,11 @@ for i = 1:length(experiments)
     end
     print_fit_summary('data', experiments{i}, fig_dir);
 end
+
+%% EEG decoding
+
+% test run with one participant
+sim_experiment = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
+decode_cfrl('cdcfr2', 'local_cat_wikiw2v', 'decode_ic', [.3 1], ...
+            'sim_experiment', sim_experiment, ...
+            'subj_ind', 1, 'overwrite', true);
