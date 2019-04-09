@@ -19,31 +19,56 @@ function outfile = decode_cfrl(experiment, fit, res_name, w, varargin)
 %
 %  OPTIONS
 %  subj_ind : numeric array : []
-%      Index of the subject to include, within the sorted list of
-%      subject numbers. Will create an output file specific to that
-%      subject.
+%      Index of the subject to include, within the sorted list of subject
+%      numbers. If specified, will create an output file specific to that
+%      subject. Otherwise, all subjects will be saved in one file.
 %
 %  overwrite : boolean : false
 %      If true, will overwrite existing output files.
+%
+%  n_workers : int : []
+%      If not empty, will start a parallel pool with this number of
+%      workers. If not specified, all cores on the system will be used.
+%
+%  sim_experiment : cell array of strings : {}
+%      Experiment codes to use for running simulations. This can be used to
+%      run different conditions with different parameters. Simulated data
+%      will be merged before classification, so that it is run across all
+%      conditions.
 
 def = struct();
 def.subj_ind = [];
 def.overwrite = false;
 def.n_workers = [];
+def.sim_experiment = {};
 opt = propval(varargin, def);
 
 if ~isempty(opt.n_workers)
     [pool, cluster] = job_parpool(opt.n_workers);
 end
 
-% simulation info
-info = get_fit_info_cfrl(fit, experiment);
-stats = getfield(load(info.res_file, 'stats'), 'stats');
-simdef = sim_def_cfrl(experiment, fit);
-load(simdef.data_file);
+% experiment info
+info = get_exp_info_cfrl(experiment);
+load(info.data);
 
 % output file
-[par, base, ext] = fileparts(info.res_file);
+if isempty(opt.sim_experiment)
+    % base on the results file that we load fitted parameters from
+    fit_info = get_fit_info_cfrl(fit, experiment);
+    [par, base, ext] = fileparts(fit_info.res_file);
+else
+    % base on the first results file; if all were loaded at the same time,
+    % they'll have the same timestamp
+    fit_info = get_fit_info_cfrl(fit, opt.sim_experiment{1});
+    [fitpar, base, ext] = fileparts(fit_info.res_file);
+    
+    % put in the main experiment directory instead of the sim_experiment
+    % subdirectories
+    par = fullfile(info.model_dir, fit_info.model_type);
+    if ~exist(par, 'dir')
+        mkdir(par);
+    end
+end
 
 % get subject(s) to process
 subjnos = unique(data.subject);
@@ -74,8 +99,77 @@ end
 % record context
 if ~exist('c', 'var')
     disp('Recording context for best-fitting parameters...')
-    [subj_data, subj_param, c, c_in, ic] = ...
-        indiv_context_cfrl(stats(subj_ind), simdef);
+    
+    % iterate over conditions, running each simulation based on the
+    % best-fitting parameters for that condition
+    if ~isempty(opt.sim_experiment)
+        % store parameters and data in [subjects x condition] cell arrays
+        n_subj = length(subj_ind);
+        n_cond = length(opt.sim_experiment);
+        cond_data = cell(n_subj, n_cond);
+        cond_param = cell(n_subj, n_cond);
+        
+        % will store context in merged format
+        s = struct;
+        s.c = cell(1, n_cond);
+        s.c_in = cell(1, n_cond);
+        s.ic = cell(1, n_cond);
+        
+        % simulate each condition
+        for i = 1:n_cond
+            simdef = sim_def_cfrl(opt.sim_experiment{i}, fit);
+            fit_info = get_fit_info_cfrl(fit, opt.sim_experiment{i});
+            stats = getfield(load(fit_info.res_file, 'stats'), 'stats');
+            [cond_data(:,i), cond_param(:,i), s.c{i}, s.c_in{i}, s.ic{i}] = ...
+                indiv_context_cfrl(stats(subj_ind), simdef);
+        end
+        
+        % get full data for each subject to get the correct list order
+        subj_data = cell(n_subj, 1);
+        for i = 1:n_subj
+            subj_data{i} = trial_subset(data.subject==subjnos(i), data);
+        end
+        
+        % fill in all lists in the original order in the full data struct
+        ucond = unique(data.pres.distractor(:,1));
+        f = struct;
+        fnames = fieldnames(s);
+        for i = 1:length(fnames)
+            % initialize the full cell array for each subject
+            full_pres = cell(1, n_subj);
+            full_rec = cell(1, n_subj);
+            for j = 1:n_subj
+                full_pres{j} = cell(size(subj_data{j}.pres_itemnos));
+                full_rec{j} = cell(size(subj_data{j}.rec_itemnos));
+            end
+            
+            % aggregate lists across conditions
+            for j = 1:n_cond
+                con_pres = s.(fnames{i}){j}.pres;
+                con_rec = s.(fnames{i}){j}.rec;
+                for k = 1:n_subj
+                    ind = subj_data{k}.pres.distractor(:,1) == ucond(j);
+                    full_pres{k}(ind,:) = con_pres{k};
+                    full_rec{k}(ind,1:size(con_rec{k},2)) = con_rec{k};
+                end
+            end
+            f.(fnames{i}).pres = full_pres;
+            f.(fnames{i}).rec = full_rec;
+        end
+
+        % unpack into separate variables
+        c = f.c;
+        c_in = f.c_in;
+        ic = f.ic;
+        subj_param = cond_param;
+    else
+        % all data simulated with the same parameters
+        simdef = sim_def_cfrl(experiment, fit);
+        stats = getfield(load(fit_info.res_file, 'stats'), 'stats');
+        [subj_data, subj_param, c, c_in, ic] = ...
+            indiv_context_cfrl(stats(subj_ind), simdef);
+        cond_param = {};
+    end
     save(outfile, 'subj_data', 'subj_param', 'c', 'c_in', 'ic');
 end
 
@@ -86,6 +180,9 @@ for i = 1:n_subj
       case 'cfr'
         filename = sprintf('psz_abs_emc_sh_rt_t2_LTP%03d.mat', subjnos(i));
         pat_file{i} = fullfile('~/work/cfr/eeg/study_patterns', filename);
+      case 'cdcfr2'
+        filename = sprintf('psz_rt_rpost_beta_CFR%03d.mat', subjnos(i));
+        pat_file{i} = fullfile('~/work/cdcfr2/eeg/study_patterns', filename);
     end
 end
 
