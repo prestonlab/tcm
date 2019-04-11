@@ -41,11 +41,8 @@ for c = 1:nConds
 
 end
 
-% % divide the acts by their sum to normalize
-% acts = acts ./ repmat(sum(acts), size(acts, 1), 1);
-
 scratchpad.w = scratchpad.logreg.betas;
-
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [] = sanity_check(testpats,testtargs,scratchpad)
 

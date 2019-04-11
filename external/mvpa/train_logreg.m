@@ -13,9 +13,17 @@ function [scratchpad] = train_logreg(trainpats,traintargs,in_args,cv_args)
 % features you have, so it could easily get high (e.g. 10^4
 % for lots of features) - see PENALTY
 %
-% PENALTY (optional, default = NaN). You have to specify a PENALTY, or
+% PENALTY (required, default = NaN). You have to specify a PENALTY, or
 % this function will fail fatally. I usually set this to around 50 for
 % 1000 voxels. The more voxels you have, the higher the penalty.
+%
+% MAXROUNDS (optional, default = 5000) The maximum number of
+% iterations used by the iteratively-reweighted least squares
+% (IRLS) algorithm. Typically no more than 8 are required.
+%
+% TOL (optional, default = 1e-4) The stopping criterion of the IRLS
+% algorithm: when the decrease in loglikelihood is below this
+% proportion, the algorithm returns.
 %
 % License:
 %=====================================================================
@@ -33,6 +41,7 @@ function [scratchpad] = train_logreg(trainpats,traintargs,in_args,cv_args)
 
 
 defaults.tol = 1e-4;
+defaults.maxrounds = 5000;
 defaults.penalty = NaN;
 defaults.use_matlab = false;
 defaults.constant = false;
@@ -73,9 +82,11 @@ lambda = args.penalty;
 % afterwards
 for c=1:nConds
   curtraintargs = traintargs(c,:);
-  out = logRegFun(curtraintargs, trainpats, lambda, args.tol);
+  out = logRegFun(curtraintargs, trainpats, lambda, args.tol, args.maxrounds);
   scratchpad.logreg.betas(:,c) = out.weights';
   scratchpad.logreg.trainError(c,:) = out.classError;
+  scratchpad.logreg.rounds(c) = out.rounds;
+  scratchpad.logreg.ll{c} = out.ll;  
 end
 
 
