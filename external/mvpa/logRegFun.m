@@ -78,11 +78,11 @@ C2 = lambda*eye(nFeat);
 
 out.ll = zeros(maxrounds, 1);
 
+A = zeros(nSamp);
 while deltaLL>tol & rounds<maxrounds
   f=exp(wOld'*x);
   p=f./(1+f);
-  A=diag(p.*(1-p));
-  
+  A(1:(nSamp+1):end) = p.*(1-p);
   %B = x*A*x'+lambda*eye(nFeat); 
   C1 = x*A*x';
   B = C1+C2;
