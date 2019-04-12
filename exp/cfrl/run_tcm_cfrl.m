@@ -115,3 +115,23 @@ for i = 1:size(cont, 1)
     p_cont = p{cont(i,1)} - p{cont(i,2)};
     ctab{i} = array2table(p_cont, 'VariableNames', param_names);
 end
+
+sim_experiment = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
+decode_cfrl('cdcfr2', 'local_cat_wikiw2v', 'decode_ic', [.3 1], ...
+            'sim_experiment', sim_experiment, ...
+            'subj_ind', 1, 'overwrite', true);
+
+flags = '-t 12:00:00 --mem=24gb --cpus-per-task=16';
+job = submit_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', ...
+                         'decode_ic_evid_30', [.3 1], 16, true, ...
+                         1:10, flags);
+
+flags = '-t 24:00:00 --mem=24gb --cpus-per-task=16';
+job = {};
+wi = .1:.1:1;
+for i = 1:length(wi)
+    res_name = sprintf('decode_ic_evid_%.0f', wi(i)*100);
+    job{i} = submit_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', ...
+                                res_name, [wi(i) 1], 16, true, ...
+                                1:10, flags);
+end
