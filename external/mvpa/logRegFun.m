@@ -70,7 +70,6 @@ wOld=zeros(nFeat,1);
 %the error at each step
 deltaLL=1;
 
-p=[];
 rounds = 0;
 oldLL=LL(wOld);
 
@@ -79,17 +78,16 @@ C2 = lambda*eye(nFeat);
 out.ll = zeros(maxrounds, 1);
 
 A = zeros(nSamp);
-while deltaLL>tol & rounds<maxrounds
+while deltaLL>tol && rounds<maxrounds
   f=exp(wOld'*x);
   p=f./(1+f);
   A(1:(nSamp+1):end) = p.*(1-p);
-  %B = x*A*x'+lambda*eye(nFeat); 
+
   C1 = x*A*x';
   B = C1+C2;
-  %wGrad = inv(B)*(x*(y-p)'-lambda*wOld);
   wGrad = B \ (x*(y-p)'-lambda*wOld);
   
-  wNew=wOld+wGrad;%inv(x*A*x'+lambda*eye(nFeat))*(x*(y-p)'-lambda*wOld);
+  wNew=wOld+wGrad;
   
   newLL=LL(wNew);
 
