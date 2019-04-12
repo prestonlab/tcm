@@ -51,7 +51,7 @@ opt.runpar = true;
 
 % set noise level
 fprintf('Optimizing noise...\n')
-n = 0:.01:.5; % 51 tests
+n = 0:.02:1; % 51 tests
 n_rep_optim = 50;
 [n_item, n_feat] = size(pattern);
 pat_ind = {1:(n_feat/2) (n_feat/2+1):n_feat};
