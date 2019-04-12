@@ -26,6 +26,11 @@ function [evidence, fitted_perf, sigma] = decode_context_match(context, ...
 %      Classifier evidence for each category. Categories are in the
 %      sorting order of the category codes.
 
+% normalize noise weights
+if ~any(w < 0)
+    w = w / sum(w);
+end
+
 % set up decoding
 ucat = unique(category);
 labels = category';
