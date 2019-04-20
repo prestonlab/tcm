@@ -126,11 +126,12 @@ job = submit_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', ...
                          'decode_ic_evid_30', [.3 1], 16, true, ...
                          1:10, flags);
 
-flags = '-t 24:00:00 --mem=24gb --cpus-per-task=16';
+flags = '-t 12:00:00 --mem=24gb --cpus-per-task=16';
 job = {};
-wi = .1:.1:1;
+%wi = .1:.1:1;
+wi = [.1 .3 .5];
 for i = 1:length(wi)
-    res_name = sprintf('decode_ic_evid_%.0f', wi(i)*100);
+    res_name = sprintf('decode_ic_evid_test_%.0f', wi(i)*100);
     job{i} = submit_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', ...
                                 res_name, [wi(i) 1], 16, true, ...
                                 1:10, flags);
