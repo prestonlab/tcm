@@ -35,13 +35,15 @@ function outfile = decode_cfrl(experiment, fit, res_name, w, varargin)
 %      run different conditions with different parameters. Simulated data
 %      will be merged before classification, so that it is run across all
 %      conditions.
+%
+%  Other options will be passed to decode_context_match.
 
 def = struct();
 def.subj_ind = [];
 def.overwrite = false;
 def.n_workers = [];
 def.sim_experiment = {};
-opt = propval(varargin, def);
+[opt, optim_opt] = propval(varargin, def);
 
 if ~isempty(opt.n_workers)
     [pool, cluster] = job_parpool(opt.n_workers);
@@ -245,7 +247,7 @@ if ~exist('con_evidence', 'var')
     for i = 1:n_subj
         [con_evidence_rep{i}, con_perf{i}, sigma(i)] = ...
             decode_context_match(ic.pres{i}, subj_data{i}.pres.category, ...
-                                 eeg_perf(i), w);
+                                 eeg_perf(i), w, optim_opt);
         con_evidence{i} = mean(con_evidence_rep{i}, 3);        
     end
     save(outfile, 'con_evidence_rep', 'con_evidence', ...
