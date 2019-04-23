@@ -47,11 +47,6 @@ def.n_rep_final = 100;
 def.plot_optim = false;
 opt = propval(varargin, def);
 
-% normalize noise weights
-if ~any(w < 0)
-    w = w / sum(w);
-end
-
 % set up decoding
 ucat = unique(category);
 labels = category';
