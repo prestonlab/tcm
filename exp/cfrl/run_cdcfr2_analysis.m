@@ -201,3 +201,107 @@ sim_experiment = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
 decode_cfrl('cdcfr2', 'local_cat_wikiw2v', 'decode_ic', [.3 1], ...
             'sim_experiment', sim_experiment, ...
             'subj_ind', 1, 'overwrite', true);
+
+fig_dir = '~/work/cdcfr2/figs/integ';
+w = [.1 .3 .5];
+for i = 1:length(w)
+    name = sprintf('%.0f', w(i) * 100);
+    res_name = sprintf('decode_ic_evid_test_%s', name);
+    s = load_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', ...
+                         'decode_ic_evid_test_10');
+    n_subj = length(s.c.pres);
+    m_eeg = cell(1, n_subj);
+    m_con = cell(1, n_subj);
+    n = cell(1, n_subj);
+    for j = 1:n_subj;
+        [m_eeg{j}, m_con{j}, n{j}] = ...
+            evidence_trainpos(s.eeg_evidence{j}, s.con_evidence{j}, ...
+                              s.subj_data{j}.pres.category);
+    end
+
+    clf
+    out_name = sprintf('integ_ic_evid_test_%s_eeg.eps', name);
+    print_evid_trainpos(cat(3, m_eeg{:}), fullfile(fig_dir, out_name));
+    clf
+    out_name = sprintf('integ_ic_evid_test_%s_con.eps', name);
+    print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
+end
+
+s = load_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', ...
+                     'decode_ic_evid_test_100');
+n_subj = length(s.c.pres);
+m_eeg = cell(1, n_subj);
+m_con = cell(1, n_subj);
+n = cell(1, n_subj);
+for j = 1:n_subj
+    [m_eeg{j}, m_con{j}, n{j}] = ...
+        evidence_trainpos(s.eeg_evidence{j}, s.con_evidence{j}, ...
+                          s.subj_data{j}.pres.category);
+end
+
+clf
+out_name = 'integ_ic_evid_test_100_eeg.eps';
+print_evid_trainpos(cat(3, m_eeg{:}), fullfile(fig_dir, out_name));
+clf
+out_name = 'integ_ic_evid_test_100_con.eps';
+print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
+
+res_name = 'decode_ic_evid_test_100';
+s = load_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', res_name);
+fig_dir = '~/work/cdcfr2/figs/integ_distract';
+if ~exist(fig_dir, 'dir')
+    mkdir(fig_dir)
+end
+distract = [0 2.5 7.5];
+distract_names = {'IFR' 'CD1' 'CD2'};
+for i = 1:length(distract)
+    m_eeg = cell(1, n_subj);
+    m_con = cell(1, n_subj);
+    n = cell(1, n_subj);
+    for j = 1:n_subj
+        % vectorize the distraction matrix to match the trial vectors
+        dmat = s.subj_data{j}.pres.distractor;
+        temp = dmat';
+        dvec = temp(:);
+        
+        % get evidence by train position for this distraction condition
+        vec_ind = dvec == distract(i);
+        mat_ind = dmat(:,1) == distract(i);
+        [m_eeg{j}, m_con{j}, n{j}] = ...
+            evidence_trainpos(s.eeg_evidence{j}(vec_ind,:), ...
+                              s.con_evidence{j}(vec_ind,:), ...
+                              s.subj_data{j}.pres.category(mat_ind,:));
+    end
+    
+    clf
+    out_name = sprintf('%s_d%.0f_eeg.eps', res_name, i - 1);
+    print_evid_trainpos(cat(3, m_eeg{:}), fullfile(fig_dir, out_name));
+    clf
+    out_name = sprintf('%s_d%.0f_con.eps', res_name, i - 1);
+    print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
+
+    % slope over train position
+    x = 1:3;
+    stats = struct;
+    ctypes = {'curr' 'prev' 'base'};
+    eeg_b = NaN(n_subj, length(ctypes));
+    con_b = NaN(n_subj, length(ctypes));
+    for j = 1:3
+        for k = 1:n_subj
+            tot_n = n{k}(x,j);
+            y_eeg = m_eeg{k}(x,j);
+            y_con = m_con{k}(x,j);
+            [b, dev, stats] = glmfit(x, y_eeg, 'normal', 'weights', tot_n);
+            eeg_b(k,j) = b(2);
+            [b, dev, stats] = glmfit(x, y_con, 'normal', 'weights', tot_n);
+            con_b(k,j) = b(2);
+        end
+    end
+
+    clf
+    out_name = sprintf('%s_slope_d%.0f_eeg.eps', res_name, i - 1);
+    print_class_slope(eeg_b, fullfile(fig_dir, out_name));
+    clf
+    out_name = sprintf('%s_slope_d%.0f_con.eps', res_name, i - 1);
+    print_class_slope(con_b, fullfile(fig_dir, out_name));
+end
