@@ -3,7 +3,7 @@ function stats = load_decode_cfrl(experiment, fit, res_name)
 %
 %  stats = load_decode_cfrl(experiment, fit, res_name)
 
-info = get_fit_info_cfrl('local_cat_wikiw2v', 'cfr');
+info = get_fit_info_cfrl(fit, experiment);
 [par, base, ext] = fileparts(info.res_file);
 
 s = load(info.res_file);
