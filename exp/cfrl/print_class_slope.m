@@ -3,7 +3,7 @@ function print_class_slope(mat, fig_file)
 %
 %  print_class_slope(mat, fig_file)
 
-m = mean(mat);
+m = mean(mat, 1);
 [l, u] = bootstrap_ci(mat, 1, 5000, 0.05);
 
 x = 1:size(mat, 2);
