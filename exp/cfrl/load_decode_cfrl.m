@@ -1,20 +1,21 @@
-function stats = load_decode_cfrl(experiment, fit, res_name)
+function stats = load_decode_cfrl(experiment, sim_experiment, fit, res_name)
 %LOAD_DECODE_CFRL   Load decoding analysis from individual subjects.
 %
 %  stats = load_decode_cfrl(experiment, fit, res_name)
 
 info = get_fit_info_cfrl(fit, experiment);
-[par, base, ext] = fileparts(info.res_file);
+sim_info = get_fit_info_cfrl(fit, sim_experiment);
+[par, base, ext] = fileparts(sim_info.res_file);
 
-s = load(info.res_file);
+s = load(sim_info.res_file);
 n_subj = length(s.stats);
-
 f_all = {'subj_data' 'subj_param' 'c' 'c_in' 'ic' 'pat_file' ...
          'eeg_evidence_raw' 'eeg_perf' 'eeg_evidence' 'con_evidence_raw' ...
          'con_evidence' 'con_perf_raw'};
 
 for i = 1:n_subj
-    outfile = fullfile(par, sprintf('%s_%s_%d.mat', base, res_name, i));
+    outfile = fullfile(info.res_dir, ...
+                       sprintf('%s_%s_%d.mat', base, res_name, i));
     if i == 1
         stats = load(outfile);
         f = fieldnames(stats);
@@ -39,7 +40,13 @@ for i = 1:n_subj
             sf = s.(f{j});
             stf = stats.(f{j});
             
-            if iscell(sf) || isnumeric(sf)
+            if strcmp(f{j}, 'subj_param')
+                if i == 2
+                    stats.(f{j}) = [stf' sf'];
+                else
+                    stats.(f{j}) = [stf sf'];
+                end
+            elseif iscell(sf) || isnumeric(sf)
                 stats.(f{j}) = [stf sf];
             else
                 stats.(f{j}).pres = [stf.pres sf.pres];
