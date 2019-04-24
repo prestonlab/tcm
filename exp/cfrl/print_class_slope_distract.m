@@ -1,9 +1,10 @@
 function print_class_slope_distract(mat, fig_file)
 %PRINT_CLASS_SLOPE_DISTRACT   Plot classifier slope by category type.
 %
+%  The mat should be [ctype x distract x subject].
+%
 %  print_class_slope_distract(mat, fig_file)
 
-mat = permute(mat, [2 3 1]);
 m = mean(mat, 3);
 [l, u] = bootstrap_ci(mat, 3, 5000, 0.05);
 
