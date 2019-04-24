@@ -246,14 +246,19 @@ clf
 out_name = 'integ_ic_evid_test_100_con.eps';
 print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
 
-res_name = 'decode_ic_evid_test_100';
-s = load_decode_cfrl('cdcfr2', 'local_cat_wikiw2v', res_name);
-fig_dir = '~/work/cdcfr2/figs/integ_distract';
+res_name = 'decode_ic_evid_test_70';
+s = load_decode_cfrl('cdcfr2', 'cdcfr2_d0', 'local_cat_wikiw2v', res_name);
+n_subj = length(s.subj_data);
+fig_dir = '~/work/cdcfr2/figs/integ_distract_test';
 if ~exist(fig_dir, 'dir')
     mkdir(fig_dir)
 end
+
 distract = [0 2.5 7.5];
 distract_names = {'IFR' 'CD1' 'CD2'};
+ctypes = {'curr' 'prev' 'base'};
+eeg_bd = NaN(n_subj, length(ctypes), length(distract));
+con_bd = NaN(n_subj, length(ctypes), length(distract));
 for i = 1:length(distract)
     m_eeg = cell(1, n_subj);
     m_con = cell(1, n_subj);
@@ -283,7 +288,6 @@ for i = 1:length(distract)
     % slope over train position
     x = 1:3;
     stats = struct;
-    ctypes = {'curr' 'prev' 'base'};
     eeg_b = NaN(n_subj, length(ctypes));
     con_b = NaN(n_subj, length(ctypes));
     for j = 1:3
@@ -297,6 +301,8 @@ for i = 1:length(distract)
             con_b(k,j) = b(2);
         end
     end
+    eeg_bd(:,:,i) = eeg_b;
+    con_bd(:,:,i) = con_b;
 
     clf
     out_name = sprintf('%s_slope_d%.0f_eeg.eps', res_name, i - 1);
@@ -305,3 +311,10 @@ for i = 1:length(distract)
     out_name = sprintf('%s_slope_d%.0f_con.eps', res_name, i - 1);
     print_class_slope(con_b, fullfile(fig_dir, out_name));
 end
+
+clf
+out_name = sprintf('%s_slope_all_eeg.eps', res_name);
+print_class_slope_distract(eeg_bd, fullfile(fig_dir, out_name));
+clf
+out_name = sprintf('%s_slope_all_con.eps', res_name);
+print_class_slope_distract(con_bd, fullfile(fig_dir, out_name));
