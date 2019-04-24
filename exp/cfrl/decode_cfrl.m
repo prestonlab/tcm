@@ -45,7 +45,7 @@ def.n_workers = [];
 def.sim_experiment = {};
 [opt, optim_opt] = propval(varargin, def);
 
-if ~isempty(opt.n_workers)
+if ~isempty(opt.n_workers) && opt.n_workers > 1
     [pool, cluster] = job_parpool(opt.n_workers);
 end
 

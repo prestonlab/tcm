@@ -136,3 +136,27 @@ for i = 1:length(wi)
                                 res_name, [wi(i) 1], 16, true, ...
                                 1:10, flags);
 end
+
+flags = '-t 24:00:00 --mem=24gb --cpus-per-task=16';
+res_name = 'decode_ic_evid_test_70';
+sim_experiment = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
+job = submit_decode_cfrl('cdcfr2', sim_experiment, 'local_cat_wikiw2v', ...
+                         res_name, [.7 1], 16, true, ...
+                         1:10, flags);
+
+
+fit = 'local_cat_wikiw2v';
+experiment = 'cdcfr2';
+info = get_fit_info_cfrl(fit, experiment);
+[par, base, ext] = fileparts(info.res_file);
+
+opt = struct;
+opt.sim_experiment = sim_experiment;
+opt.overwrite = true;
+opt.n_workers = [];
+opt.sigmas = 0:.2:1;
+opt.n_rep_optim = 10;
+opt.n_rep_final = 100;
+opt.plot_optim = false;
+
+decode_cfrl(experiment, fit, 'test', [1 1], opt);
