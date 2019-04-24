@@ -246,75 +246,30 @@ clf
 out_name = 'integ_ic_evid_test_100_con.eps';
 print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
 
-res_name = 'decode_ic_evid_test_70';
+% load distraction classification and plot
+res_name = 'decode_ic_evid_test_30';
 s = load_decode_cfrl('cdcfr2', 'cdcfr2_d0', 'local_cat_wikiw2v', res_name);
-n_subj = length(s.subj_data);
+res = class_slope_distract(s);
+
 fig_dir = '~/work/cdcfr2/figs/integ_distract_test';
 if ~exist(fig_dir, 'dir')
     mkdir(fig_dir)
 end
 
-distract = [0 2.5 7.5];
-distract_names = {'IFR' 'CD1' 'CD2'};
-ctypes = {'curr' 'prev' 'base'};
-eeg_bd = NaN(n_subj, length(ctypes), length(distract));
-con_bd = NaN(n_subj, length(ctypes), length(distract));
-for i = 1:length(distract)
-    m_eeg = cell(1, n_subj);
-    m_con = cell(1, n_subj);
-    n = cell(1, n_subj);
-    for j = 1:n_subj
-        % vectorize the distraction matrix to match the trial vectors
-        dmat = s.subj_data{j}.pres.distractor;
-        temp = dmat';
-        dvec = temp(:);
-        
-        % get evidence by train position for this distraction condition
-        vec_ind = dvec == distract(i);
-        mat_ind = dmat(:,1) == distract(i);
-        [m_eeg{j}, m_con{j}, n{j}] = ...
-            evidence_trainpos(s.eeg_evidence{j}(vec_ind,:), ...
-                              s.con_evidence{j}(vec_ind,:), ...
-                              s.subj_data{j}.pres.category(mat_ind,:));
-    end
-    
+for i = 1:length(res.distract);
     clf
     out_name = sprintf('%s_d%.0f_eeg.eps', res_name, i - 1);
-    print_evid_trainpos(cat(3, m_eeg{:}), fullfile(fig_dir, out_name));
+    print_evid_trainpos(squeeze(res.eeg_m(:,:,i,:)), ...
+                        fullfile(fig_dir, out_name));
     clf
     out_name = sprintf('%s_d%.0f_con.eps', res_name, i - 1);
-    print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
-
-    % slope over train position
-    x = 1:3;
-    stats = struct;
-    eeg_b = NaN(n_subj, length(ctypes));
-    con_b = NaN(n_subj, length(ctypes));
-    for j = 1:3
-        for k = 1:n_subj
-            tot_n = n{k}(x,j);
-            y_eeg = m_eeg{k}(x,j);
-            y_con = m_con{k}(x,j);
-            [b, dev, stats] = glmfit(x, y_eeg, 'normal', 'weights', tot_n);
-            eeg_b(k,j) = b(2);
-            [b, dev, stats] = glmfit(x, y_con, 'normal', 'weights', tot_n);
-            con_b(k,j) = b(2);
-        end
-    end
-    eeg_bd(:,:,i) = eeg_b;
-    con_bd(:,:,i) = con_b;
-
-    clf
-    out_name = sprintf('%s_slope_d%.0f_eeg.eps', res_name, i - 1);
-    print_class_slope(eeg_b, fullfile(fig_dir, out_name));
-    clf
-    out_name = sprintf('%s_slope_d%.0f_con.eps', res_name, i - 1);
-    print_class_slope(con_b, fullfile(fig_dir, out_name));
+    print_evid_trainpos(squeeze(res.con_m(:,:,i,:)), ...
+                        fullfile(fig_dir, out_name));
 end
 
 clf
 out_name = sprintf('%s_slope_all_eeg.eps', res_name);
-print_class_slope_distract(eeg_bd, fullfile(fig_dir, out_name));
+print_class_slope_distract(res.eeg_b, fullfile(fig_dir, out_name));
 clf
 out_name = sprintf('%s_slope_all_con.eps', res_name);
-print_class_slope_distract(con_bd, fullfile(fig_dir, out_name));
+print_class_slope_distract(res.con_b, fullfile(fig_dir, out_name));
