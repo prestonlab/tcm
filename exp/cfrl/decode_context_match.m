@@ -19,7 +19,7 @@ function [evidence, fitted_perf, sigma] = decode_context_match(context, ...
 %      Target decoding performance to match.
 %
 %  w - [1 x 2] numeric array
-%      Weight of effect of noise on item (w(1)) and context (w(2)). If
+%      Weight of item (w(1)) and context (w(2)) components. If
 %      either weight is negative, that segment will be omitted.
 %
 %  OUTPUTS
@@ -46,6 +46,11 @@ def.n_rep_optim = 10;
 def.n_rep_final = 100;
 def.plot_optim = false;
 opt = propval(varargin, def);
+
+% normalize component weights
+if ~any(w < 0)
+    w = w / sum(w);
+end
 
 % set up decoding
 ucat = unique(category);
@@ -131,7 +136,7 @@ function y = add_noise(x, sigma, ind, w)
     noise = randn(size(x)) * sigma;
     y = NaN(size(x));
     for i = 1:length(ind)
-        y(:,ind{i}) = x(:,ind{i}) + noise(:,ind{i}) * w(i);
+        y(:,ind{i}) = x(:,ind{i}) * w(i) + noise(:,ind{i});
     end
     
     for i = 1:length(w)
