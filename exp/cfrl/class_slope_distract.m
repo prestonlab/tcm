@@ -53,6 +53,9 @@ for i = 1:n_distract
 end
 
 stats = struct;
+stats.trainpos = unique(trainpos)';
+stats.ctype = {'curr' 'prev' 'base'};
+stats.distract = distract;
 stats.eeg_m = eeg_m;
 stats.con_m = con_m;
 stats.eeg_b = eeg_b;
