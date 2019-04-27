@@ -138,10 +138,11 @@ for i = 1:length(wi)
 end
 
 flags = '-t 24:00:00 --mem=24gb --cpus-per-task=16';
-res_name = 'decode_ic_evid_test_70';
+res_name = 'decode_ic_evid_wtest_50';
 sim_experiment = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
+w = .5;
 job = submit_decode_cfrl('cdcfr2', sim_experiment, 'local_cat_wikiw2v', ...
-                         res_name, [.7 1], 16, true, ...
+                         res_name, [w 1-w], 16, true, ...
                          1:10, flags);
 
 
