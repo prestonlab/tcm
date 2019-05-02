@@ -247,11 +247,11 @@ out_name = 'integ_ic_evid_test_100_con.eps';
 print_evid_trainpos(cat(3, m_con{:}), fullfile(fig_dir, out_name));
 
 % load distraction classification and plot
-res_name = 'decode_ic_evid_test_30';
+res_name = 'decode_ic_evid_wtest_50';
 s = load_decode_cfrl('cdcfr2', 'cdcfr2_d0', 'local_cat_wikiw2v', res_name);
 res = class_slope_distract(s);
 
-fig_dir = '~/work/cdcfr2/figs/integ_distract_test';
+fig_dir = '~/work/cdcfr2/figs/integ_distract_wtest';
 if ~exist(fig_dir, 'dir')
     mkdir(fig_dir)
 end
@@ -268,8 +268,8 @@ for i = 1:length(res.distract);
 end
 
 clf
-out_name = sprintf('%s_slope_all_eeg.eps', res_name);
+out_name = sprintf('%s_slope_eeg.eps', res_name);
 print_class_slope_distract(res.eeg_b, fullfile(fig_dir, out_name));
 clf
-out_name = sprintf('%s_slope_all_con.eps', res_name);
+out_name = sprintf('%s_slope_con.eps', res_name);
 print_class_slope_distract(res.con_b, fullfile(fig_dir, out_name));
