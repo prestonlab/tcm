@@ -116,6 +116,22 @@ for i = 1:size(cont, 1)
     ctab{i} = array2table(p_cont, 'VariableNames', param_names);
 end
 
+res_dir = '~/work/cdcfr2/figs/param';
+for i = 1:length(experiments)
+    out_file = fullfile(res_dir, sprintf('%s_param.csv', experiments{i}));
+    writetable(ptab{i}, out_file);
+end
+
+% cfr parameters
+info = get_fit_info_cfrl('local_cat_wikiw2v', 'cfr');
+s = load(info.res_file);
+p = cat(1, s.stats.parameters);
+param_names = s.stats(1).names;
+ptab = array2table(p, 'VariableNames', param_names);
+out_file = fullfile('~/work/cfr/figs2', 'cfr_param.csv');
+writetable(ptab, out_file);
+
+
 sim_experiment = {'cdcfr2_d0' 'cdcfr2_d1' 'cdcfr2_d2'};
 decode_cfrl('cdcfr2', 'local_cat_wikiw2v', 'decode_ic', [.3 1], ...
             'sim_experiment', sim_experiment, ...
