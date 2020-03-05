@@ -43,6 +43,7 @@ def.n_search = 1;
 def.n_workers = 1;
 def.search_type = 'de';
 def.subject = [];
+def.verbose = 2;
 run_opt = propval(varargin, def);
 
 if run_opt.n_workers > 1 && isempty(gcp('nocreate'))
@@ -54,7 +55,8 @@ simdef = sim_def_cfrl(experiment, fit);
 
 % search settings
 init = cat(1, simdef.param_info.init)';
-search_opt = search_opt_cfrl(run_opt.search_type, 'init_ranges', init);
+search_opt = search_opt_cfrl(run_opt.search_type, 'init_ranges', init, ...
+                             'verbose', run_opt.verbose);
 fprintf('Search settings:\n');
 disp(search_opt)
 
