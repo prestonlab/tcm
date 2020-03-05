@@ -1,9 +1,13 @@
-function info = get_fit_info_cfrl(fit, experiment)
+function info = get_fit_info_cfrl(fit, experiment, res_dir)
 %GET_FIT_INFO_CFRL   Get information about CFRL model fits.
 %
-%  info = get_fit_info_cfrl(fit, experiment)
+%  info = get_fit_info_cfrl(fit, experiment, res_dir)
 
-files = get_exp_info_cfrl(experiment);
+if nargin < 3
+    res_dir = '';
+end
+
+files = get_exp_info_cfrl(experiment, res_dir);
 
 if strcmp(fit, 'data')
     info.res_dir = files.res_dir;
@@ -58,6 +62,10 @@ end
 
 info.model_dir = files.model_dir;
 info.model_type = model_type;
+if isempty(files.model_dir)
+    info.res_dir = '';
+    return
+end
 info.res_dir = fullfile(files.model_dir, model_type);
 
 % attempt to find the latest search results

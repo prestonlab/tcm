@@ -1,11 +1,15 @@
-function simdef = sim_def_cfrl(experiment, fit)
+function simdef = sim_def_cfrl(experiment, fit, res_dir)
 %SIM_DEF_CFRL   Get a simulation definition.
 %
-%  simdef = sim_def_cfrl(experiment, fit)
+%  simdef = sim_def_cfrl(experiment, fit, res_dir)
+
+if nargin < 3
+    res_dir = '';
+end
 
 % unpack model information
-info = get_fit_info_cfrl(fit, experiment);
-files = get_exp_info_cfrl(experiment);
+info = get_fit_info_cfrl(fit, experiment, res_dir);
+files = get_exp_info_cfrl(experiment, res_dir);
 [param_info, fixed] = search_param_cfrl(info.model_type, experiment);
 opt = model_features_cfrl(info.model_type);
 
