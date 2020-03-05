@@ -31,6 +31,17 @@ function res = indiv_search_cfrl(experiment, fit, varargin)
 %  n_workers - int - 1
 %      Number of parallel workers to use when optimizing parameters
 %      for different subjects.
+%
+%  search_type - char - 'de'
+%      Search profile name to use for the parameter search. See
+%      search_param_cfrl.
+%
+%  subject - numeric - []
+%      If not empty, will fit only the specified subjects. Default is to
+%      fit all subjects.
+%
+%  verbose - numeric - 2
+%      Level of verbosity to use for displaying search status.
 
 if ismember(experiment, {'cdcfr2' 'cdcfr2-1' 'cdcfr2-2'}) && ...
         ~ismember(experiment, {'cdcfr2_d0', 'cdcfr2_d1', 'cdcfr2_d2'})
