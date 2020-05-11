@@ -30,16 +30,17 @@ param = struct();
 param.B_enc = 0.79;
 param.B_rec = 0.94;
 param.Afc = 0;
-param.Acf = 1.22;
+param.Acf = 0;
 param.Dfc = 70.46;
-param.Dcf = 100 - 1.22; % adjust for new parameter definition
+param.Dcf = 100; % adjust for new parameter definition
 param.Sfc = 0;
 param.Scf = 2.5;
 param.Lfc = 1;
 param.Lcf = 1;
 param.P1 = 16.84;
 param.P2 = 1.64;
-param.T = 4.64;
+%param.T = 4.64;
+param.T = 10;
 param.X1 = 0.0093;
 param.X2 = 0.32;
 param.stop_rule = 'op';
@@ -58,7 +59,8 @@ if nargin > 2
     data.recalls_vec = recalls_vec_tcm(data.recalls, data.listLength);
 end
 
-sem = load('cfr_wikiw2v.mat');
+sem = load('cfr_wikiw2v_raw.mat');
+sem.vectors = zscore(sem.vectors, 1, 2) / sqrt(size(sem.vectors, 2));
 
 if imp == 1
     switch ver
